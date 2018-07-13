@@ -2,8 +2,8 @@
 
 void DataPoint::SetTimestamp()
 {
-	//Timestamp = UGameplayStatics::GetRealTimeSeconds(GetWorld());
-	Timestamp = 0;
+	static float count = 0;
+	Timestamp = count++;
 }
 
 DataPoint::DataPoint()
@@ -11,24 +11,43 @@ DataPoint::DataPoint()
 	SetTimestamp();
 }
 
-DataPoint::DataPoint(DataValue* dataValue)
+DataPoint::DataPoint(DataValueBase* dataValue)
 {
 	SetTimestamp();
 	Data.push_back(dataValue);
 }
 
-DataPoint::DataPoint(const std::vector<DataValue*>& data)
+DataPoint::DataPoint(const DataPoint & otherDataPoint)
 {
-	SetTimestamp();
-	Data = data;
+	Timestamp = otherDataPoint.Timestamp;
+	for (unsigned int i = 0; i < otherDataPoint.Data.size(); i++)
+	{
+		AddData(otherDataPoint.Data[i]->Clone());
+	}
+}
+
+DataPoint & DataPoint::operator=(const DataPoint & otherDataPoint)
+{
+	if (&otherDataPoint != this) // suicide guard
+	{
+		// Delete this datapoint
+		for (unsigned int i = 0; i < Data.size(); i++)
+		{
+			delete Data[i];
+		}
+
+		// Copy DataPoint
+		Timestamp = otherDataPoint.Timestamp;
+		for (unsigned int i = 0; i < otherDataPoint.Data.size(); i++)
+		{
+			AddData(otherDataPoint.Data[i]->Clone());
+		}
+	}
+	return *this;
 }
 
 DataPoint::~DataPoint()
 {
-	for (int i = 0; i < Data.size(); i++)
-	{
-		delete Data[i];
-	}
 }
 
 DataPoint DataPoint::NIL;
@@ -43,21 +62,17 @@ bool DataPoint::operator!=(const DataPoint& other) const
 	return !(*this == other);
 }
 
-void DataPoint::AddData(DataValue* dataValue)
+void DataPoint::AddData(DataValueBase* dataValue)
 {
-	Data.push_back(dataValue);
-}
 
-void DataPoint::AddData(std::vector<DataValue*> data)
-{
-	Data.insert(std::end(Data), std::begin(data), std::end(data));
+	Data.push_back(dataValue->Clone());
 }
 
 std::ostream & operator<<(std::ostream & os, const DataPoint & dataPoint)
 {
 	// TODO: insert return statement here
 	os << dataPoint.Timestamp << ',';
-	for (int i = 0; i < dataPoint.Data.size(); i++)
+	for (unsigned int i = 0; i < dataPoint.Data.size(); i++)
 	{
 		os << *dataPoint.Data[i] << ',';
 	}

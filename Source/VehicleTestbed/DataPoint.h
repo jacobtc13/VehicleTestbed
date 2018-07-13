@@ -1,33 +1,31 @@
 #pragma once
 
-#include "CoreMinimal.h"
-#include "DataValue.h"
+#include <iostream>
 #include <string>
 #include <vector>
-#include "Kismet/GameplayStatics.h"
-#include "Engine/World.h"
+#include <time.h>
+#include "DataValue.h"
 
-class VEHICLETESTBED_API DataPoint
-{
+class VEHICLETESTBED_API DataPoint {
 private:
 	float Timestamp;
-	std::vector<DataValue*> Data;
+	std::vector<DataValueBase*> Data;
 	int Size;
 	void SetTimestamp();
 public:
 	static DataPoint NIL;
 
 	DataPoint();
-	DataPoint(DataValue* data);
-	DataPoint(const std::vector<DataValue*>& data);
+	DataPoint(DataValueBase* data);
+
+	DataPoint(const DataPoint & otherDataPoint);
+	DataPoint& operator=(const DataPoint& otherDataPoint);
 	~DataPoint();
 
 	bool operator==(const DataPoint& other) const;
 	bool operator!=(const DataPoint& other) const;
-	void AddData(DataValue* dataValue);
-	void AddData(std::vector<DataValue*> data);
+	void AddData(DataValueBase* dataValue);
 	friend std::ostream& operator<<(std::ostream & os, const DataPoint& dataPoint);
 };
-
 
 

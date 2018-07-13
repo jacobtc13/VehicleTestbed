@@ -2,29 +2,48 @@
 
 #pragma once
 
-#include "CoreMinimal.h"
 #include <string>
+#include <memory>
 /**
- * 
- */
-class VEHICLETESTBED_API DataValue
-{
-private: 
-	union {
-		uint64 ui;
-		int64 si;
-		bool b;
-		double d;
-		//std::string s;
-	};
-	enum { UINT, SINT, BOOL, DOUBLE } DataType;
-public:
-	DataValue(uint64 value);
-	DataValue(int64 value);
-	DataValue(bool value);
-	DataValue(double value);
-	//DataValue(std::string value);
-	~DataValue();
+*
+*/
 
-	friend std::ostream& operator<<(std::ostream & os, const DataValue& dataValue);
+class VEHICLETESTBED_API DataValueBase
+{
+public:
+	virtual DataValueBase *Clone() const = 0;
+	virtual void Print(std::ostream& os) const = 0;
+	friend std::ostream& operator<<(std::ostream& os, const DataValueBase& dataValue)
+	{
+		dataValue.Print(os);
+		return os;
+	}
+};
+
+template <typename T>
+class VEHICLETESTBED_API DataValue : public DataValueBase
+{
+private:
+	T Value;
+public:
+	DataValue(T value)
+	{
+		Value = value;
+	}
+	DataValue(DataValue<T> const& otherDataValue)
+	{
+		Value = otherDataValue.Value;
+	}
+
+	virtual ~DataValue() {};
+
+	virtual DataValue<T> *Clone() const
+	{
+		return new DataValue<T>(*this);
+	}
+
+	void Print(std::ostream& os) const override
+	{
+		os << Value;
+	}
 };

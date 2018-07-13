@@ -1,42 +1,21 @@
 #include "DataRecorder.h"
 
-
-DataPoint& DataRecorder::Pop()
+bool DataRecorder::Pop(DataPoint& item)
 {
-	std::unique_lock<std::mutex> mlock(Mutex);
-	while (Queue.empty())
+	std::lock_guard<std::mutex> mlock(Mutex);
+	if (Queue.empty())
 	{
-		Cond.wait(mlock);
+		return false;
 	}
-	DataPoint& item = Queue.front();
+	item = *Queue.front();
 	Queue.pop();
-	return item;
+	return true;
 }
 
-void DataRecorder::Pop(DataPoint& item)
+void DataRecorder::Push(DataPoint* item)
 {
-	std::unique_lock<std::mutex> mlock(Mutex);
-	while (Queue.empty())
-	{
-		Cond.wait(mlock);
-	}
-	item = Queue.front();
-	Queue.pop();
-}
-
-void DataRecorder::Push(const DataPoint& item)
-{
-	std::unique_lock<std::mutex> mlock(Mutex);
-	Queue.push(item);
-	mlock.unlock();
-	Cond.notify_one();
-}
-
-void DataRecorder::Push(DataPoint&& item)
-{
-	std::unique_lock<std::mutex> mlock(Mutex);
+	std::lock_guard<std::mutex> mlock(Mutex);
 	Queue.push(std::move(item));
-	mlock.unlock();
 	Cond.notify_one();
 }
 
@@ -44,8 +23,7 @@ DataRecorder::DataRecorder() : ClockRateMS(100) { }
 
 DataRecorder::DataRecorder(int clockRateMS) : ClockRateMS(clockRateMS) { }
 
-DataRecorder::DataRecorder(int clockRateMS, std::vector<const void*> collectors) : ClockRateMS(clockRateMS) { }
-
+DataRecorder::DataRecorder(int clockRateMS, std::vector<std::pair<const void*, DataType>> collectors) : ClockRateMS(clockRateMS), Collectors(collectors) { }
 
 void DataRecorder::ReadFromCollectors()
 {
@@ -55,19 +33,51 @@ void DataRecorder::ReadFromCollectors()
 		Clock::time_point t0 = Clock::now();
 
 		DataPoint dataPoint;
-		for (std::vector<const void*>::const_iterator iter = Collectors.begin(), end = Collectors.end(); iter != end; ++iter)
+		for (unsigned int i = 0; i < Collectors.size(); i++)
 		{
-			DataValue value(*iter);
-			dataPoint.AddData(&value);
+			switch (Collectors[i].second)
+			{
+			case DataType::BOOL:
+			{
+				bool temp = *(bool *)Collectors[i].first;
+				DataValue<bool> value(temp);
+				dataPoint.AddData(value.Clone());
+				break;
+			}
+			case DataType::INT:
+			{
+				int temp = *(int *)Collectors[i].first;
+				DataValue<int> value(temp);
+				dataPoint.AddData(value.Clone());
+				break;
+			}
+			case DataType::UINT:
+			{
+				DataValue<unsigned int> value(*(unsigned int*)Collectors[i].first);
+				dataPoint.AddData(value.Clone());
+				break;
+			}
+			case DataType::DOUBLE:
+			{
+				DataValue<double> value(*(double *)Collectors[i].first);
+				dataPoint.AddData(value.Clone());
+				break;
+			}
+			case DataType::STRING:
+			{
+				DataValue<std::string> value(*(std::string *)Collectors[i].first);
+				dataPoint.AddData(value.Clone());
+				break;
+			}
+			}
 		}
-		Push(dataPoint);
+		Push(&dataPoint);
 
 		Clock::time_point t1 = Clock::now();
 		milliseconds ms = std::chrono::duration_cast<milliseconds>(t1 - t0);
 		std::this_thread::sleep_for(std::chrono::milliseconds(10 - ms.count()));
 	} while (!bStop);
 }
-
 
 std::thread DataRecorder::StartWriter()
 {
@@ -84,10 +94,14 @@ void DataRecorder::WriteToFile()
 	std::fstream fs;
 	fs.open("test.txt", std::fstream::out | std::fstream::ate);
 	do {
-		auto dataPoint = Pop();
-		if (dataPoint != DataPoint::NIL)
+		DataPoint writeDataPoint;
+		if (Pop(writeDataPoint))
 		{
-			fs << dataPoint << std::endl;
+			fs << writeDataPoint << std::endl;
+		}
+		else
+		{
+			std::this_thread::sleep_for(std::chrono::milliseconds(ClockRateMS));
 		}
 	} while (!bStop);
 
@@ -104,12 +118,12 @@ int DataRecorder::GetClockRate()
 	return ClockRateMS;
 }
 
-void DataRecorder::AddCollector(const void* collector)
+void DataRecorder::AddCollector(const void* ptr, DataType type)
 {
-	Collectors.push_back(collector);
+	Collectors.push_back(std::pair<const void*, DataType>(ptr, type));
 }
 
-void DataRecorder::AddCollectors(std::vector<const void*> collectors)
+void DataRecorder::AddCollectors(std::vector<std::pair<const void*, DataType>> collectors)
 {
 	Collectors.insert(Collectors.end(), collectors.begin(), collectors.end());
 }
@@ -123,7 +137,6 @@ void DataRecorder::Start()
 void DataRecorder::Stop()
 {
 	bStop = true;
-	Push(DataPoint::NIL);
 	Cond.notify_all();
 
 	ReaderThread.join();

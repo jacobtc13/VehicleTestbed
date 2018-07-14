@@ -1,5 +1,3 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
 #include "TestbedWheeledVehicle.h"
 
 #include "Components/BoxComponent.h"
@@ -10,6 +8,7 @@
 
 ATestbedWheeledVehicle::ATestbedWheeledVehicle()
 {
+	// All camera position values need to be manually changed based on size of vehicle in inherited classes.
 	// Use a spring arm to give the camera smooth, natural-feeling motion.
 	CameraSpringArm = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraSpringArm"));
 	CameraSpringArm->SetupAttachment(RootComponent);
@@ -32,14 +31,11 @@ ATestbedWheeledVehicle::~ATestbedWheeledVehicle()
 
 }
 
-/////////////////////
-// Vehicle Control//
-///////////////////
-
 void ATestbedWheeledVehicle::SetupPlayerInputComponent(class UInputComponent* InputComponent)
 {
 	Super::SetupPlayerInputComponent(InputComponent);
 
+	// Binds actions to player input which are based on the functions in UE under Project Settings->Input
 	InputComponent->BindAxis("MoveForward", this, &ATestbedWheeledVehicle::SetThrottleInput);
 	InputComponent->BindAxis("MoveRight", this, &ATestbedWheeledVehicle::SetSteeringInput);
 	InputComponent->BindAxis("Brake", this, &ATestbedWheeledVehicle::SetBrakeInput);
@@ -60,12 +56,9 @@ void ATestbedWheeledVehicle::SetBrakeInput(float Value)
 	GetVehicleMovementComponent()->SetBrakeInput(Value);
 }
 
-///////////////////
-// Get functions//
-/////////////////
-
 float ATestbedWheeledVehicle::GetVehicleForwardSpeed() const
 {
+	// Conversion is done to output result in km/h
 	return GetVehicleMovementComponent()->GetForwardSpeed() * 0.036f;
 }
 

@@ -1,5 +1,3 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
 #pragma once
 
 #include "WheeledVehicle.h"
@@ -9,45 +7,40 @@
 
 #include "TestbedWheeledVehicle.generated.h"
 
-/**
- * 
- */
 UCLASS()
+///<summary>Base class for all wheeled vehicle actors. Sets up cameras and controls for player usage.</summary>
 class VEHICLETESTBED_API ATestbedWheeledVehicle : public AWheeledVehicle
 {
 	GENERATED_BODY()
 
 public:
-	//////////////////////////////
-	//Constructor/Deconstructor//
-	////////////////////////////
-
 	ATestbedWheeledVehicle();
 	
 	~ATestbedWheeledVehicle();
 
-	/////////////////////
-	// Vehicle Control//
-	///////////////////
-
+	///<summary>Sets up the player input controls</summary>
+	///<param name='InputComponent'>Player input control that will have actions of the vehicle bound to it</param>  
 	virtual void SetupPlayerInputComponent(class UInputComponent* InputComponent) override;
 
 	UFUNCTION(Category = "Testbed Wheeled Vehicle", BlueprintCallable)
-		void SetThrottleInput(float Value);
+	///<summary>Sets the current throttle applied to the vehicle by the player</summary>
+	///<param name='SetThrottleInput'>Value of the throttle applied</param>  
+	void SetThrottleInput(float Value);
 
 	UFUNCTION(Category = "Testbed Wheeled Vehicle", BlueprintCallable)
-		void SetSteeringInput(float Value);
+	///<summary>Sets the steering direction and magnitude of it to the vehicle</summary>
+	///<param name='SetSteeringInput'>Value of the steering applied, positive and negative give steering direction</param>  
+	void SetSteeringInput(float Value);
 
 	UFUNCTION(Category = "Testbed Wheeled Vehicle", BlueprintCallable)
-		void SetBrakeInput(float Value);
+	///<summary>Sets the current braking applied to the vehicle by the player</summary>
+	///<param name='SetBrakeInput'>Value of the brakes applied</param>  
+	void SetBrakeInput(float Value);
 
-	///////////////////
-	// Get functions//
-	/////////////////
-
-	/// Forward speed in km/h. Might be negative if goes backwards.
 	UFUNCTION(Category = "Testbed Wheeled Vehicle", BlueprintCallable)
-		float GetVehicleForwardSpeed() const;
+	///<summary>Gets the current speed of the vehicle</summary>
+	///<returns>Current vehicle speed</returns>  
+	float GetVehicleForwardSpeed() const;
 
 protected:
 	UPROPERTY(EditAnywhere)

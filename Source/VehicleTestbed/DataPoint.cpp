@@ -46,9 +46,7 @@ DataPoint & DataPoint::operator=(const DataPoint & otherDataPoint)
 	return *this;
 }
 
-DataPoint::~DataPoint()
-{
-}
+DataPoint::~DataPoint() { }
 
 DataPoint DataPoint::NIL;
 
@@ -70,7 +68,6 @@ void DataPoint::AddData(DataValueBase* dataValue)
 
 std::ostream & operator<<(std::ostream & os, const DataPoint & dataPoint)
 {
-	// TODO: insert return statement here
 	os << dataPoint.Timestamp << ',';
 	for (unsigned int i = 0; i < dataPoint.Data.size(); i++)
 	{

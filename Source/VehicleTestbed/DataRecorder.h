@@ -22,6 +22,7 @@ private:
 	std::queue<DataPoint*> Queue;
 	std::condition_variable Cond;
 	std::atomic<bool> bStop;
+	std::atomic<bool> bPause;
 	std::thread ReaderThread;
 	std::thread WriterThread;
 
@@ -100,5 +101,11 @@ public:
 
 	///<summary>Joins running threads and ends execution</summary>
 	void Stop();
+
+	///<summary>Pauses the data collection thread until <see cref="Resume()"/> is called</summary>
+	void Pause();
+
+	///<summary>Resumes the data collection thread</summary>
+	void Resume();
 };
 

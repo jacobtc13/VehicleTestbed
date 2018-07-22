@@ -1,5 +1,6 @@
 #pragma once
 
+#include "CoreMinimal.h"
 #include <iostream>
 #include <string>
 #include <vector>
@@ -9,7 +10,7 @@
 ///<summary>DataPoint class for data recording queue, holds a timestamp and list of dataValues</summary>
 class VEHICLETESTBED_API DataPoint {
 private:
-	float Timestamp;
+	std::string Timestamp;
 	std::vector<DataValueBase*> Data;
 
 	///<summary>Gets the timestamp from the environment and sets it</summary>

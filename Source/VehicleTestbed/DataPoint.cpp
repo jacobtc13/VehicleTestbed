@@ -2,8 +2,8 @@
 
 void DataPoint::SetTimestamp()
 {
-	static float count = 0;
-	Timestamp = count++;
+	FString fstr = FDateTime::Now().ToString();
+	Timestamp = std::string(TCHAR_TO_UTF8(*fstr));
 }
 
 DataPoint::DataPoint()

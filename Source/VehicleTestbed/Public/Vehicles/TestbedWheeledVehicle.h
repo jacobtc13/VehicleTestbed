@@ -42,11 +42,21 @@ public:
 	///<returns>Current vehicle speed</returns>  
 	float GetVehicleForwardSpeed() const;
 
+	UFUNCTION(Category = "Testbed Wheeled Vehicle", BlueprintCallable)
+	///<summary>Gets the third person view camera for the vehicle</summary>
+	///<returns>Current vehicle speed</returns>  
+	UCameraComponent* GetChaseCamera();
+
+	UFUNCTION(Category = "Testbed Wheeled Vehicle", BlueprintCallable)
+	///<summary>Gets first person view camera for the vehicle</summary>
+	///<returns>Current vehicle speed</returns>  
+	UCameraComponent* GetInternalCamera();
+
 protected:
 	UPROPERTY(EditAnywhere)
-		USpringArmComponent* CameraSpringArm;
+	USpringArmComponent* CameraSpringArm;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-		UCameraComponent* ChaseCamera;
+	UCameraComponent* ChaseCamera;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-		UCameraComponent* InternalCamera;
+	UCameraComponent* InternalCamera;
 };

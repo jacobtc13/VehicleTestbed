@@ -1,28 +1,42 @@
-#include"EventRecorder.h"
+#include "EventRecorder.h"
+#include "Paths.h"
 
-std::queue<RecordableEvent> EventRecorder::WriteQueue = std::queue<RecordableEvent>();
-std::mutex EventRecorder::QueueMutex;
-std::ofstream EventRecorder::Writer = std::ofstream();
-std::string EventRecorder::FileName = "events.xml";
-std::thread EventRecorder::WriterThread;
-bool EventRecorder::bPause = false;
-bool EventRecorder::bStop = false;
-std::condition_variable EventRecorder::C;
+std::queue<FRecordableEvent> UEventRecorder::WriteQueue = std::queue<FRecordableEvent>();
+std::mutex UEventRecorder::QueueMutex;
+FString UEventRecorder::FileName = FPaths::ProjectDir() + FString("events.xml");
+std::thread UEventRecorder::WriterThread;
+std::atomic<bool> UEventRecorder::bPause = false;
+std::atomic<bool> UEventRecorder::bStop = false;
+std::condition_variable UEventRecorder::C;
 
-void EventRecorder::AddEventToQueue(const std::string aName, const std::string aHandler)
+void UEventRecorder::AddEventToQueue(const FString aName, const FString aHandler)
 {
-	RecordableEvent REvent = RecordableEvent(aName, aHandler);
+	FRecordableEvent REvent = FRecordableEvent(aName, aHandler);
 	QueueMutex.lock();
 	WriteQueue.push(REvent);
 	QueueMutex.unlock();
 }
 
-void EventRecorder::Start()
+void UEventRecorder::Start()
 {
-	WriterThread = std::thread(Write);
+	if (!WriterThread.joinable())
+	{
+		WriterThread = std::thread(Write);
+	}
 }
 
-void EventRecorder::Stop()
+void UEventRecorder::Pause()
+{
+	bPause = true;
+}
+
+void UEventRecorder::Resume()
+{
+	bPause = false;
+	C.notify_all();
+}
+
+void UEventRecorder::Stop()
 {
 	bStop = true;
 	C.notify_all();
@@ -30,7 +44,7 @@ void EventRecorder::Stop()
 	WriterThread.join();
 }
 
-void EventRecorder::Write()
+void UEventRecorder::Write()
 {
 	while (!bStop)
 	{
@@ -40,58 +54,39 @@ void EventRecorder::Write()
 		{
 			QueueMutex.unlock();  // unlocking here may seem pointless but it's fine if this thread gets locked out halfway through
 								  // and gives more opportunities for waiting events to continue on.
-			RecordableEvent* REvent = nullptr;
 			QueueMutex.lock();
-			REvent = &WriteQueue.front();
+			FRecordableEvent REvent = WriteQueue.front();
 			WriteQueue.pop();
 			QueueMutex.unlock();
 
-			if (!Writer.is_open())
-			{
-				Writer.open(FileName);
-			}
-			
-			Writer << "<event>" << std::endl;
-			Writer << "\t<name>" << REvent->Name << "</name>" << std::endl;
-			Writer << "\t<time>" << REvent->Timestamp << "</time>" << std::endl;
-			Writer << "\t<handler>" << REvent->Handler << "</handler>" << std::endl;
-			Writer << "</event>" << std::endl;
+			CheckForPause();  // check for a pause before and after writing
 
-			CheckForPause();  // Writing is a relatively long operation so now is a good time to check for a pause
+			const FString Line = FString("<event>\r\n\t<name>") + REvent.Name + FString("</name>\r\n\t<time>")
+			+ REvent.Timestamp + FString("</time>\r\n\t<handler>") + REvent.Handler + FString("</handler>\r\n</event>\r\n");
+
+			// This crazy method automatically handles opening, closing and creating the file
+			FFileHelper::SaveStringToFile(Line, *FileName, FFileHelper::EEncodingOptions::AutoDetect, &IFileManager::Get(), EFileWrite::FILEWRITE_Append);
+
+			CheckForPause();
 
 			QueueMutex.lock();
 		}
 		QueueMutex.unlock();
 
-		if (Writer.is_open())
-		{
-			Writer.close();
-		}
-
 		CheckForPause();
 	}
 }
 
-void EventRecorder::CheckForPause()
+void UEventRecorder::CheckForPause()
 {
 	std::unique_lock<std::mutex> lock;
-	while (EventRecorder::bPause)
+	while (UEventRecorder::bPause)
 	{
-		bool WasOpen = false;
-		if (Writer.is_open())
-		{
-			WasOpen = true;
-			Writer.close();
-		}
 		C.wait(lock);
-		if (WasOpen)
-		{
-			Writer.open(FileName);
-		}
 	}
 }
 
-RecordableEvent::RecordableEvent(const std::string aName, const std::string aHandler)
+FRecordableEvent::FRecordableEvent(const FString aName, const FString aHandler)
 	: Name(aName), Handler(aHandler),
-	Timestamp(std::string(TCHAR_TO_UTF8(*(FDateTime::Now().ToString()))))
-{}
+	Timestamp(FDateTime::Now().ToString(*FString("%d/%m/%Y - %H:%M:%S:%s")))
+{ }

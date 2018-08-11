@@ -1,10 +1,15 @@
 #include"EventRecorder.h"
 
 std::queue<RecordableEvent> EventRecorder::WriteQueue = std::queue<RecordableEvent>();
+std::mutex EventRecorder::QueueMutex;
 std::ofstream EventRecorder::Writer = std::ofstream();
 std::string EventRecorder::FileName = "events.xml";
+std::thread EventRecorder::WriterThread;
+bool EventRecorder::bPause = false;
+bool EventRecorder::bStop = false;
+std::condition_variable EventRecorder::C;
 
-void EventRecorder::AddEvent(const std::string aName, const std::string aHandler)
+void EventRecorder::AddEventToQueue(const std::string aName, const std::string aHandler)
 {
 	RecordableEvent REvent = RecordableEvent(aName, aHandler);
 	QueueMutex.lock();

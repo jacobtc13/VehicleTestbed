@@ -1,12 +1,12 @@
 #pragma once
 
-#include"CoreMinimal.h"
-#include"Blueprint.generated.h"
-#include<queue>
-#include<thread>
-#include<mutex>
-#include<string>
-#include<fstream>
+#include "CoreMinimal.h"
+#include "Kismet/BlueprintFunctionLibrary.h"
+#include <queue>
+#include <thread>
+#include <mutex>
+#include <string>
+#include <fstream>
 
 class VEHICLETESTBED_API EventRecorder
 {
@@ -28,7 +28,7 @@ private:
 	// functions
 public:
 	UFUNCTION(BlueprintCallable, Category="Events")
-	static void AddEvent(const std::string aName, const std::string aHandler);
+	static void AddEventToQueue(const std::string aName, const std::string aHandler);
 
 	static void Start();
 	static void Stop();

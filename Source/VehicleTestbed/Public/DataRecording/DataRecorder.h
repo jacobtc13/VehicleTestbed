@@ -14,8 +14,13 @@
 #include "DataPoint.h"
 #include "DataType.h"
 
-class VEHICLETESTBED_API DataRecorder
+#include "DataRecorder.generated.h"
+
+UCLASS()
+class VEHICLETESTBED_API UDataRecorder : public UObject
 {
+	GENERATED_BODY()
+
 private:
 	// Threading variables
 	std::mutex Mutex;
@@ -49,26 +54,26 @@ private:
 
 public:
 	///<summary>Default constructor, sets clock rate to 100ms and filename to 'data.csv'</summary>
-	DataRecorder();
+	UDataRecorder();
 
 	///<summary>Constructor with clock rate, sets filename to 'data.csv'</summary>
 	///<param name="clockRateMS">Clock rate to use</param>
-	DataRecorder(int clockRateMS);
+	UDataRecorder(int clockRateMS);
 
 	///<summary>Constructor with filename, sets clock rate to 100ms</summary>
 	///<param name="filename">Output filename</param>
-	DataRecorder(std::string filename);
+	UDataRecorder(std::string filename);
 
 	///<summary>Constructor with clock rate</summary>
 	///<param name="clockRateMS">Clock rate to use</param>
 	///<param name="filename">Output filename</param>
-	DataRecorder(int clockRateMS, std::string filename);
+	UDataRecorder(int clockRateMS, std::string filename);
 
 	///<summary>Constructor with clock rate and collectors list</summary>
 	///<param name="clockRateMS">Clock rate to use</param>
 	///<param name="filename">Output filename</param>
 	///<param name="collectors">Vector of collectors, pointer and datatype pair</param>
-	DataRecorder(int clockRateMS, std::string filename, std::vector<std::pair<const void*, DataType>> collectors);
+	UDataRecorder(int clockRateMS, std::string filename, std::vector<std::pair<const void*, DataType>> collectors);
 
 	///<summary>Spawns a thread calling <see cref="ReadFromCollectors()" /></summary>
 	///<returns><see cref="std::thread"/> reference for spawned thread</returns>
@@ -78,10 +83,12 @@ public:
 	///<returns><see cref="std::thread"/> reference for spawned thread</returns>
 	std::thread StartWriter();
 
+	UFUNCTION(Category = "Data Recorder", BlueprintCallable)
 	///<summary>Sets Clock Rate</summary>
 	///<param name="clockRateMS">Clock rate in ms</param>
 	void SetClockRate(int clockRateMS);
 
+	UFUNCTION(Category = "Data Recorder", BlueprintCallable)
 	///<summary>Gets the current clock rate</summary>
 	///<returns>Current clock rate in ms</returns>
 	int GetClockRate();
@@ -95,16 +102,20 @@ public:
 	///<param name="collectors">Vector of collectors to add</param>
 	void AddCollectors(std::vector<std::pair<const void*, DataType>> collectors);
 
+	UFUNCTION(Category = "Data Recorder", BlueprintCallable)
 	///<summary>Calls <see cref="StartReader()"/> and <see cref="StartWriter()"/> 
 	/// and stores the thread references</summary>
 	void Start();
 
+	UFUNCTION(Category = "Data Recorder", BlueprintCallable)
 	///<summary>Joins running threads and ends execution</summary>
 	void Stop();
 
+	UFUNCTION(Category = "Data Recorder", BlueprintCallable)
 	///<summary>Pauses the data collection thread until <see cref="Resume()"/> is called</summary>
 	void Pause();
 
+	UFUNCTION(Category= "Data Recorder", BlueprintCallable)
 	///<summary>Resumes the data collection thread</summary>
 	void Resume();
 };

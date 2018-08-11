@@ -1,6 +1,6 @@
 #include "DataRecorder.h"
 
-bool DataRecorder::Pop(DataPoint& item)
+bool UDataRecorder::Pop(DataPoint& item)
 {
 	std::lock_guard<std::mutex> mlock(Mutex);
 	if (Queue.empty())
@@ -12,27 +12,27 @@ bool DataRecorder::Pop(DataPoint& item)
 	return true;
 }
 
-void DataRecorder::Push(DataPoint* item)
+void UDataRecorder::Push(DataPoint* item)
 {
 	std::lock_guard<std::mutex> mlock(Mutex);
 	Queue.push(std::move(item));
 	Cond.notify_one();
 }
 
-DataRecorder::DataRecorder() : ClockRateMS(100), Filename("data.csv") { }
+UDataRecorder::UDataRecorder() : ClockRateMS(100), Filename("data.csv") { }
 
-DataRecorder::DataRecorder(int clockRateMS) : ClockRateMS(clockRateMS), Filename("data.csv") { }
+UDataRecorder::UDataRecorder(int clockRateMS) : ClockRateMS(clockRateMS), Filename("data.csv") { }
 
-DataRecorder::DataRecorder(std::string filename) : ClockRateMS(100), Filename(filename) { }
+UDataRecorder::UDataRecorder(std::string filename) : ClockRateMS(100), Filename(filename) { }
 
-DataRecorder::DataRecorder(int clockRateMS, std::string filename) 
+UDataRecorder::UDataRecorder(int clockRateMS, std::string filename) 
 	: ClockRateMS(clockRateMS), Filename(filename) { }
 
-DataRecorder::DataRecorder(int clockRateMS, std::string filename, 
+UDataRecorder::UDataRecorder(int clockRateMS, std::string filename, 
 	std::vector<std::pair<const void*, DataType>> collectors) 
 	: ClockRateMS(clockRateMS), Filename(filename), Collectors(collectors) { }
 
-void DataRecorder::ReadFromCollectors()
+void UDataRecorder::ReadFromCollectors()
 {
 	do {
 		typedef std::chrono::high_resolution_clock Clock;
@@ -175,17 +175,17 @@ void DataRecorder::ReadFromCollectors()
 	} while (!bStop);
 }
 
-std::thread DataRecorder::StartWriter()
+std::thread UDataRecorder::StartWriter()
 {
 	return std::thread([=] { WriteToFile(); });;
 }
 
-std::thread DataRecorder::StartReader()
+std::thread UDataRecorder::StartReader()
 {
 	return std::thread([=] { ReadFromCollectors(); });
 }
 
-void DataRecorder::WriteToFile()
+void UDataRecorder::WriteToFile()
 {
 	std::fstream fs;
 	fs.open(Filename, std::fstream::out | std::fstream::ate);
@@ -204,33 +204,33 @@ void DataRecorder::WriteToFile()
 	fs.close();
 }
 
-void DataRecorder::SetClockRate(int clockRateMS)
+void UDataRecorder::SetClockRate(int clockRateMS)
 {
 	ClockRateMS = clockRateMS;
 }
 
-int DataRecorder::GetClockRate()
+int UDataRecorder::GetClockRate()
 {
 	return ClockRateMS;
 }
 
-void DataRecorder::AddCollector(const void* ptr, DataType type)
+void UDataRecorder::AddCollector(const void* ptr, DataType type)
 {
 	Collectors.push_back(std::pair<const void*, DataType>(ptr, type));
 }
 
-void DataRecorder::AddCollectors(std::vector<std::pair<const void*, DataType>> collectors)
+void UDataRecorder::AddCollectors(std::vector<std::pair<const void*, DataType>> collectors)
 {
 	Collectors.insert(Collectors.end(), collectors.begin(), collectors.end());
 }
 
-void DataRecorder::Start()
+void UDataRecorder::Start()
 {
 	ReaderThread = StartReader();
 	WriterThread = StartWriter();
 }
 
-void DataRecorder::Stop()
+void UDataRecorder::Stop()
 {
 	bStop = true;
 	Cond.notify_all();
@@ -239,12 +239,12 @@ void DataRecorder::Stop()
 	WriterThread.join();
 }
 
-void DataRecorder::Pause()
+void UDataRecorder::Pause()
 {
 	bPause = true;
 }
 
-void DataRecorder::Resume()
+void UDataRecorder::Resume()
 {
 	bPause = false;
 	Cond.notify_one();

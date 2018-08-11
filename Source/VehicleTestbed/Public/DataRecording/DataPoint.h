@@ -7,8 +7,10 @@
 #include <time.h>
 #include "DataValue.h"
 
+
 ///<summary>DataPoint class for data recording queue, holds a timestamp and list of dataValues</summary>
-class VEHICLETESTBED_API DataPoint {
+class VEHICLETESTBED_API DataPoint 
+{
 private:
 	std::string Timestamp;
 	std::vector<DataValueBase*> Data;

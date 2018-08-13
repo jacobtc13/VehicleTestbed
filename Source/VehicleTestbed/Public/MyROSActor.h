@@ -4,7 +4,11 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "ROSIntegration/Classes/RI/Topic.h"
+#include "ROSIntegration/Classes/ROSIntegrationGameInstance.h"
+#include "ROSIntegration/Public/std_msgs/String.h"
 #include "MyROSActor.generated.h"
+
 
 UCLASS()
 class VEHICLETESTBED_API AMyROSActor : public AActor

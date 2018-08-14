@@ -4,6 +4,7 @@
 
 #include "GameFramework/SpringArmComponent.h"
 #include "Camera/CameraComponent.h"
+#include "CharacterDirector.h"
 
 #include "TestbedWheeledVehicle.generated.h"
 
@@ -42,7 +43,7 @@ public:
 	///<returns>Current vehicle speed</returns>  
 	float GetVehicleForwardSpeed() const;
 
-	UFUNCTION(Category = "Testbed Wheeled Vehicle", BlueprintCallable)
+	/*UFUNCTION(Category = "Testbed Wheeled Vehicle", BlueprintCallable)
 	///<summary>Gets the third person view camera for the vehicle</summary>
 	///<returns>Current vehicle speed</returns>  
 	UCameraComponent* GetChaseCamera();
@@ -50,7 +51,29 @@ public:
 	UFUNCTION(Category = "Testbed Wheeled Vehicle", BlueprintCallable)
 	///<summary>Gets first person view camera for the vehicle</summary>
 	///<returns>Current vehicle speed</returns>  
-	UCameraComponent* GetInternalCamera();
+	UCameraComponent* GetInternalCamera();*/ // TODO - Remove if unneccessary
+
+	UFUNCTION(Category = "Testbed Wheeled Vehicle", BlueprintCallable)
+	///<summary>Switches to the next available vehicle in the array</summary>
+	void CycleCharacterForward();
+
+	UFUNCTION(Category = "Testbed Wheeled Vehicle", BlueprintCallable)
+	///<summary>Switches to the previous available vehicle in the array</summary>
+	void CycleCharacterBackward();
+
+	void CycleCharacter(bool IsCycleForward);
+
+	UFUNCTION()
+	///<summary>Gets first person view camera for the vehicle</summary>
+	void SwitchToOverheadCamera();
+
+	UFUNCTION()
+	///<summary>Gets first person view camera for the vehicle</summary>
+	void SwitchToInternalCamera();
+
+	UFUNCTION()
+	///<summary>Gets first person view camera for the vehicle</summary>
+	void SwitchToChaseCamera();
 
 protected:
 	UPROPERTY(EditAnywhere)
@@ -59,4 +82,6 @@ protected:
 	UCameraComponent* ChaseCamera;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	UCameraComponent* InternalCamera;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UCameraComponent* OverheadCamera;
 };

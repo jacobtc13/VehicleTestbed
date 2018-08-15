@@ -26,6 +26,9 @@ ATestbedWheeledVehicle::ATestbedWheeledVehicle()
 	// Create overhead camera for viewing from above the vehicle
 	OverheadCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("OverheadCamera"));
 	OverheadCamera->SetupAttachment(RootComponent);
+
+	ActiveCamera = ChaseCamera;
+	ActiveCamera->Activate();
 }
 
 ATestbedWheeledVehicle::~ATestbedWheeledVehicle()
@@ -69,16 +72,6 @@ float ATestbedWheeledVehicle::GetVehicleForwardSpeed() const
 	return GetVehicleMovementComponent()->GetForwardSpeed() * 0.036f;
 }
 
-/*UCameraComponent * ATestbedWheeledVehicle::GetChaseCamera()
-{
-	return ChaseCamera;
-}
-
-UCameraComponent* ATestbedWheeledVehicle::GetInternalCamera()
-{
-	return InternalCamera;
-}*/
-
 void ATestbedWheeledVehicle::CycleCharacterForward()
 {
 	CycleCharacter(true);
@@ -91,45 +84,44 @@ void ATestbedWheeledVehicle::CycleCharacterBackward()
 
 void ATestbedWheeledVehicle::CycleCharacter(bool IsCycleForward)
 {
-	UE_LOG(LogTemp, Warning, TEXT("Starting character switch"));
-	//TArray<AActor*> FoundActors = GetWorld()->PersistentLevel->Actors;
-	int j = 0;
-	//TSubclassOf<ATestbedWheeledVehicle> ClassToFind;
+	// TODO: This entire function needs to be placed in the game mode where references to all actors that can be cycled through will be stored
+	// TODO: Once the actor is switched, the controller will need to be replaced with an AI controller
+	// Returns if the level is null or there are less than 2 actors to choose from
 	if (GetLevel() == nullptr) return;
-	if (GetLevel()->Actors.Num() == 0) return;
+	if (GetLevel()->Actors.Num() <= 1) return; // TODO: Read from list of possessable actors instead
 	int num = GetLevel()->Actors.Num();
-	for (int i = 0; i < (GetLevel()->Actors.Num() - 1); i++)
+	for (int i = 0; i < (GetLevel()->Actors.Num()); i++)
 	{
-		if (GetLevel()->Actors[i]->IsA(AJackalWheeledVehicle::StaticClass()))
+		// Temporary action: Loop through actors and possess the next available testbedvehicleclass that isn't the current
+		// When moved to the GameMode, will cycle through list of possessable vehicles instead
+		if (GetLevel()->Actors[i]->IsA(ATestbedWheeledVehicle::StaticClass()) && GetLevel()->Actors[i] != this)
 		{
 			APlayerController* OurPlayerController = UGameplayStatics::GetPlayerController(this, 0);
 			OurPlayerController->Possess(Cast<AJackalWheeledVehicle>(GetLevel()->Actors[i]));
+			UE_LOG(LogTemp, Warning, TEXT("Changing vehicle"));
 			return;
 		}
-		UE_LOG(LogTemp, Warning, TEXT("Loop: %d"), i);
 	}
-	//int i = GetWorld()->PersistentLevel->Actors.Num();
-	UE_LOG(LogTemp, Warning, TEXT("FoundActors: %d"), j);
-	if (j == 0)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("No character director found"));
-		return;
-	}
-	//ACharacterDirector* CharacterDirector = Cast<ACharacterDirector>(FoundActors[0]);
-	//CharacterDirector->ChangePlayerController(IsCycleForward);k
 }
 
 void ATestbedWheeledVehicle::SwitchToOverheadCamera()
 {
-
+	SwitchActiveCamera(OverheadCamera);
 }
 
 void ATestbedWheeledVehicle::SwitchToInternalCamera()
 {
-
+	SwitchActiveCamera(InternalCamera);
 }
 
 void ATestbedWheeledVehicle::SwitchToChaseCamera()
 {
+	SwitchActiveCamera(ChaseCamera);
+}
 
+void ATestbedWheeledVehicle::SwitchActiveCamera(UCameraComponent* NewActiveCamera)
+{
+	ActiveCamera->Deactivate();
+	ActiveCamera = NewActiveCamera;
+	ActiveCamera->Activate();
 }

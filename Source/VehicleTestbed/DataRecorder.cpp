@@ -163,6 +163,15 @@ void DataRecorder::ReadFromCollectors()
 		Clock::time_point t1 = Clock::now();
 		milliseconds ms = std::chrono::duration_cast<milliseconds>(t1 - t0);
 		std::this_thread::sleep_for(std::chrono::milliseconds(10 - ms.count()));
+
+		// Wait thread while paused
+		std::unique_lock<std::mutex> mlock(Mutex);
+		while (bPause)
+		{
+			Cond.wait(mlock);
+		}
+		mlock.unlock();
+
 	} while (!bStop);
 }
 
@@ -228,4 +237,15 @@ void DataRecorder::Stop()
 
 	ReaderThread.join();
 	WriterThread.join();
+}
+
+void DataRecorder::Pause()
+{
+	bPause = true;
+}
+
+void DataRecorder::Resume()
+{
+	bPause = false;
+	Cond.notify_one();
 }

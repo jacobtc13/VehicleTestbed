@@ -12,7 +12,7 @@ ATestbedWheeledVehicle::ATestbedWheeledVehicle()
 	// Use a spring arm to give the camera smooth, natural-feeling motion.
 	CameraSpringArm = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraSpringArm"));
 	CameraSpringArm->SetupAttachment(RootComponent);
-	CameraSpringArm->RelativeRotation = FRotator(-20.f, 0.f, 0.f);
+	CameraSpringArm->RelativeRotation = FRotator(-15.f, 0.f, 0.f);
 	CameraSpringArm->TargetArmLength = 400.0f;
 	CameraSpringArm->bEnableCameraLag = true;
 	CameraSpringArm->CameraLagSpeed = 3.0f;
@@ -60,5 +60,15 @@ float ATestbedWheeledVehicle::GetVehicleForwardSpeed() const
 {
 	// Conversion is done to output result in km/h
 	return GetVehicleMovementComponent()->GetForwardSpeed() * 0.036f;
+}
+
+UCameraComponent * ATestbedWheeledVehicle::GetChaseCamera()
+{
+	return ChaseCamera;
+}
+
+UCameraComponent* ATestbedWheeledVehicle::GetInternalCamera()
+{
+	return InternalCamera;
 }
 

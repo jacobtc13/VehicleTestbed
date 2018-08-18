@@ -43,14 +43,6 @@ public:
 	///<returns>Current vehicle speed</returns>  
 	float GetVehicleForwardSpeed() const;
 
-	UFUNCTION(Category = "Testbed Wheeled Vehicle", BlueprintCallable)
-	///<summary>Switches to the next available vehicle in the array</summary>
-	void CycleCharacterForward();
-
-	UFUNCTION(Category = "Testbed Wheeled Vehicle", BlueprintCallable)
-	///<summary>Switches to the previous available vehicle in the array</summary>
-	void CycleCharacterBackward();
-
 	UFUNCTION()
 	///<summary>Gets first person view camera for the vehicle</summary>
 	void SwitchToOverheadCamera();
@@ -63,16 +55,15 @@ public:
 	///<summary>Gets first person view camera for the vehicle</summary>
 	void SwitchToChaseCamera();
 
+	UFUNCTION()
+	///<summary>Returns true if the actor can be possessed in game</summary>
+	bool IsPossessable() { return bIsPosessable; };
+
 private:
 	UFUNCTION()
 	///<summary>Activates the selected camera and deactivates the previously active camera</summary>
 	///<param name='NewActiveCamera'>The next camera which will be set as the active camera</param>  
 	void SwitchActiveCamera(UCameraComponent* NewActiveCamera);
-
-	UFUNCTION()
-	///<summary>Cycles through the list of current actors to control</summary>
-	///<param name='IsCycleForward'>Is the character being changed to the next one in the list?</param>  
-	void CycleCharacter(bool IsCycleForward);
 
 protected:
 	UPROPERTY(EditAnywhere)
@@ -86,5 +77,5 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	UCameraComponent* ActiveCamera;
 	UPROPERTY(EditAnywhere)
-	bool IsPosessable = true;
+	bool bIsPosessable = true;
 };

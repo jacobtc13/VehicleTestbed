@@ -13,7 +13,7 @@ class VEHICLETESTBED_API DataPoint
 {
 private:
 	std::string Timestamp;
-	std::vector<DataValueBase*> Data;
+	std::vector<std::unique_ptr<DataValueBase>> Data;
 
 	///<summary>Gets the timestamp from the environment and sets it</summary>
 	void SetTimestamp();
@@ -25,7 +25,7 @@ public:
 	DataPoint();
 	
 	///<summary>Constructor with a single datavalue to assign</summary>
-	DataPoint(DataValueBase* data);
+	DataPoint(std::unique_ptr<DataValueBase> data);
 
 	///<summary>Copy Constructor, create deep copy of other datapoint</summary>
 	///<param name="otherDataPoint">Datapoint to copy</param>
@@ -51,7 +51,7 @@ public:
 	bool operator!=(const DataPoint& other) const;
 
 	///<summary>Adds a DataValue to the Data Vector</summary>
-	void AddData(DataValueBase* dataValue);
+	void AddData(std::unique_ptr<DataValueBase>& dataValue);
 
 	///<summary>Output operator, writes DataPoint to <see cref="std::ostream"/></summary>
 	friend std::ostream& operator<<(std::ostream & os, const DataPoint& dataPoint);

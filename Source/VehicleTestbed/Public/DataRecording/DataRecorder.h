@@ -10,9 +10,11 @@
 #include <condition_variable>
 #include <queue>
 #include <utility>
+#include "Paths.h"
 
 #include "DataPoint.h"
 #include "DataType.h"
+#include "DataCollector.h"
 
 #include "DataRecorder.generated.h"
 
@@ -24,14 +26,15 @@ class VEHICLETESTBED_API UDataRecorder : public UObject
 private:
 	// Threading variables
 	std::mutex Mutex;
-	std::queue<DataPoint*> Queue;
+	std::queue<std::unique_ptr<DataPoint>> Queue;
 	std::condition_variable Cond;
 	std::atomic<bool> bStop;
 	std::atomic<bool> bPause;
 	std::thread ReaderThread;
 	std::thread WriterThread;
 
-	std::vector<std::pair<const void*, DataType>> Collectors;
+	//std::vector<std::pair<const void*, DataType>> Collectors;
+	std::vector<DataCollectorBase*> Collectors;
 	std::atomic<int> ClockRateMS;
 
 	std::string Filename;
@@ -46,11 +49,11 @@ private:
 	///<summary>Get top DataPoint* from Queue and point item at it, then pop queue</summary>
 	///<param name="item">Datapoint reference to assign to top item</param>
 	///<returns>True if successful, false if queue is empty</summary>
-	bool Pop(DataPoint& item);
+	bool Pop(std::unique_ptr<DataPoint>& item);
 
 	///<summary>Adds a DataPoint to the queue</summary>
 	///<param name="item">DataPoint to add</param>
-	void Push(DataPoint* item);
+	void Push(std::unique_ptr<DataPoint> item);
 
 public:
 	///<summary>Default constructor, sets clock rate to 100ms and filename to 'data.csv'</summary>
@@ -68,12 +71,6 @@ public:
 	///<param name="clockRateMS">Clock rate to use</param>
 	///<param name="filename">Output filename</param>
 	UDataRecorder(int clockRateMS, std::string filename);
-
-	///<summary>Constructor with clock rate and collectors list</summary>
-	///<param name="clockRateMS">Clock rate to use</param>
-	///<param name="filename">Output filename</param>
-	///<param name="collectors">Vector of collectors, pointer and datatype pair</param>
-	UDataRecorder(int clockRateMS, std::string filename, std::vector<std::pair<const void*, DataType>> collectors);
 
 	///<summary>Override base begin destroy to ensure all threads are exited cleanly</summary>
 	virtual void BeginDestroy() override;
@@ -99,12 +96,8 @@ public:
 	///<summary>Add a new collector</summary>
 	///<param name="collector">Const Pointer to the data to collect</param>
 	///<param name="type"><see cref="DataType"> of the pointer</param>
-	void AddCollector(const void* collector, DataType type);
-
-	///<summary>Add a vector of collectors</summary>
-	///<param name="collectors">Vector of collectors to add</param>
-	void AddCollectors(std::vector<std::pair<const void*, DataType>> collectors);
-
+	void AddCollector(DataCollectorBase* collector);
+	
 	UFUNCTION(Category = "Data Recorder", BlueprintCallable)
 	///<summary>Calls <see cref="StartReader()"/> and <see cref="StartWriter()"/> 
 	/// and stores the thread references</summary>

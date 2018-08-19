@@ -6,6 +6,7 @@
 #include "GameFramework/GameModeBase.h"
 
 #include "DataRecorder.h"
+#include "DataCollector.h"
 
 #include "VehicleTestbedGameModeBase.generated.h"
 
@@ -18,7 +19,7 @@ class VEHICLETESTBED_API AVehicleTestbedGameModeBase : public AGameModeBase
 	GENERATED_BODY()
 
 private:
-	UPROPERTY()
+	UPROPERTY(VisibleAnywhere, Category="Game Mode")
 	UDataRecorder* dataRecorder;
 
 public:

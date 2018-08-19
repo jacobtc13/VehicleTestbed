@@ -11,7 +11,7 @@ DataPoint::DataPoint()
 	SetTimestamp();
 }
 
-DataPoint::DataPoint(DataValueBase* dataValue)
+DataPoint::DataPoint(std::unique_ptr<DataValueBase> dataValue)
 {
 	SetTimestamp();
 	Data.push_back(dataValue);
@@ -22,7 +22,8 @@ DataPoint::DataPoint(const DataPoint & otherDataPoint)
 	Timestamp = otherDataPoint.Timestamp;
 	for (unsigned int i = 0; i < otherDataPoint.Data.size(); i++)
 	{
-		AddData(otherDataPoint.Data[i]->Clone());
+		std::unique_ptr<DataValueBase> copyDataValue = std::make_unique<DataValueBase>(otherDataPoint.Data[i]->Clone());
+		AddData(copyDataValue);
 	}
 }
 
@@ -31,16 +32,14 @@ DataPoint & DataPoint::operator=(const DataPoint & otherDataPoint)
 	if (&otherDataPoint != this) // suicide guard
 	{
 		// Delete this datapoint
-		for (unsigned int i = 0; i < Data.size(); i++)
-		{
-			delete Data[i];
-		}
+		Data.clear();
 
 		// Copy DataPoint
 		Timestamp = otherDataPoint.Timestamp;
 		for (unsigned int i = 0; i < otherDataPoint.Data.size(); i++)
 		{
-			AddData(otherDataPoint.Data[i]->Clone());
+			std::unique_ptr<DataValueBase> copyDataValue = std::make_unique<DataValueBase>(otherDataPoint.Data[i]);
+			AddData(copyDataValue);
 		}
 	}
 	return *this;
@@ -60,10 +59,9 @@ bool DataPoint::operator!=(const DataPoint& other) const
 	return !(*this == other);
 }
 
-void DataPoint::AddData(DataValueBase* dataValue)
+void DataPoint::AddData(std::unique_ptr<DataValueBase>& dataValue)
 {
-
-	Data.push_back(dataValue->Clone());
+	Data.push_back(dataValue);
 }
 
 std::ostream & operator<<(std::ostream & os, const DataPoint & dataPoint)

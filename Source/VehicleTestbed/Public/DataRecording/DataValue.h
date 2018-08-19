@@ -45,6 +45,12 @@ class VEHICLETESTBED_API DataValue : public DataValueBase
 private:
 	T Value;
 public:
+	///<summary>Default constructor, initalises value</summary>
+	DataValue()
+	{
+		Value = T{};
+	}
+
 	///<summary>Default constructor</summary>
 	///<param name="value">Value to assign</summary>
 	DataValue(T value)
@@ -73,6 +79,7 @@ public:
 	///<param name="os"><see cref="std::ostream"/> object to write to</param>
 	void Print(std::ostream& os) const override
 	{
-		os << Value;
+		if (Value)
+			os << Value;
 	}
 };

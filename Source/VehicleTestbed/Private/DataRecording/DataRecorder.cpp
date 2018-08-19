@@ -32,6 +32,15 @@ UDataRecorder::UDataRecorder(int clockRateMS, std::string filename,
 	std::vector<std::pair<const void*, DataType>> collectors) 
 	: ClockRateMS(clockRateMS), Filename(filename), Collectors(collectors) { }
 
+void UDataRecorder::BeginDestroy()
+{
+	Super::BeginDestroy();
+	if (!bStop)
+	{
+		Stop();
+	}
+}
+
 void UDataRecorder::ReadFromCollectors()
 {
 	do {
@@ -191,14 +200,12 @@ void UDataRecorder::WriteToFile()
 	fs.open(Filename, std::fstream::out | std::fstream::ate);
 	do {
 		DataPoint writeDataPoint;
-		if (Pop(writeDataPoint))
+		// Write datapoints until list is empty
+		while (Pop(writeDataPoint))
 		{
 			fs << writeDataPoint << std::endl;
 		}
-		else
-		{
-			std::this_thread::sleep_for(std::chrono::milliseconds(ClockRateMS));
-		}
+		std::this_thread::sleep_for(std::chrono::milliseconds(ClockRateMS));
 	} while (!bStop);
 
 	fs.close();
@@ -226,8 +233,9 @@ void UDataRecorder::AddCollectors(std::vector<std::pair<const void*, DataType>> 
 
 void UDataRecorder::Start()
 {
-	ReaderThread = StartReader();
-	WriterThread = StartWriter();
+	if(!ReaderThread.joinable()) ReaderThread = StartReader();
+	if(!WriterThread.joinable()) WriterThread = StartWriter();
+	bStop = false;
 }
 
 void UDataRecorder::Stop()
@@ -235,8 +243,8 @@ void UDataRecorder::Stop()
 	bStop = true;
 	Cond.notify_all();
 
-	ReaderThread.join();
-	WriterThread.join();
+	if (ReaderThread.joinable()) ReaderThread.join();
+	if (WriterThread.joinable()) WriterThread.join();
 }
 
 void UDataRecorder::Pause()

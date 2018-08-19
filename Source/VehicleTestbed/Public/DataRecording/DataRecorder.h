@@ -75,6 +75,9 @@ public:
 	///<param name="collectors">Vector of collectors, pointer and datatype pair</param>
 	UDataRecorder(int clockRateMS, std::string filename, std::vector<std::pair<const void*, DataType>> collectors);
 
+	///<summary>Override base begin destroy to ensure all threads are exited cleanly</summary>
+	virtual void BeginDestroy() override;
+
 	///<summary>Spawns a thread calling <see cref="ReadFromCollectors()" /></summary>
 	///<returns><see cref="std::thread"/> reference for spawned thread</returns>
 	std::thread StartReader();

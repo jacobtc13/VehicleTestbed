@@ -10,7 +10,7 @@ void ATestbedPlayerController::SetupInputComponent()
 {
 	APlayerController::SetupInputComponent();
 
-	InputComponent->BindAction("CycleVehicleForward", EInputEvent::IE_Pressed, this, &ATestbedPlayerController::CycleCharacterForward);
+	InputComponent->BindAction("CycleCharacterForward", EInputEvent::IE_Pressed, this, &ATestbedPlayerController::CycleCharacterForward);
 	InputComponent->BindAction("CycleCharacterBackward", EInputEvent::IE_Pressed, this, &ATestbedPlayerController::CycleCharacterBackward);
 }
 void ATestbedPlayerController::BeginPlay()

@@ -16,9 +16,11 @@ class VEHICLETESTBED_API ATestbedPlayerController : public APlayerController
 {
 	GENERATED_BODY()
 
-	void SetupInputComponent();
+	///<summary>Allows the PlayerController to set up custom input bindings</summary>
+	virtual void SetupInputComponent() override;
 	
-	void BeginPlay();
+	///<summary>Event that is called when play begins for this actor</summary>
+	virtual void BeginPlay() override;
 
 	UFUNCTION(Category = "Testbed Wheeled Vehicle", BlueprintCallable)
 	///<summary>Switches to the next available vehicle in the array</summary>

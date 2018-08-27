@@ -14,11 +14,5 @@
 				"ROSIntegrationVision"
 			]
 		}
-	],
-	"Plugins": [
-		{
-			"Name": "test",
-			"Enabled": false
-		}
 	]
 }

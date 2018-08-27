@@ -1,22 +1,20 @@
-#include "TestPlayerController.h"
+#include "TestbedPlayerController.h"
 #include "TestbedWheeledVehicle.h"
-#include "Blueprint/UserWidget.h"
 
 
-void ATestPlayerController::SetupInputComponent()
+void ATestbedPlayerController::SetupInputComponent()
 {
-
-	Super::SetupInputComponent();
+	APlayerController::SetupInputComponent();
 
 	// Pawn Swapping
-	InputComponent->BindAction("SwitchCamera", IE_Released, this, &ATestPlayerController::SwapPawn);
+	InputComponent->BindAction("SwitchCamera", IE_Released, this, &ATestbedPlayerController::SwapPawn);
 	// Pausing
-	InputComponent->BindAction("PauseButton", IE_Released, this, &ATestPlayerController::Pause);
+	InputComponent->BindAction("PauseButton", IE_Released, this, &ATestbedPlayerController::Pause);
 }
 
-void ATestPlayerController::BeginPlay()
+void ATestbedPlayerController::BeginPlay()
 {
-	Super::BeginPlay();
+	APlayerController::BeginPlay();
 
 	// Pawn Swapping
 	UGameplayStatics::GetAllActorsOfClass((UObject*)GetWorld(), APawn::StaticClass(), Pawns);
@@ -25,7 +23,7 @@ void ATestPlayerController::BeginPlay()
 }
 
 // Pawn Swapping
-void ATestPlayerController::SwapPawn()
+void ATestbedPlayerController::SwapPawn()
 {
 	int32 index = Pawns.Find(GetPawn());
 	if (!Pawns.IsValidIndex(++index))
@@ -34,7 +32,7 @@ void ATestPlayerController::SwapPawn()
 }
 
 // Pausing
-void ATestPlayerController::Pause()
+void ATestbedPlayerController::Pause()
 {
 	PauseMenuInstance->AddToViewport();
 	SetInputMode(FInputModeUIOnly());

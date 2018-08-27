@@ -2,14 +2,14 @@
 
 #include "Kismet/GameplayStatics.h"
 
-#include "Widget.h"
+#include "Blueprint/UserWidget.h"
 
 #include "CoreMinimal.h"
 #include "GameFramework/PlayerController.h"
-#include "TestPlayerController.generated.h"
+#include "TestbedPlayerController.generated.h"
 
 UCLASS()
-class VEHICLETESTBED_API ATestPlayerController : public APlayerController
+class VEHICLETESTBED_API ATestbedPlayerController : public APlayerController
 {
 	GENERATED_BODY()
 

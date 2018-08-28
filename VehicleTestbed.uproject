@@ -9,7 +9,9 @@
 			"Type": "Runtime",
 			"LoadingPhase": "Default",
 			"AdditionalDependencies": [
-				"PhysXVehicles"
+				"PhysXVehicles",
+				"Engine",
+				"ROSIntegrationVision"
 			]
 		}
 	]

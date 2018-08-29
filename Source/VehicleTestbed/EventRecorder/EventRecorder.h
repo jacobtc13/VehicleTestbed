@@ -5,6 +5,7 @@
 #include <mutex>
 #include <atomic>
 #include "FileHelper.h"
+#include "Engine/World.h"
 
 #include "CoreMinimal.h"
 #include "Kismet/BlueprintFunctionLibrary.h"
@@ -17,44 +18,47 @@ class VEHICLETESTBED_API UEventRecorder : public UBlueprintFunctionLibrary
 	GENERATED_BODY()
 
 public:
-	struct FRecordableEvent;
+	class FRecordableEvent;
+	typedef TSharedRef<const FRecordableEvent> EventRef;
+
 private:
 	class Destructor;
+	typedef TSharedPtr<const FRecordableEvent> EventPtr;
 
 	// variables
 private:
 	static Destructor destructor;
-	static std::thread WriterThread;
+	static std::thread writerThread;
 
-	static std::queue<FRecordableEvent> WriteQueue;
+	static std::queue<EventRef> writeQueue;
 
-	static std::mutex QueueMutex;
+	static std::mutex queueMutex;
 
-	static FString FileName;
+	static FString fileName;
 
 	static std::atomic<bool> bPause;
 	static std::atomic<bool> bStop;
-	static std::condition_variable C;
+	static std::condition_variable condWaiter;
 
 	// functions
 public:
 	// This function is not a UFUNCTION because it is not designed to be called from blueprints
 	///<summary>Collects data about an event and adds it to the queue to be written</summary>
 	///<param name ="rEvent">An FRecordableEvent object to be added to the queue</param>
-	static void RecordEvent(const FRecordableEvent rEvent);
+	static void RecordEvent(EventRef rEvent);
 
 	UFUNCTION(BlueprintCallable, Category = "EventRecorder")
 	///<summary>Collects data about an event and adds it to the queue to be written</summary>
 	///<param name="aName">Name of the event which was triggered</param>
 	///<param name="aHandler">Name of the object which is handling the event</param>
-	static void RecordEvent(const FString aName, const FString aHandler);
+	static void RecordEvent(const FString aName, const UObject* aHandler);
 
 	UFUNCTION(BlueprintCallable, Category = "EventRecorder")
 	///<summary>Collects data about an event and adds it to the queue to be written</summary>
 	///<param name="aName">Name of the event which was triggered</param>
 	///<param name="aHandler">Name of the object which is handling the event</param>
 	///<param name="details">A TMap of key-value pairs to log</param>
-	static void RecordEventWithDetails(const FString aName, const FString aHandler, const TMap<FString, FString> details);
+	static void RecordEventWithDetails(const FString aName, const UObject* aHandler, const TMap<FString, FString> details);
 
 	UFUNCTION(BlueprintCallable, Category = "EventRecorder")
 	///<summary>Creates a thread running <see cref="Write()" /></summary>
@@ -73,32 +77,23 @@ public:
 	static void Stop();
 
 private:
-	///<summary>Checks whether the WriteQueue is empty, thread safe</summary>
-	///<returns>True if the queue is empty, false if not</returns>
-	static const bool QueueEmpty();
-	///<summary>Loop function which is run by the WriterThread.  When the queue of events is not empty it will write their details to a file one by one</summary>
+	///<summary>Adds a recordable event to the queue</summary>
+	///<param name="rEventRef">A shared reference (smart pointer) of a recordable event</param>
+	static void Push(const EventRef rEventRef);
+
+	///<summary>Pops the front of the queue and sets the passed pointer to it</summary>
+	///<param name="rEventPtr">Gets set to what used to be the front of the queue</param>
+	///<returns>True if the pop was successful, false otherwise</returns>
+	static const bool Pop(EventPtr& rEventPtr);
+
+	///<summary>Loops until the write queue is empty and writes the events to a file in batches for better performance</summary>
 	static void Write();
+
+	///<summary>Loop function which is run by the WriterThread.</summary>
+	static void WriteThreadFunction();
+
 	///<summary>Checks the value of bPause and waits on the condition variable if it is true</summary>
 	static void CheckForPause();
-
-public:
-	///<summary>A simple structure to hold information about an event trigger</summary>
-	struct FRecordableEvent
-	{
-	public:
-		typedef TPair<FString, FString> Pair;
-
-		const FString Timestamp;
-		const FString Name;
-		const FString Handler;
-
-		const TMap<FString, FString> Details;
-
-		FRecordableEvent(const FString aName, const FString aHandler, const TMap<FString, FString> details)
-			: Timestamp(FDateTime::Now().ToString(*FString("%d/%m/%Y - %H:%M:%S.%s"))),
-			Name(aName), Handler(aHandler), Details(details)
-		{}
-	};
 
 private:
 	///<summary>Calls <see cref="Stop()" /> on destruction.  Use as a static variable and make sure it's initialized last</summary>
@@ -109,5 +104,47 @@ private:
 		{
 			Stop();
 		}
+	};
+
+
+public:
+	///<summary>A simple class to hold information about an event trigger</summary>
+	class FRecordableEvent
+	{
+	public:
+		typedef TPair<FString, FString> Pair;
+
+		const FString timestamp;
+		const FString gameTimestamp;
+		const FString name;
+		const FString handler;
+
+		const TMap<FString, FString> details;
+
+		///<summary>Constructor which requires a name and handler</summary>
+		///<param name="aName">Name of the event which was triggered</param>
+		///<param name="aHandler">Name of the object which is handling the event</param>
+		///<param name="details">A TMap of key-value pairs to log</param>
+		FRecordableEvent(const FString aName, const UObject* aHandler, const TMap<FString, FString> details = TMap<FString, FString>())
+			: timestamp(FDateTime::Now().ToString(*FString("%d/%m/%Y - %H:%M:%S.%s"))),
+			gameTimestamp(FString::SanitizeFloat(aHandler->GetWorld()->GetRealTimeSeconds())),
+			name(aName), handler(aHandler->GetFName().ToString()), details(details)
+		{}
+
+		virtual ~FRecordableEvent()
+		{}
+
+		///<summary>Copy Constructor</summary>
+		///<param name="other">Another FRecordableEvent object</param>
+		FRecordableEvent(const FRecordableEvent& other)
+			: timestamp(other.timestamp), name(other.name), handler(other.handler), details(other.details) // This is what the compiler would auto-generate
+		{}
+
+		// All member variables are const so can't use the assignment operator (deleted implicitly anyway)
+		FRecordableEvent& operator=(const FRecordableEvent& other) = delete;
+
+		///<summary>Gets the info in an XML format as an array of lines</summary>
+		///<returns>An array of FStrings where each element of the array is a new line</returns>
+		virtual const TArray<FString> GetXMLFormattedOutput() const;
 	};
 };

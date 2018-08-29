@@ -3,44 +3,44 @@
 
 typedef UEventRecorder::FRecordableEvent FRecordableEvent;
 
-std::condition_variable UEventRecorder::C;
+std::condition_variable UEventRecorder::condWaiter;
 std::atomic<bool> UEventRecorder::bStop = false;
 std::atomic<bool> UEventRecorder::bPause = false;
-std::queue<FRecordableEvent> UEventRecorder::WriteQueue = std::queue<FRecordableEvent>();
-std::mutex UEventRecorder::QueueMutex;
-FString UEventRecorder::FileName = FPaths::ProjectDir() + FString("Logs/events.xml");
-std::thread UEventRecorder::WriterThread;
+std::queue<UEventRecorder::EventRef> UEventRecorder::writeQueue;
+std::mutex UEventRecorder::queueMutex;
+FString UEventRecorder::fileName = FPaths::ProjectDir() + FString("Logs/events.xml");
+std::thread UEventRecorder::writerThread;
 UEventRecorder::Destructor UEventRecorder::destructor;
 
-void UEventRecorder::RecordEvent(const FRecordableEvent rEvent)
+void UEventRecorder::RecordEvent(EventRef rEvent)
 {
 	// Don't record new events if it's stopped
 	if (!bStop && !bPause)
 	{
-		QueueMutex.lock();
-		WriteQueue.push(rEvent);
-		QueueMutex.unlock();
+		Push(rEvent);
 	}
 }
 
-void UEventRecorder::RecordEvent(const FString aName, const FString aHandler)
+void UEventRecorder::RecordEvent(const FString aName, const UObject* aHandler)
 {
-	RecordEvent(FRecordableEvent(aName, aHandler, TMap<FString, FString>()));
+	if (aHandler != nullptr)
+		RecordEvent(EventRef(new FRecordableEvent(aName, aHandler)));
 }
 
-void UEventRecorder::RecordEventWithDetails(const FString aName, const FString aHandler, const TMap<FString, FString> details)
+void UEventRecorder::RecordEventWithDetails(const FString aName, const UObject* aHandler, const TMap<FString, FString> details)
 {
-	RecordEvent(FRecordableEvent(aName, aHandler, details));
+	if (aHandler != nullptr)
+		RecordEvent(EventRef(new FRecordableEvent(aName, aHandler, details)));
 }
 
 void UEventRecorder::Start()
 {
-	// Do nothing if the thing has already started
-	if (!WriterThread.joinable())
+	// Do nothing if the recorder has already started
+	if (!writerThread.joinable())
 	{
 		bStop = false;
 		bPause = false;
-		WriterThread = std::thread(Write);
+		writerThread = std::thread(WriteThreadFunction);
 	}
 }
 
@@ -56,29 +56,43 @@ void UEventRecorder::Pause()
 void UEventRecorder::Resume()
 {
 	bPause = false;
-	C.notify_all();
+	condWaiter.notify_all();
 }
 
 void UEventRecorder::Stop()
 {
-	// Do nothing if the thing has already stopped
+	// Do nothing if the recorder has already stopped
 	if (!bStop)
 	{
 		bStop = true;
 		bPause = false;
-		C.notify_all();
-		if (WriterThread.joinable())
-			WriterThread.join();
+		condWaiter.notify_all();
+		if (writerThread.joinable())
+			writerThread.join();
 	}
 }
 
-const bool UEventRecorder::QueueEmpty()
+// Private functions
+
+void UEventRecorder::Push(const EventRef rEventRef)
 {
-	bool isEmpty;
-	QueueMutex.lock();
-	isEmpty = WriteQueue.empty();
-	QueueMutex.unlock();
-	return isEmpty;
+	queueMutex.lock();
+	writeQueue.push(rEventRef);
+	queueMutex.unlock();
+}
+
+const bool UEventRecorder::Pop(EventPtr& rEventPtr)
+{
+	queueMutex.lock();
+	if (!writeQueue.empty())
+	{
+		rEventPtr = writeQueue.front();
+		writeQueue.pop();
+		queueMutex.unlock();
+		return true;
+	}
+	queueMutex.unlock();
+	return false;
 }
 
 void UEventRecorder::CheckForPause()
@@ -86,14 +100,14 @@ void UEventRecorder::CheckForPause()
 	std::unique_lock<std::mutex> lock;
 	while (bPause)
 	{
-		C.wait(lock);
+		condWaiter.wait(lock);
 	}
 }
 
 void WriteToFile(TArray<FString>& eventsInXMLArray, const FString& file)
 {
 	// This method handles creating, opening, and closing the file
-	if (FFileHelper::SaveStringArrayToFile(eventsInXMLArray, *(file), FFileHelper::EEncodingOptions::AutoDetect, &IFileManager::Get(), EFileWrite::FILEWRITE_Append))
+	if (FFileHelper::SaveStringArrayToFile(eventsInXMLArray, *file, FFileHelper::EEncodingOptions::AutoDetect, &IFileManager::Get(), EFileWrite::FILEWRITE_Append))
 	{
 		eventsInXMLArray.Empty(); // clears the array
 	}
@@ -102,38 +116,49 @@ void WriteToFile(TArray<FString>& eventsInXMLArray, const FString& file)
 void UEventRecorder::Write()
 {
 	// SaveStringArrayToFile() handles the addition of line endings
-	TArray<FString> rEventsInXML = TArray<FString>();
-	while (!bStop || !QueueEmpty())
+	TArray<FString> rEventsInXML;
+	EventPtr rEventPtr;
+	while (Pop(rEventPtr))
 	{
-		while (!QueueEmpty())
-		{
-			// At this point we know for a fact that WriteQueue.front() will return something valid because the queue is not empty
-			QueueMutex.lock();
-			FRecordableEvent rEvent = WriteQueue.front();
-			WriteQueue.pop();
-			QueueMutex.unlock();
+		rEventsInXML.Append(rEventPtr->GetXMLFormattedOutput());
 
-			rEventsInXML.Add("<event>");
-			rEventsInXML.Add("\t<time>" + rEvent.Timestamp + "</time>");
-			rEventsInXML.Add("\t<name>" + rEvent.Name + "</name>");
-			rEventsInXML.Add("\t<handler>" + rEvent.Handler + "</hander>");
-			for (const FRecordableEvent::Pair& pair : rEvent.Details)
-			{
-				rEventsInXML.Add("\t<" + pair.Key + ">" + pair.Value + "</" + pair.Key + ">");
-			}
-			rEventsInXML.Add("</event>");
-
-			// Simple optimization
-			if (rEventsInXML.Num() > 1000) // This checks number of lines in the array, not number of events
-			{
-				WriteToFile(rEventsInXML, FileName);
-			}
-			CheckForPause();
-		}
-		// If Queue is empty we may as well write whatever events we've currently got
-		if (rEventsInXML.Num()) // false = 0, true = everything else
+		// Simple optimization - Write in batches of 1000 lines
+		if (rEventsInXML.Num() > 1000) // This checks number of lines in the array, not number of events
 		{
-			WriteToFile(rEventsInXML, FileName);
+			WriteToFile(rEventsInXML, fileName);
 		}
 	}
+	// If Queue is empty we may as well write whatever events we've currently got
+	if (rEventsInXML.Num()) // false = 0, true = everything else
+	{
+		WriteToFile(rEventsInXML, fileName);
+	}
+}
+
+void UEventRecorder::WriteThreadFunction()
+{
+	while (!bStop)
+	{
+		Write();
+		CheckForPause();
+	}
+	// One last check to catch any events that may have been pushed between the last check and bStop being set
+	Write();
+}
+
+const TArray<FString> FRecordableEvent::GetXMLFormattedOutput() const
+{
+	TArray<FString> output;
+	output.Add("<event>");
+	output.Add("\t<time>" + timestamp + "</time>");
+	output.Add("\t<gametime>" + gameTimestamp + "</gametime>");
+	output.Add("\t<name>" + name + "</name>");
+	output.Add("\t<handler>" + handler + "</hander>");
+	for (const FRecordableEvent::Pair& pair : details)
+	{
+		output.Add("\t<" + pair.Key + ">" + pair.Value + "</" + pair.Key + ">");
+	}
+	output.Add("</event>");
+
+	return output;
 }

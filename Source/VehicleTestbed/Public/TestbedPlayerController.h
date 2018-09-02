@@ -20,22 +20,53 @@ public:
 	///<summary>Event that is called when play begins for this actor</summary>
 	virtual void BeginPlay() override;
 
-	UFUNCTION(Category = "Testbed Wheeled Vehicle", BlueprintCallable)
+	UFUNCTION()
 	///<summary>Switches to the next available vehicle in the array</summary>
 	void CycleCharacterForward();
 
-	UFUNCTION(Category = "Testbed Wheeled Vehicle", BlueprintCallable)
+	UFUNCTION()
 	///<summary>Switches to the previous available vehicle in the array</summary>
 	void CycleCharacterBackward();
+
+	UFUNCTION()
+	///<summary>Sets the current forward movement applied to the pawn by the player</summary>
+	///<param name='Value'>Value of the movement applied</param>  
+	void SetThrottleInput(float Value);
+
+	UFUNCTION()
+	///<summary>Sets the steering/strafing direction and magnitude of it to the pawn</summary>
+	///<param name='Value'>Value of the steering/strafing applied, positive and negative give steering direction (+ is right)</param>  
+	void SetSteeringInput(float Value);
+
+	UFUNCTION()
+	///<summary>Sets the current braking applied to the vehicle by the player</summary>
+	///<param name='Value'>Value of the brakes applied</param>  
+	void SetBrakeInput(float Value);
+
+	UFUNCTION()
+	///<summary>Gets overhead view for the pawn</summary>
+	void SwitchToOverheadCamera();
+
+	UFUNCTION()
+	///<summary>Gets first person view camera for the pawn</summary>
+	void SwitchToInternalCamera();
+
+	UFUNCTION()
+	///<summary>Gets third person view camera for the pawn</summary>
+	void SwitchToChaseCamera();
 
 protected:
 	///<summary>Allows the PlayerController to set up custom input bindings</summary>
 	virtual void SetupInputComponent() override;
 
 private:
+	UPROPERTY()
 	TArray<AActor*> ControllablePawns;
 
 	int32 CurrentPawnIndex;
+
+	UPROPERTY()
+	APawn* CurrentlyPossessedPawn = nullptr;
 
 	UFUNCTION()
 	///<summary>Cycles through the list of current actors to control</summary>

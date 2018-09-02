@@ -15,10 +15,8 @@ UCLASS()
 class VEHICLETESTBED_API ATestbedPlayerController : public APlayerController
 {
 	GENERATED_BODY()
-
-	///<summary>Allows the PlayerController to set up custom input bindings</summary>
-	virtual void SetupInputComponent() override;
 	
+public:
 	///<summary>Event that is called when play begins for this actor</summary>
 	virtual void BeginPlay() override;
 
@@ -29,6 +27,10 @@ class VEHICLETESTBED_API ATestbedPlayerController : public APlayerController
 	UFUNCTION(Category = "Testbed Wheeled Vehicle", BlueprintCallable)
 	///<summary>Switches to the previous available vehicle in the array</summary>
 	void CycleCharacterBackward();
+
+protected:
+	///<summary>Allows the PlayerController to set up custom input bindings</summary>
+	virtual void SetupInputComponent() override;
 
 private:
 	TArray<AActor*> ControllablePawns;

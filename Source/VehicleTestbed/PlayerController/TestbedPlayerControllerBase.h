@@ -21,7 +21,23 @@ public:
 	virtual void BeginPlay() override;
 
 	// Pawn Swapping
+	UFUNCTION(Category="Testbed Wheeled Vehicle", BlueprintCallable)
+	///<summary>Switches to the next available vehicle in the array</summary>
+	void CycleCharacterForward();
+
+	UFUNCTION(Category="Testbed Wheeled Vehicle", BlueprintCallable)
+	///<summary>Switches to the previous available vehicle in the array</summary>
+	void CycleCharacterBackward();
+
+	// Pausing
+	///<summary>Adds the pause widget to the screen and pauses the game</summary>
+	void Pause();
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Widgets")
+	TSubclassOf<UUserWidget> PauseMenu;
+
 private:
+	// Pawn Swapping
 	TArray<AActor*> ControllablePawns;
 
 	int32 CurrentPawnIndex;
@@ -31,23 +47,7 @@ private:
 	///<param name='IsCycleForward'>Is the character being changed to the next one in the list?</param>  
 	void CycleCharacter(bool IsCycleForward);
 
-public:
-	//void SwapPawn();
-	UFUNCTION(Category = "Testbed Wheeled Vehicle", BlueprintCallable)
-	///<summary>Switches to the next available vehicle in the array</summary>
-	void CycleCharacterForward();
-
-	UFUNCTION(Category = "Testbed Wheeled Vehicle", BlueprintCallable)
-	///<summary>Switches to the previous available vehicle in the array</summary>
-	void CycleCharacterBackward();
-
-
 	// Pausing
-public:
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Widgets")
-	TSubclassOf<UUserWidget> PauseMenu;
-private:
+	UPROPERTY()
 	UUserWidget* PauseMenuInstance;
-public:
-	void Pause();
 };

@@ -28,6 +28,19 @@ UDataRecorder::UDataRecorder(std::string filename) : ClockRateMS(100), Filename(
 UDataRecorder::UDataRecorder(int clockRateMS, std::string filename) 
 	: ClockRateMS(clockRateMS), Filename(filename) { }
 
+UDataRecorder::~UDataRecorder()
+{
+	for (unsigned int i = 0; i < Collectors.size(); i++)
+	{
+		delete Collectors[i];
+	}
+	std::lock_guard<std::mutex> mlock(Mutex);
+	while (!Queue.empty()) 
+	{
+		Queue.pop();
+	}
+}
+
 void UDataRecorder::BeginDestroy()
 {
 	UObject::BeginDestroy();

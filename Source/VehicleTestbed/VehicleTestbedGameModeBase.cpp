@@ -12,9 +12,9 @@ void AVehicleTestbedGameModeBase::BeginPlay()
 	Super::BeginPlay();
 
 	// Add collectors to data recorder
-	DataCollector<int32> myCollector;
-	myCollector.FGetDelegate.BindUObject(this, &AVehicleTestbedGameModeBase::GetNumPlayers);
-	dataRecorder->AddCollector(&myCollector);
+	DataCollector<int32>* myCollector = new DataCollector<int32>();
+	myCollector->FGetDelegate.BindUObject(this, &AVehicleTestbedGameModeBase::GetNumPlayers);
+	dataRecorder->AddCollector(myCollector);
 
 	dataRecorder->Start();
 }

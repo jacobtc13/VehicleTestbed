@@ -24,20 +24,23 @@ class VEHICLETESTBED_API UDataRecorder : public UObject
 	GENERATED_BODY()
 
 private:
+	
+	std::string Filename;
+	std::atomic<int> ClockRateMS;
+	
 	// Threading variables
 	std::mutex Mutex;
-	std::queue<std::unique_ptr<DataPoint>> Queue;
 	std::condition_variable Cond;
-	std::atomic<bool> bStop;
-	std::atomic<bool> bPause;
 	std::thread ReaderThread;
 	std::thread WriterThread;
+	
+	std::atomic<bool> bStop;
+	std::atomic<bool> bPause;
+	
+	std::queue<std::unique_ptr<DataPoint>> Queue;
 
-	//std::vector<std::pair<const void*, DataType>> Collectors;
 	std::vector<DataCollectorBase*> Collectors;
-	std::atomic<int> ClockRateMS;
 
-	std::string Filename;
 
 	///<summary>Read the value from all collectors, save in datapoint and push onto queue</summary>
 	void ReadFromCollectors();
@@ -71,6 +74,9 @@ public:
 	///<param name="clockRateMS">Clock rate to use</param>
 	///<param name="filename">Output filename</param>
 	UDataRecorder(int clockRateMS, std::string filename);
+
+	///<summary>Destructor, clean up collectors, ensure queue is fulled destroyed</summary>
+	virtual ~UDataRecorder();
 
 	///<summary>Override base begin destroy to ensure all threads are exited cleanly</summary>
 	virtual void BeginDestroy() override;

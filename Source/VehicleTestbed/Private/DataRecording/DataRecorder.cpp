@@ -15,7 +15,7 @@ bool UDataRecorder::Pop(std::unique_ptr<DataPoint>& item)
 void UDataRecorder::Push(std::unique_ptr<DataPoint> item)
 {
 	std::lock_guard<std::mutex> mlock(Mutex);
-	Queue.push(item);
+	Queue.push(std::move(item));
 	Cond.notify_one();
 }
 
@@ -30,7 +30,7 @@ UDataRecorder::UDataRecorder(int clockRateMS, std::string filename)
 
 void UDataRecorder::BeginDestroy()
 {
-	Super::BeginDestroy();
+	UObject::BeginDestroy();
 	if (!bStop)
 	{
 		Stop();
@@ -48,8 +48,7 @@ void UDataRecorder::ReadFromCollectors()
 
 		for (unsigned int i = 0; i < Collectors.size(); i++)
 		{
-			std::unique_ptr<DataValueBase> dataValue = std::make_unique<DataValueBase>(Collectors[i]->Collect());
-			dataPoint->AddData(dataValue);
+			dataPoint->AddData(std::move(Collectors[i]->Collect()));
 		}
 		Push(std::move(dataPoint));
 

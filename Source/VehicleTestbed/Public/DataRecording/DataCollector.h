@@ -52,11 +52,13 @@ DataCollector<T>::~DataCollector()
 template <typename T>
 std::unique_ptr<DataValueBase> DataCollector<T>::Collect() const
 {
+	std::unique_ptr<DataValueBase> ptr;
 	DataValue<T> dataValue;
 	if (FGetDelegate.IsBound())
 	{
 		T value = FGetDelegate.Execute();
 		dataValue = DataValue<T>(value);
 	}
-	return std::make_unique<DataValueBase>(&dataValue);
+	ptr = std::make_unique<DataValue<T>>(dataValue);
+	return ptr;
 }

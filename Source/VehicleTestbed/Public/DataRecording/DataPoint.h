@@ -18,15 +18,9 @@ private:
 	///<summary>Gets the timestamp from the environment and sets it</summary>
 	void SetTimestamp();
 public:
-	///<summary>Sentinel null value</summary>
-	static DataPoint NIL;
-
 	///<summary>Default Constructor</summary>
 	DataPoint();
 	
-	///<summary>Constructor with a single datavalue to assign</summary>
-	DataPoint(std::unique_ptr<DataValueBase> data);
-
 	///<summary>Copy Constructor, create deep copy of other datapoint</summary>
 	///<param name="otherDataPoint">Datapoint to copy</param>
 	///<returns>New DataPoint with deep copy of otherDataPoint</returns>
@@ -38,7 +32,7 @@ public:
 	DataPoint& operator=(const DataPoint& otherDataPoint);
 
 	///<summary>Destructor</summary>
-	~DataPoint();
+	virtual ~DataPoint();
 
 	///<summary>Equality operator, compares datapoints</summary>
 	///<param name="other">Datapoint to compare</param>
@@ -51,7 +45,7 @@ public:
 	bool operator!=(const DataPoint& other) const;
 
 	///<summary>Adds a DataValue to the Data Vector</summary>
-	void AddData(std::unique_ptr<DataValueBase>& dataValue);
+	void AddData(std::unique_ptr<DataValueBase> dataValue);
 
 	///<summary>Output operator, writes DataPoint to <see cref="std::ostream"/></summary>
 	friend std::ostream& operator<<(std::ostream & os, const DataPoint& dataPoint);

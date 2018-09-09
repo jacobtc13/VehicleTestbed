@@ -42,8 +42,6 @@ public:
 template <typename T>
 class VEHICLETESTBED_API DataValue : public DataValueBase
 {
-private:
-	T Value;
 public:
 	///<summary>Default constructor, initalises value</summary>
 	DataValue()
@@ -82,4 +80,8 @@ public:
 		if (Value)
 			os << Value;
 	}
+
+private:
+	T Value;
+
 };

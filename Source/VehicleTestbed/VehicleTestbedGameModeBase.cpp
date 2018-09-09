@@ -7,15 +7,18 @@ AVehicleTestbedGameModeBase::AVehicleTestbedGameModeBase()
 	dataRecorder = CreateDefaultSubobject<UDataRecorder>(TEXT("Data Recorder"));
 }
 
-void AVehicleTestbedGameModeBase::BeginPlay()
+void AVehicleTestbedGameModeBase::PostInitializeComponents()
 {
-	Super::BeginPlay();
-
 	// Add collectors to data recorder
+	// TODO: Rewrite this to load from file/menu and do bindings dynamically
 	DataCollector<int32>* myCollector = new DataCollector<int32>();
 	myCollector->FGetDelegate.BindUObject(this, &AVehicleTestbedGameModeBase::GetNumPlayers);
 	dataRecorder->AddCollector(myCollector);
+}
 
+void AVehicleTestbedGameModeBase::BeginPlay()
+{
+	Super::BeginPlay();
 	dataRecorder->Start();
 }
 

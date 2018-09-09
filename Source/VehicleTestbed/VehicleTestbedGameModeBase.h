@@ -26,6 +26,9 @@ public:
 	///<summary>Defualt constructor for Game Mode</summary>
 	AVehicleTestbedGameModeBase();
 
+	///<summary>Called just before game starts, initialise all bindings</summary>
+	virtual void PostInitializeComponents() override;
+
 	///<summary>Called when the game starts, starts dataRecording</summary>
 	virtual void BeginPlay() override;
 

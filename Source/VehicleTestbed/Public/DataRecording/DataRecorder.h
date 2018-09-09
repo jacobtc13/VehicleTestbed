@@ -23,41 +23,6 @@ class VEHICLETESTBED_API UDataRecorder : public UObject
 {
 	GENERATED_BODY()
 
-private:
-	
-	std::string Filename;
-	std::atomic<int> ClockRateMS;
-	
-	// Threading variables
-	std::mutex Mutex;
-	std::condition_variable Cond;
-	std::thread ReaderThread;
-	std::thread WriterThread;
-	
-	std::atomic<bool> bStop;
-	std::atomic<bool> bPause;
-	
-	std::queue<std::unique_ptr<DataPoint>> Queue;
-
-	std::vector<DataCollectorBase*> Collectors;
-
-
-	///<summary>Read the value from all collectors, save in datapoint and push onto queue</summary>
-	void ReadFromCollectors();
-
-	///<summary>Write <see cref="Datapoint"> from queue to output file</summary> 
-	void WriteToFile();
-
-	// Queue Operators
-	///<summary>Get top DataPoint* from Queue and point item at it, then pop queue</summary>
-	///<param name="item">Datapoint reference to assign to top item</param>
-	///<returns>True if successful, false if queue is empty</summary>
-	bool Pop(std::unique_ptr<DataPoint>& item);
-
-	///<summary>Adds a DataPoint to the queue</summary>
-	///<param name="item">DataPoint to add</param>
-	void Push(std::unique_ptr<DataPoint> item);
-
 public:
 	///<summary>Default constructor, sets clock rate to 100ms and filename to 'data.csv'</summary>
 	UDataRecorder();
@@ -103,7 +68,7 @@ public:
 	///<param name="collector">Const Pointer to the data to collect</param>
 	///<param name="type"><see cref="DataType"> of the pointer</param>
 	void AddCollector(DataCollectorBase* collector);
-	
+
 	UFUNCTION(Category = "Data Recorder", BlueprintCallable)
 	///<summary>Calls <see cref="StartReader()"/> and <see cref="StartWriter()"/> 
 	/// and stores the thread references</summary>
@@ -117,8 +82,43 @@ public:
 	///<summary>Pauses the data collection thread until <see cref="Resume()"/> is called</summary>
 	void Pause();
 
-	UFUNCTION(Category= "Data Recorder", BlueprintCallable)
+	UFUNCTION(Category = "Data Recorder", BlueprintCallable)
 	///<summary>Resumes the data collection thread</summary>
 	void Resume();
+
+private:
+	
+	std::string Filename;
+	std::atomic<int> ClockRateMS;
+	
+	// Threading variables
+	std::mutex Mutex;
+	std::condition_variable Cond;
+	std::thread ReaderThread;
+	std::thread WriterThread;
+	
+	std::atomic<bool> bStop;
+	std::atomic<bool> bPause;
+	
+	std::queue<std::unique_ptr<DataPoint>> Queue;
+
+	std::vector<DataCollectorBase*> Collectors;
+
+	///<summary>Read the value from all collectors, save in datapoint and push onto queue</summary>
+	void ReadFromCollectors();
+
+	///<summary>Write <see cref="Datapoint"> from queue to output file</summary> 
+	void WriteToFile();
+
+	///<summary>Get top DataPoint* from Queue and point item at it, then pop queue</summary>
+	///<param name="item">Datapoint reference to assign to top item</param>
+	///<returns>True if successful, false if queue is empty</summary>
+	bool Pop(std::unique_ptr<DataPoint>& item);
+
+	///<summary>Adds a DataPoint to the queue</summary>
+	///<param name="item">Unique ptr to DataPoint to add</param>
+	void Push(std::unique_ptr<DataPoint> item);
+
+
 };
 

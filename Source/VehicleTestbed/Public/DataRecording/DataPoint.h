@@ -11,12 +11,7 @@
 ///<summary>DataPoint class for data recording queue, holds a timestamp and list of dataValues</summary>
 class VEHICLETESTBED_API DataPoint 
 {
-private:
-	std::string Timestamp;
-	std::vector<std::unique_ptr<DataValueBase>> Data;
 
-	///<summary>Gets the timestamp from the environment and sets it</summary>
-	void SetTimestamp();
 public:
 	///<summary>Default Constructor</summary>
 	DataPoint();
@@ -49,6 +44,13 @@ public:
 
 	///<summary>Output operator, writes DataPoint to <see cref="std::ostream"/></summary>
 	friend std::ostream& operator<<(std::ostream & os, const DataPoint& dataPoint);
+
+private:
+	std::string Timestamp;
+	std::vector<std::unique_ptr<DataValueBase>> Data;
+
+	///<summary>Gets the timestamp from the environment and sets it</summary>
+	void SetTimestamp();
 };
 
 

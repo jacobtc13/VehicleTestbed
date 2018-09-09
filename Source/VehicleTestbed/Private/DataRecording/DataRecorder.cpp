@@ -61,7 +61,10 @@ void UDataRecorder::ReadFromCollectors()
 
 		for (unsigned int i = 0; i < Collectors.size(); i++)
 		{
-			dataPoint->AddData(std::move(Collectors[i]->Collect()));
+			if (Collectors[i]->IsEnabled())
+			{
+				dataPoint->AddData(std::move(Collectors[i]->Collect()));
+			}
 		}
 		Push(std::move(dataPoint));
 
@@ -87,6 +90,19 @@ void UDataRecorder::WriteToFile()
 	FString path = FPaths::ProjectDir();
 	std::string filepath = std::string(TCHAR_TO_UTF8(*path));
 	fs.open(filepath+Filename, std::fstream::out | std::fstream::ate);
+
+	// Print header row
+	fs << "Timestamp,";
+	for (unsigned int i = 0; i < Collectors.size(); i++)
+	{
+		if (Collectors[i]->IsEnabled())
+		{
+			fs << std::string(TCHAR_TO_UTF8(*Collectors[i]->GetName().ToString())) << ',';
+		}
+	}
+	fs << std::endl;
+
+	// Print datapoints until stop is set
 	do {
 		std::unique_ptr<DataPoint> writeDataPoint;
 		// Write datapoints until list is empty

@@ -18,23 +18,19 @@ public:
 	
 	~ATestbedWheeledVehicle();
 
-	///<summary>Sets up the player input controls</summary>
-	///<param name='InputComponent'>Player input control that will have actions of the vehicle bound to it</param>  
-	virtual void SetupPlayerInputComponent(class UInputComponent* InputComponent) override;
-
-	UFUNCTION(Category = "Testbed Wheeled Vehicle", BlueprintCallable)
+	UFUNCTION()
 	///<summary>Sets the current throttle applied to the vehicle by the player</summary>
-	///<param name='SetThrottleInput'>Value of the throttle applied</param>  
+	///<param name='Value'>Value of the throttle applied</param>  
 	void SetThrottleInput(float Value);
 
-	UFUNCTION(Category = "Testbed Wheeled Vehicle", BlueprintCallable)
+	UFUNCTION()
 	///<summary>Sets the steering direction and magnitude of it to the vehicle</summary>
-	///<param name='SetSteeringInput'>Value of the steering applied, positive and negative give steering direction</param>  
+	///<param name='Value'>Value of the steering applied, positive and negative give steering direction</param>  
 	void SetSteeringInput(float Value);
 
-	UFUNCTION(Category = "Testbed Wheeled Vehicle", BlueprintCallable)
+	UFUNCTION()
 	///<summary>Sets the current braking applied to the vehicle by the player</summary>
-	///<param name='SetBrakeInput'>Value of the brakes applied</param>  
+	///<param name='Value'>Value of the brakes applied</param>  
 	void SetBrakeInput(float Value);
 
 	UFUNCTION(Category = "Testbed Wheeled Vehicle", BlueprintCallable)
@@ -42,11 +38,39 @@ public:
 	///<returns>Current vehicle speed</returns>  
 	float GetVehicleForwardSpeed() const;
 
+	UFUNCTION()
+	///<summary>Gets first person view camera for the vehicle</summary>
+	void SwitchToOverheadCamera();
+
+	UFUNCTION()
+	///<summary>Gets first person view camera for the vehicle</summary>
+	void SwitchToInternalCamera();
+
+	UFUNCTION()
+	///<summary>Gets first person view camera for the vehicle</summary>
+	void SwitchToChaseCamera();
+
+	UFUNCTION()
+	///<summary>Returns true if the actor can be possessed in game</summary>
+	bool IsPossessable() { return bIsPosessable; };
+
+private:
+	UFUNCTION()
+	///<summary>Activates the selected camera and deactivates the previously active camera</summary>
+	///<param name='NewActiveCamera'>The next camera which will be set as the active camera</param>  
+	void SwitchActiveCamera(UCameraComponent* NewActiveCamera);
+
 protected:
 	UPROPERTY(EditAnywhere)
-		USpringArmComponent* CameraSpringArm;
+	USpringArmComponent* CameraSpringArm;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-		UCameraComponent* ChaseCamera;
+	UCameraComponent* ChaseCamera;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-		UCameraComponent* InternalCamera;
+	UCameraComponent* InternalCamera;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UCameraComponent* OverheadCamera;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UCameraComponent* ActiveCamera;
+	UPROPERTY(EditAnywhere)
+	bool bIsPosessable = true;
 };

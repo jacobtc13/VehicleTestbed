@@ -9,7 +9,7 @@ void ATestbedPlayerControllerBase::SetupInputComponent()
 	// Pawn Swapping
 	InputComponent->BindAction("CycleCharacterForward", EInputEvent::IE_Pressed, this, &ATestbedPlayerControllerBase::CycleCharacterForward);
 	InputComponent->BindAction("CycleCharacterBackward", EInputEvent::IE_Pressed, this, &ATestbedPlayerControllerBase::CycleCharacterBackward);
-	
+
 	// Pausing
 	InputComponent->BindAction("PauseButton", IE_Released, this, &ATestbedPlayerControllerBase::Pause);
 }
@@ -68,19 +68,16 @@ void ATestbedPlayerControllerBase::CycleCharacter(bool IsCycleForward)
 	Possess((APawn*)ControllablePawns[CurrentPawnIndex]);
 }
 
-/*void ATestbedPlayerControllerBase::SwapPawn()
-{
-	int32 index = Pawns.Find(GetPawn());
-	if (!Pawns.IsValidIndex(++index))
-		index = 0;
-	Possess((APawn*)Pawns[index]);
-}*/
-
 // Pausing
 void ATestbedPlayerControllerBase::Pause()
 {
-	PauseMenuInstance->AddToViewport();
-	SetInputMode(FInputModeUIOnly());
-	bShowMouseCursor = true;
-	SetPause(true);
+	if (!GetWorld()->IsPaused())
+	{
+		if (PauseMenuInstance->AddToPlayerScreen())
+		{
+			SetInputMode(FInputModeUIOnly());
+			bShowMouseCursor = true;
+			SetPause(true);
+		}
+	}
 }

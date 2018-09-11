@@ -12,27 +12,27 @@ AGadget::~AGadget()
 
 bool AGadget::IsMounted()
 {
-	return (GetMountedPawn() != nullptr);
+	return (GetMountedMountingNode() != nullptr);
 }
 
-AMountablePawn *AGadget::GetMountedPawn()
+UGadgetMountingNode *AGadget::GetMountedMountingNode()
 {
-	_mutexMountedPawn.lock();
+	_mutexMountedMountingNode.lock();
 
-	AMountablePawn *result = _mountedPawn;
+	UGadgetMountingNode *result = _mountedMountingNode;
 
-	_mutexMountedPawn.unlock();
+	_mutexMountedMountingNode.unlock();
 
 	return result;
 }
 
-int AGadget::SetMountedPawn(AMountablePawn *toSetTo)
+int AGadget::SetMountedMountingNode(UGadgetMountingNode *toSetTo)
 {
 	int result = 0;
 
-	_mutexMountedPawn.lock();
+	_mutexMountedMountingNode.lock();
 
-	//Assume success for return codes
+	//Assume success for these return codes
 	if (IsMounted())
 	{
 		result = 1;//Successfully set from non-null reference
@@ -43,9 +43,9 @@ int AGadget::SetMountedPawn(AMountablePawn *toSetTo)
 		result = 0;//Successfully set from null refrence
 	}
 
-	_mountedPawn = toSetTo;
+	_mountedMountingNode = toSetTo;
 
-	_mutexMountedPawn.unlock();
+	_mutexMountedMountingNode.unlock();
 
 	return result;
 }

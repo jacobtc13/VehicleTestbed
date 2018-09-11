@@ -2,20 +2,20 @@
 
 #include "Gadget.h"
 
-Gadget::Gadget()
+AGadget::AGadget()
 {
 }
 
-Gadget::~Gadget()
+AGadget::~AGadget()
 {
 }
 
-bool Gadget::IsMounted()
+bool AGadget::IsMounted()
 {
-	return (GetMountedPawn() != NULL);
+	return (GetMountedPawn() != nullptr);
 }
 
-AMountablePawn *Gadget::GetMountedPawn()
+AMountablePawn *AGadget::GetMountedPawn()
 {
 	_mutexMountedPawn.lock();
 
@@ -26,7 +26,7 @@ AMountablePawn *Gadget::GetMountedPawn()
 	return result;
 }
 
-int Gadget::SetMountedPawn(AMountablePawn *toSetTo)
+int AGadget::SetMountedPawn(AMountablePawn *toSetTo)
 {
 	int result = 0;
 

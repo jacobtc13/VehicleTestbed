@@ -5,15 +5,19 @@
 #include "CoreMinimal.h"
 #include "Gadget.h"
 #include <mutex>
+#include "GadgetMountingSocket.generated.h"
 
 /**
  * 
  */
-class VEHICLETESTBED_API GadgetMountingSocket
+UCLASS()
+class VEHICLETESTBED_API UGadgetMountingSocket : public UObject
 {
+	GENERATED_BODY()
+
 private:
 	///<summary>Internal reference to the gadget mounted at this position</summary>
-	Gadget * _mountedGadget = NULL;
+	AGadget *_mountedGadget = nullptr;
 
 	///<summary>Position of this mounting socket</summary>
 	FVector _position;
@@ -22,15 +26,15 @@ private:
 	std::mutex _mutexPosition;
 
 public:
-	GadgetMountingSocket(FVector postion);
-	~GadgetMountingSocket();
+	UGadgetMountingSocket();
+	~UGadgetMountingSocket();
 
 	///<summary>Returns the pointer to the mounted gadget, can be NULL, blocks</summary>
 	///<returns>Pointer to mounted gadget</returns>
-	Gadget * GetMountedGadget();
+	AGadget *GetMountedGadget();
 
 	///<summary>Sets the internal refrence for the mounted gadget</summary>
 	///<params name='toSetTo'>Pointer to replace current refrence to mounted gadget</params>
 	///<returns>Error code, 0 success, 1 success overriding data</returns>
-	int SetMountedGadget(Gadget *toSetTo);
+	int SetMountedGadget(AGadget *toSetTo);
 };

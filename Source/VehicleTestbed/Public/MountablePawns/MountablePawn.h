@@ -4,7 +4,6 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Pawn.h"
-#include "GadgetMountingSocket.h"
 #include "MountablePawn.generated.h"
 
 UCLASS()

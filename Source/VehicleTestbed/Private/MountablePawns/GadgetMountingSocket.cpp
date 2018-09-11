@@ -2,18 +2,18 @@
 
 #include "GadgetMountingSocket.h"
 
-GadgetMountingSocket::GadgetMountingSocket(FVector psoition)
-{
 
-}
-
-GadgetMountingSocket::~GadgetMountingSocket()
+UGadgetMountingSocket::UGadgetMountingSocket()
 {
 }
 
-Gadget * GadgetMountingSocket::GetMountedGadget()
+UGadgetMountingSocket::~UGadgetMountingSocket()
 {
-	Gadget * result = NULL;
+}
+
+AGadget *UGadgetMountingSocket::GetMountedGadget()
+{
+	AGadget * result = nullptr;
 
 	_mutexMountedGadget.lock();
 
@@ -24,14 +24,14 @@ Gadget * GadgetMountingSocket::GetMountedGadget()
 	return result;
 }
 
-int GadgetMountingSocket::SetMountedGadget(Gadget * toSetTo)
+int UGadgetMountingSocket::SetMountedGadget(AGadget *toSetTo)
 {
 	int result = 0;
 
 	_mutexMountedGadget.lock();
 
 	//Assume success for return codes
-	if (_mountedGadget != NULL)
+	if (_mountedGadget != nullptr)
 	{
 		result = 1;//Successfully set from non-null reference
 	}

@@ -5,15 +5,19 @@
 #include "CoreMinimal.h"
 #include "MountablePawn.h"
 #include <mutex>
+#include "Gadget.generated.h"
 
 /**
  * Base class which handles being mounted/dismounted from a pawn
  */
-class VEHICLETESTBED_API Gadget
+UCLASS()
+class VEHICLETESTBED_API AGadget : public AActor
 {
+	GENERATED_BODY()
+
 public:
-	Gadget();
-	~Gadget();
+	AGadget();
+	~AGadget();
 
 	UFUNCTION()
 	///<summary>Returns true if this Gadget is mounted, otherwise false</summary>
@@ -22,7 +26,7 @@ public:
 	UFUNCTION()
 	///<summary>Returns a pointer to the currently mounted pawn, can be NULL, blocks</summary>
 	///<returns>A pointer to the currently mounted Pawn</returns>
-	AMountablePawn *GetMountedPawn();
+	AMountablePawn* GetMountedPawn();
 
 	UFUNCTION()
 	///<summary>Sets the internal reference for the currently mounted pawn, blocks</summary>
@@ -32,7 +36,7 @@ public:
 
 private:
 	///<summary>The internal reference for the currently mounted pawn</summary>
-	AMountablePawn *_mountedPawn = NULL;
+	AMountablePawn* _mountedPawn = nullptr;
 
 	///<summary>MUTEX to synchronise access to _mountedPawn</summary>
 	std::mutex _mutexMountedPawn;

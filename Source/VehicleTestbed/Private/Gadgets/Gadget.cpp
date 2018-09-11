@@ -15,7 +15,7 @@ bool Gadget::IsMounted()
 	return (GetMountedPawn() != NULL);
 }
 
-AMountablePawn * Gadget::GetMountedPawn()
+AMountablePawn *Gadget::GetMountedPawn()
 {
 	_mutexMountedPawn.lock();
 
@@ -26,7 +26,7 @@ AMountablePawn * Gadget::GetMountedPawn()
 	return result;
 }
 
-int Gadget::SetMountedPawn(AMountablePawn * toSetTo)
+int Gadget::SetMountedPawn(AMountablePawn *toSetTo)
 {
 	int result = 0;
 

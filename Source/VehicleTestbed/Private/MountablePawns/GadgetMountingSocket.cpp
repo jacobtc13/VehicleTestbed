@@ -13,7 +13,7 @@ GadgetMountingSocket::~GadgetMountingSocket()
 
 Gadget * GadgetMountingSocket::GetMountedGadget()
 {
-	Gadget *result = NULL;
+	Gadget * result = NULL;
 
 	_mutexMountedGadget.lock();
 

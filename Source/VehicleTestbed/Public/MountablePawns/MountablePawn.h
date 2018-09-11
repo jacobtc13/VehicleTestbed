@@ -4,8 +4,8 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Pawn.h"
+#include "GadgetMountingSocket.h"
 #include "MountablePawn.generated.h"
-#include <list>
 
 UCLASS()
 class VEHICLETESTBED_API AMountablePawn : public APawn
@@ -16,7 +16,6 @@ public:
 	// Sets default values for this pawn's properties
 	AMountablePawn();
 
-	std::list<GadgetMountingSocket> _mountedGadgets;
 
 protected:
 	// Called when the game starts or when spawned

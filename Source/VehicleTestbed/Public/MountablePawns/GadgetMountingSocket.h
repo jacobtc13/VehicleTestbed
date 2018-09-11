@@ -13,7 +13,7 @@ class VEHICLETESTBED_API GadgetMountingSocket
 {
 private:
 	///<summary>Internal reference to the gadget mounted at this position</summary>
-	Gadget *_mountedGadget = NULL;
+	Gadget * _mountedGadget = NULL;
 
 	///<summary>Position of this mounting socket</summary>
 	FVector _position;
@@ -27,7 +27,7 @@ public:
 
 	///<summary>Returns the pointer to the mounted gadget, can be NULL, blocks</summary>
 	///<returns>Pointer to mounted gadget</returns>
-	Gadget *GetMountedGadget();
+	Gadget * GetMountedGadget();
 
 	///<summary>Sets the internal refrence for the mounted gadget</summary>
 	///<params name='toSetTo'>Pointer to replace current refrence to mounted gadget</params>

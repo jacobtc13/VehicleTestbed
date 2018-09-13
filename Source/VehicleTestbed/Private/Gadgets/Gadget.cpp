@@ -15,22 +15,16 @@ bool AGadget::IsMounted()
 	return (GetMountedMountingNode() != nullptr);
 }
 
-UGadgetMountingNode *AGadget::GetMountedMountingNode()
+UGadgetMountingNode* AGadget::GetMountedMountingNode()
 {
-	_mutexMountedMountingNode.lock();
-
-	UGadgetMountingNode *result = _mountedMountingNode;
-
-	_mutexMountedMountingNode.unlock();
+	UGadgetMountingNode* result = _mountedMountingNode;
 
 	return result;
 }
 
-int AGadget::SetMountedMountingNode(UGadgetMountingNode *toSetTo)
+int AGadget::SetMountedMountingNode(UGadgetMountingNode* toSetTo)
 {
 	int result = 0;
-
-	_mutexMountedMountingNode.lock();
 
 	//Assume success for these return codes
 	if (IsMounted())
@@ -44,8 +38,6 @@ int AGadget::SetMountedMountingNode(UGadgetMountingNode *toSetTo)
 	}
 
 	_mountedMountingNode = toSetTo;
-
-	_mutexMountedMountingNode.unlock();
 
 	return result;
 }

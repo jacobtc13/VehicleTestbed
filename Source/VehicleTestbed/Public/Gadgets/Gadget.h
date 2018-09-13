@@ -3,7 +3,6 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include <mutex>
 #include "GadgetMountingNode.h"
 #include "Gadget.generated.h"
 
@@ -24,12 +23,12 @@ public:
 	bool IsMounted();
 
 	UFUNCTION()
-	///<summary>Returns a pointer to the currently mounted pawn, can be NULL, blocks</summary>
+	///<summary>Returns a pointer to the currently mounted pawn, can be NULL</summary>
 	///<returns>A pointer to the currently mounted Pawn</returns>
-		UGadgetMountingNode* GetMountedMountingNode();
+	UGadgetMountingNode* GetMountedMountingNode();
 
 	UFUNCTION()
-	///<summary>Sets the internal reference for the currently mounted pawn, blocks</summary>
+	///<summary>Sets the internal reference for the currently mounted pawn</summary>
 	///<params name ='toSetTo'>Address of the Pawn this Gadget is mounted to</params>
 	///<returns>Error code, 0 success, 1 success overriding data</returns>
 	int SetMountedMountingNode(UGadgetMountingNode* toSetTo);
@@ -37,9 +36,5 @@ public:
 private:
 	///<summary>The internal reference for the currently mounted pawn</summary>
 	UGadgetMountingNode* _mountedMountingNode = nullptr;
-
-	///<summary>MUTEX to synchronise access to _mountedPawn</summary>
-	std::mutex _mutexMountedMountingNode;
-
 
 };

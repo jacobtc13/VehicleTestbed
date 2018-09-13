@@ -15,11 +15,7 @@ AGadget* UGadgetMountingNode::GetMountedGadget()
 {
 	AGadget* result = nullptr;
 
-	_mutexMountedGadget.lock();
-
 	result = _mountedGadget;
-
-	_mutexMountedGadget.unlock();
 
 	return result;
 }
@@ -27,8 +23,6 @@ AGadget* UGadgetMountingNode::GetMountedGadget()
 int UGadgetMountingNode::SetMountedGadget(AGadget* toSetTo)
 {
 	int result = 0;
-
-	_mutexMountedGadget.lock();
 
 	//Assume success for these return codes
 	if (_mountedGadget != nullptr)
@@ -43,29 +37,21 @@ int UGadgetMountingNode::SetMountedGadget(AGadget* toSetTo)
 
 	_mountedGadget = toSetTo;
 
-	_mutexMountedGadget.unlock();
-
 	return result;
 }
 
-AMountablePawn *UGadgetMountingNode::GetMountedPawn()
+AMountablePawn* UGadgetMountingNode::GetMountedPawn()
 {
 	AMountablePawn * result = nullptr;
 
-	_mutexMountedPawn.lock();
-
 	result = _mountedPawn;
-
-	_mutexMountedPawn.unlock();
 
 	return result;
 }
 
-int UGadgetMountingNode::SetMountedPawn(AMountablePawn *toSetTo)
+int UGadgetMountingNode::SetMountedPawn(AMountablePawn* toSetTo)
 {
 	int result = 0;
-
-	_mutexMountedPawn.lock();
 
 	//Assume success for return codes
 	if (_mountedPawn != nullptr)
@@ -79,8 +65,6 @@ int UGadgetMountingNode::SetMountedPawn(AMountablePawn *toSetTo)
 	}
 
 	_mountedPawn = toSetTo;
-
-	_mutexMountedPawn.unlock();
 
 	return result;
 }

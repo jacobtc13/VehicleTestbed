@@ -8,7 +8,6 @@ class AGadget;
 class AMountablePawn;
 
 #include "CoreMinimal.h"
-#include <mutex>
 #include "GadgetMountingNode.generated.h"
 
 /**
@@ -26,15 +25,11 @@ private:
 	///<summary>Internal reference to the Pawn this is mounted on </summary>
 	AMountablePawn* _mountedPawn = nullptr;
 
-	std::mutex _mutexMountedGadget; 
-	std::mutex _mutexMountedPawn;
-	std::mutex _mutexPosition;
-
 public:
 	UGadgetMountingNode();
 	~UGadgetMountingNode();
 
-	///<summary>Returns the pointer to the mounted gadget, can be nullptr, blocks</summary>
+	///<summary>Returns the pointer to the mounted gadget, can be nullptr</summary>
 	///<returns>Pointer to mounted gadget</returns>
 	AGadget* GetMountedGadget();
 
@@ -43,9 +38,9 @@ public:
 	///<returns>Error code, 0 success, 1 success overriding data</returns>
 	int SetMountedGadget(AGadget* toSetTo);
 
-	///<summary>Returns the pointer to the mounted Pawn, can be nullptr, blocks</summary>
+	///<summary>Returns the pointer to the mounted Pawn, can be nullptr</summary>
 	///<returns>Pointer to mounted Pawn</returns>
-	AMountablePawn *GetMountedPawn();
+	AMountablePawn* GetMountedPawn();
 
 	///<summary>Sets the internal refrence for the mounted Pawn</summary>
 	///<params name='toSetTo'>Pointer to replace current refrence to mounted Pawn</params>

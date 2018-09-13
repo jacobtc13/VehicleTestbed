@@ -17,7 +17,7 @@ public:
 	AMountablePawn();
 
 	///<summary>Get a pointer to the internal list of UGadgetMouningNode pointers</summary>
-	TArray<UGadgetMountingNode>* GetMountingNodes();
+	TArray<UGadgetMountingNode*>* GetMountingNodes();
 
 protected:
 	// Called when the game starts or when spawned

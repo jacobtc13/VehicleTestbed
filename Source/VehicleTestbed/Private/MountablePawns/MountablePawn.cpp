@@ -11,7 +11,7 @@ AMountablePawn::AMountablePawn()
 
 }
 
-TArray<UGadgetMountingNode>* AMountablePawn::GetMountingNodes()
+TArray<UGadgetMountingNode*>* AMountablePawn::GetMountingNodes()
 {
 	return nullptr;
 }
@@ -34,6 +34,5 @@ void AMountablePawn::Tick(float DeltaTime)
 void AMountablePawn::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
-
 }
 

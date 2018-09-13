@@ -2,7 +2,7 @@
 
 bool UDataRecorder::Pop(std::unique_ptr<DataPoint>& item)
 {
-	std::lock_guard<std::mutex> mlock(Mutex);
+	std::lock_guard<std::mutex> mlock(Mutex); // released when mlock goes out of scope
 	if (Queue.empty())
 	{
 		return false;
@@ -14,7 +14,7 @@ bool UDataRecorder::Pop(std::unique_ptr<DataPoint>& item)
 
 void UDataRecorder::Push(std::unique_ptr<DataPoint> item)
 {
-	std::lock_guard<std::mutex> mlock(Mutex);
+	std::lock_guard<std::mutex> mlock(Mutex); // released when mlock goes out of scope
 	Queue.push(std::move(item));
 	Cond.notify_one();
 }
@@ -143,13 +143,16 @@ void UDataRecorder::AddCollector(DataCollectorBase* collector)
 
 void UDataRecorder::Start()
 {
+	// Spawn threads if not already runnning
 	if(!ReaderThread.joinable()) ReaderThread = StartReader();
 	if(!WriterThread.joinable()) WriterThread = StartWriter();
 	bStop = false;
+	bPause = false;
 }
 
 void UDataRecorder::Stop()
 {
+	bPause = false;
 	bStop = true;
 	Cond.notify_all();
 

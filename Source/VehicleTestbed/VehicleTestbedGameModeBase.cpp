@@ -9,6 +9,8 @@ AVehicleTestbedGameModeBase::AVehicleTestbedGameModeBase()
 
 void AVehicleTestbedGameModeBase::PostInitializeComponents()
 {
+	Super::PostInitializeComponents();
+
 	// Add collectors to data recorder
 	// TODO: Rewrite this to load from file/menu and do bindings dynamically
 	DataCollector<int32>* myCollector = new DataCollector<int32>();

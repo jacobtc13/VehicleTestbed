@@ -18,21 +18,17 @@ public:
 	
 	~ATestbedWheeledVehicle();
 
-	///<summary>Sets up the player input controls</summary>
-	///<param name='InputComponent'>Player input control that will have actions of the vehicle bound to it</param>  
-	virtual void SetupPlayerInputComponent(class UInputComponent* InputComponent) override;
-
-	UFUNCTION(Category = "Testbed Wheeled Vehicle", BlueprintCallable)
+	UFUNCTION()
 	///<summary>Sets the current throttle applied to the vehicle by the player</summary>
 	///<param name='Value'>Value of the throttle applied</param>  
 	void SetThrottleInput(float Value);
 
-	UFUNCTION(Category = "Testbed Wheeled Vehicle", BlueprintCallable)
+	UFUNCTION()
 	///<summary>Sets the steering direction and magnitude of it to the vehicle</summary>
 	///<param name='Value'>Value of the steering applied, positive and negative give steering direction</param>  
 	void SetSteeringInput(float Value);
 
-	UFUNCTION(Category = "Testbed Wheeled Vehicle", BlueprintCallable)
+	UFUNCTION()
 	///<summary>Sets the current braking applied to the vehicle by the player</summary>
 	///<param name='Value'>Value of the brakes applied</param>  
 	void SetBrakeInput(float Value);

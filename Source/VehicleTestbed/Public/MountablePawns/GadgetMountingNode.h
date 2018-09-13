@@ -11,7 +11,7 @@ class AMountablePawn;
 #include "GadgetMountingNode.generated.h"
 
 /**
- * 
+ * This class acts to link a AMountablePawn and a AGadget which is mounted to it
  */
 UCLASS()
 class VEHICLETESTBED_API UGadgetMountingNode : public UObject
@@ -24,6 +24,9 @@ private:
 
 	///<summary>Internal reference to the Pawn this is mounted on </summary>
 	AMountablePawn* _mountedPawn = nullptr;
+
+	///<summary>The name of the socket associated with this mounting node</summary>
+	FName _relatedSocketName;
 
 public:
 	UGadgetMountingNode();
@@ -46,4 +49,16 @@ public:
 	///<params name='toSetTo'>Pointer to replace current refrence to mounted Pawn</params>
 	///<returns>Error code, 0 success, 1 success overriding data</returns>
 	int SetMountedPawn(AMountablePawn* toSetTo);
+
+	///<summary>Sets the internal refrence for the mounted Pawn to nullptr</summary>
+	///<returns>Error code derrived from call to SetMountedPawn</returns>
+	int ClearMountedGadget();
+
+	///<summary>Returns the name of the socket on the MountablePawn related to this node</summary>
+	///<returns>FName of related socket</returns>
+	FName GetRelatedSocketName();
+
+	///<summary>Sets the Fame for the related socket on the mounted MountablePawn</summary>
+	///<params name='toSetTo'>FName to replace the current related socket name</params>
+	void SetRelatedSocketName(FName toSetTo);
 };

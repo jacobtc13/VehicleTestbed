@@ -17,9 +17,7 @@ bool AGadget::IsMounted()
 
 UGadgetMountingNode* AGadget::GetMountedMountingNode()
 {
-	UGadgetMountingNode* result = _mountedMountingNode;
-
-	return result;
+	return _mountedMountingNode;
 }
 
 int AGadget::SetMountedMountingNode(UGadgetMountingNode* toSetTo)
@@ -40,4 +38,10 @@ int AGadget::SetMountedMountingNode(UGadgetMountingNode* toSetTo)
 	_mountedMountingNode = toSetTo;
 
 	return result;
+}
+
+bool operator == (const AGadget A, const AGadget B)
+{
+	//Two AGadgets can only be considered equivilant if they are the same object, represented here as having the same memory address
+	return (&A == &B);
 }

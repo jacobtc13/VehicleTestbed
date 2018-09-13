@@ -36,3 +36,35 @@ void AMountablePawn::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 }
 
+void AMountablePawn::MountGadget(AGadget* toAdd, FName filter)
+{
+	TArray<UGadgetMountingNode*> nodes = *(GetMountingNodes());//passed through as a pointer, defrerenced so now nodes is just a normal variable referring to the correct object in memory
+
+	int i = 0;
+	while (i < nodes.Num())
+	{
+		if (nodes[i]->GetRelatedSocketName() == filter)
+		{
+			nodes[i]->SetMountedGadget(toAdd);
+		}
+
+		i += 1;
+	}
+}
+
+void AMountablePawn::DismountGadget(AGadget toDismount)
+{
+	TArray<UGadgetMountingNode*> nodes = *(GetMountingNodes());//passed through as a pointer, defrerenced so now nodes is just a normal variable referring to the correct object in memory
+
+	int i = 0;
+	while (i < nodes.Num())
+	{
+		if (*(nodes[i]->GetMountedGadget()) == toDismount)
+		{
+			nodes[i]->ClearMountedGadget();
+		}
+
+		i += 1;
+	}
+}
+

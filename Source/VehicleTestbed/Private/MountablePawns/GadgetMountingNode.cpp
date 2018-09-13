@@ -13,11 +13,7 @@ UGadgetMountingNode::~UGadgetMountingNode()
 
 AGadget* UGadgetMountingNode::GetMountedGadget()
 {
-	AGadget* result = nullptr;
-
-	result = _mountedGadget;
-
-	return result;
+	return _mountedGadget;
 }
 
 int UGadgetMountingNode::SetMountedGadget(AGadget* toSetTo)
@@ -42,11 +38,7 @@ int UGadgetMountingNode::SetMountedGadget(AGadget* toSetTo)
 
 AMountablePawn* UGadgetMountingNode::GetMountedPawn()
 {
-	AMountablePawn * result = nullptr;
-
-	result = _mountedPawn;
-
-	return result;
+	return _mountedPawn;
 }
 
 int UGadgetMountingNode::SetMountedPawn(AMountablePawn* toSetTo)
@@ -67,4 +59,19 @@ int UGadgetMountingNode::SetMountedPawn(AMountablePawn* toSetTo)
 	_mountedPawn = toSetTo;
 
 	return result;
+}
+
+int UGadgetMountingNode::ClearMountedGadget()
+{
+	return SetMountedGadget(nullptr);
+}
+
+FName UGadgetMountingNode::GetRelatedSocketName()
+{
+	return _relatedSocketName;
+}
+
+void UGadgetMountingNode::SetRelatedSocketName(FName toSetTo)
+{
+	_relatedSocketName = toSetTo;
 }

@@ -7,7 +7,7 @@
 #include "Gadget.generated.h"
 
 /**
- * Base class which handles being mounted/dismounted from a pawn
+ * Base class for mounting/dismounting to an AMountablePAwn
  */
 UCLASS()
 class VEHICLETESTBED_API AGadget : public AActor

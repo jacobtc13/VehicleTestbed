@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Gadget.h"
-#include "GameFramework/Pawn.h"
+#include "GameFramework/Character.h"
 #include "GadgetMountingNode.h"
 #include "Engine/SkeletalMesh.h"
 #include "MountablePawn.generated.h"
@@ -13,12 +13,11 @@
 * This class derives from APawn and includes the functionality for mounting/dismounting an AGadet via a dynamic array of UGadgetMouningNodes
 */
 UCLASS()
-class VEHICLETESTBED_API AMountablePawn : public APawn
+class VEHICLETESTBED_API AMountablePawn : public ACharacter
 {
-	GENERATED_BODY()
+	GENERATED_UCLASS_BODY()
 
 public:
-	// Sets default values for this pawn's properties
 	AMountablePawn();
 
 	~AMountablePawn();
@@ -27,30 +26,28 @@ public:
 	///<returns>A pointer to the dynamic array of pointers to mounting nodes</returns>
 	TArray<UGadgetMountingNode*> GetMountingNodes();
 
-	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 	///<summary>Adds the AGadget toAdd to all UGadgetMountingNodes related to the socket denoted by FName toAddTo</summary>
 	///<params name = 'toAdd'>Pointer to AGadget to add to desired UGadgetNodes</params>
-	///<params name = 'filter'>FName to filter for when selecting which UGadgetMountingNodes to add toAdd to</params>
-	void MountGadget(AGadget* toAdd, FName filter);
+	///<params name = 'socketName'>FName to select socket that will have gadget removed from</params>
+	void MountGadget(AGadget* toAdd, FName socketName);
 
 	///<summary>Removes the AGadget toDismount from all UGadgetMountingNodes in _mountingNodes</summary>
 	///<params name = 'toDismount'>The AGadget to be dismounted</params>
-	void DismountGadget(AGadget* toDismount);
+	///<params name = 'socketName'>FName to select socket that will have gadget removed from</params>
+	void DismountGadget(FName socketName);
 
 protected:
-	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Assets")
-	TArray<FName> SocketNames;
+	TArray<FName> socketNames;
 
 private:
 	UPROPERTY()
 	///<summary>Dynamic array of UGadgetMountingNode pointers, holds all of the locations a Gadget can be mounted on the Pawn</summary>
-	TArray<UGadgetMountingNode*> _mountingNodes;
+	TArray<UGadgetMountingNode*> mountingNodes;
 };

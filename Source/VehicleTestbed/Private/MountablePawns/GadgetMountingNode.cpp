@@ -13,26 +13,25 @@ UGadgetMountingNode::~UGadgetMountingNode()
 
 AGadget* UGadgetMountingNode::GetMountedGadget()
 {
-	return _mountedGadget;
+	return mountedGadget;
 }
 
 void UGadgetMountingNode::SetMountedGadget(AGadget* toSetTo)
 {
-	_mountedGadget = toSetTo;
+	mountedGadget = toSetTo;
 }
 
-/*AMountablePawn* UGadgetMountingNode::GetMountedPawn()
+void UGadgetMountingNode::RemoveMountedGadget()
 {
-	return _mountedPawn;
-}*/
-
-void UGadgetMountingNode::ClearMountedGadget()
-{
-	//_mountedGadget->SetMountedMountingNode(nullptr);
 	SetMountedGadget(nullptr);
+}
+
+void UGadgetMountingNode::ActivateGadget()
+{
+	if (mountedGadget != nullptr) mountedGadget->Activate();
 }
 
 FName UGadgetMountingNode::GetRelatedSocketName()
 {
-	return _relatedSocketName;
+	return relatedSocketName;
 }

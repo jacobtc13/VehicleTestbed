@@ -10,21 +10,6 @@ AGadget::~AGadget()
 {
 }
 
-bool AGadget::IsMounted()
-{
-	return false;// (GetMountedMountingNode() != nullptr);
-}
-
-/*UGadgetMountingNode* AGadget::GetMountedMountingNode()
-{
-	return _mountedMountingNode;
-}*/
-
-/*void AGadget::SetMountedMountingNode(UGadgetMountingNode* toSetTo)
-{
-	_mountedMountingNode = toSetTo;
-}*/
-
 void AGadget::Activate()
 {
 

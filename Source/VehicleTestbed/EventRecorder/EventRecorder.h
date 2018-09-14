@@ -11,7 +11,8 @@
 #include "Kismet/BlueprintFunctionLibrary.h"
 #include "EventRecorder.generated.h"
 
-UCLASS()
+// Abstract tag blocks instantiation of this class.  It is pointless to do so anyway.
+UCLASS(Abstract)
 ///<summary>Collects details of events and writes them to a file</summary>
 class VEHICLETESTBED_API UEventRecorder : public UBlueprintFunctionLibrary
 {
@@ -22,23 +23,23 @@ public:
 	typedef TSharedRef<const FRecordableEvent> EventRef;
 
 private:
-	class Destructor;
+	class FDestructor;
 	typedef TSharedPtr<const FRecordableEvent> EventPtr;
 
 	// variables
 private:
-	static Destructor destructor;
-	static std::thread writerThread;
+	static FDestructor Destructor;
+	static std::thread WriterThread;
 
-	static std::queue<EventRef> writeQueue;
+	static std::queue<EventRef> WriteQueue;
 
-	static std::mutex queueMutex;
+	static std::mutex QueueMutex;
 
-	static FString fileName;
+	static FString FileName;
 
 	static std::atomic<bool> bPause;
 	static std::atomic<bool> bStop;
-	static std::condition_variable condWaiter;
+	static std::condition_variable CondWaiter;
 
 	// functions
 public:
@@ -62,7 +63,8 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "EventRecorder")
 	///<summary>Creates a thread running <see cref="Write()" /></summary>
-	static void Start();
+	///<returns>True if the thread was started, false if it was already running.</returns>
+	static const bool Start();
 
 	UFUNCTION(BlueprintCallable, Category = "EventRecorder")
 	///<summary>Sets the pause variable to true, causing the WriterThread to pause when it next checks the boolean's value</summary>
@@ -84,7 +86,7 @@ private:
 	///<summary>Pops the front of the queue and sets the passed pointer to it</summary>
 	///<param name="rEventPtr">Gets set to what used to be the front of the queue</param>
 	///<returns>True if the pop was successful, false otherwise</returns>
-	static const bool Pop(EventPtr& rEventPtr);
+	static const bool Pop(EventPtr& OutEventPtr);
 
 	///<summary>Loops until the write queue is empty and writes the events to a file in batches for better performance</summary>
 	static void Write();
@@ -97,12 +99,14 @@ private:
 
 private:
 	///<summary>Calls <see cref="Stop()" /> on destruction.  Use as a static variable and make sure it's initialized last</summary>
-	class Destructor
+	class FDestructor
 	{
 	public:
-		~Destructor()
+		~FDestructor()
 		{
 			Stop();
+			if (WriterThread.joinable())
+				WriterThread.join();
 		}
 	};
 

@@ -3,14 +3,14 @@
 
 typedef UEventRecorder::FRecordableEvent FRecordableEvent;
 
-std::condition_variable UEventRecorder::condWaiter;
+std::condition_variable UEventRecorder::CondWaiter;
 std::atomic<bool> UEventRecorder::bStop = false;
 std::atomic<bool> UEventRecorder::bPause = false;
-std::queue<UEventRecorder::EventRef> UEventRecorder::writeQueue;
-std::mutex UEventRecorder::queueMutex;
-FString UEventRecorder::fileName = FPaths::ProjectDir() + FString("Logs/events.xml");
-std::thread UEventRecorder::writerThread;
-UEventRecorder::Destructor UEventRecorder::destructor;
+std::queue<UEventRecorder::EventRef> UEventRecorder::WriteQueue;
+std::mutex UEventRecorder::QueueMutex;
+FString UEventRecorder::FileName = FPaths::ProjectDir() + FString("Logs/events.xml");
+std::thread UEventRecorder::WriterThread;
+UEventRecorder::FDestructor UEventRecorder::Destructor;
 
 void UEventRecorder::RecordEvent(EventRef rEvent)
 {
@@ -33,15 +33,17 @@ void UEventRecorder::RecordEventWithDetails(const FString aName, const UObject* 
 		RecordEvent(EventRef(new FRecordableEvent(aName, aHandler, details)));
 }
 
-void UEventRecorder::Start()
+const bool UEventRecorder::Start()
 {
 	// Do nothing if the recorder has already started
-	if (!writerThread.joinable())
+	if (!WriterThread.joinable())
 	{
 		bStop = false;
 		bPause = false;
-		writerThread = std::thread(WriteThreadFunction);
+		WriterThread = std::thread(WriteThreadFunction);
+		return true;
 	}
+	return false;
 }
 
 void UEventRecorder::Pause()
@@ -56,7 +58,7 @@ void UEventRecorder::Pause()
 void UEventRecorder::Resume()
 {
 	bPause = false;
-	condWaiter.notify_all();
+	CondWaiter.notify_all();
 }
 
 void UEventRecorder::Stop()
@@ -66,9 +68,7 @@ void UEventRecorder::Stop()
 	{
 		bStop = true;
 		bPause = false;
-		condWaiter.notify_all();
-		if (writerThread.joinable())
-			writerThread.join();
+		CondWaiter.notify_all();
 	}
 }
 
@@ -76,22 +76,22 @@ void UEventRecorder::Stop()
 
 void UEventRecorder::Push(const EventRef rEventRef)
 {
-	queueMutex.lock();
-	writeQueue.push(rEventRef);
-	queueMutex.unlock();
+	QueueMutex.lock();
+	WriteQueue.push(rEventRef);
+	QueueMutex.unlock();
 }
 
-const bool UEventRecorder::Pop(EventPtr& rEventPtr)
+const bool UEventRecorder::Pop(EventPtr& OutEventPtr)
 {
-	queueMutex.lock();
-	if (!writeQueue.empty())
+	QueueMutex.lock();
+	if (!WriteQueue.empty())
 	{
-		rEventPtr = writeQueue.front();
-		writeQueue.pop();
-		queueMutex.unlock();
+		OutEventPtr = WriteQueue.front();
+		WriteQueue.pop();
+		QueueMutex.unlock();
 		return true;
 	}
-	queueMutex.unlock();
+	QueueMutex.unlock();
 	return false;
 }
 
@@ -100,7 +100,7 @@ void UEventRecorder::CheckForPause()
 	std::unique_lock<std::mutex> lock;
 	while (bPause)
 	{
-		condWaiter.wait(lock);
+		CondWaiter.wait(lock);
 	}
 }
 
@@ -125,13 +125,13 @@ void UEventRecorder::Write()
 		// Simple optimization - Write in batches of 1000 lines
 		if (rEventsInXML.Num() > 1000) // This checks number of lines in the array, not number of events
 		{
-			WriteToFile(rEventsInXML, fileName);
+			WriteToFile(rEventsInXML, FileName);
 		}
 	}
 	// If Queue is empty we may as well write whatever events we've currently got
 	if (rEventsInXML.Num()) // false = 0, true = everything else
 	{
-		WriteToFile(rEventsInXML, fileName);
+		WriteToFile(rEventsInXML, FileName);
 	}
 }
 

@@ -1,11 +1,10 @@
 #pragma once
 
 #include <queue>
-#include <thread>
+#include <future>
 #include <mutex>
 #include <atomic>
 #include "FileHelper.h"
-#include "Engine/World.h"
 
 #include "CoreMinimal.h"
 #include "Kismet/BlueprintFunctionLibrary.h"
@@ -29,7 +28,7 @@ private:
 	// variables
 private:
 	static FDestructor Destructor;
-	static std::thread WriterThread;
+	static std::future<void> WriterThread;
 	static std::queue<EventRef> WriteQueue;
 	static std::mutex QueueMutex;
 

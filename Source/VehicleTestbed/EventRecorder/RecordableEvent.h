@@ -1,6 +1,7 @@
 #pragma once
 
 #include "EventRecorder.h"
+#include "Engine/World.h"
 
 ///<summary>A simple class to hold information about an event trigger</summary>
 class UEventRecorder::FRecordableEvent

@@ -6,14 +6,14 @@ std::atomic<bool> UEventRecorder::bStop = false;
 std::queue<UEventRecorder::EventRef> UEventRecorder::WriteQueue;
 std::mutex UEventRecorder::QueueMutex;
 FString UEventRecorder::FileName = FPaths::ProjectDir() + TEXT("Logs/events.xml");
-std::thread UEventRecorder::WriterThread;
+std::future<void> UEventRecorder::WriterThread;
 UEventRecorder::FDestructor UEventRecorder::Destructor;
 
 UEventRecorder::FDestructor::~FDestructor()
 {
 	Stop();
-	if (WriterThread.joinable())
-		WriterThread.join();
+	if (WriterThread.valid())
+		WriterThread.wait();
 }
 
 void UEventRecorder::RecordEvent(EventRef REvent)
@@ -37,13 +37,27 @@ void UEventRecorder::RecordEventWithDetails(const FString EventName, const UObje
 		RecordEvent(EventRef(new FRecordableEvent(EventName, Caller, Details)));
 }
 
+const bool isWriterThreadFinished(const std::future<void>& WriterThread)
+{
+	using namespace std::chrono_literals;
+	if (WriterThread.valid())
+		return WriterThread.wait_for(0ms) == std::future_status::ready;
+	else
+		// not valid means it has either not run or has returned and `get()` has been called
+		// in either case it is ready to be started
+		return true;
+}
+
 const bool UEventRecorder::Start()
 {
 	// Do nothing if the recorder has already started
-	if (!WriterThread.joinable())
+	if (isWriterThreadFinished(WriterThread))
 	{
 		bStop = false;
-		WriterThread = std::thread(WriteThreadFunction);
+		// Set the target filename to reflect the newly starting run. The file won't exist until the recorder tries to write
+		FileName = FPaths::ProjectDir() + TEXT("Logs/events-") + FDateTime::Now().ToString(TEXT("%d.%m.%Y-%H.%M.%S")) + TEXT(".xml");
+		
+		WriterThread = std::async(std::launch::async, WriteThreadFunction);
 		return true;
 	}
 	return false;

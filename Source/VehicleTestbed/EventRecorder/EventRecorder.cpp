@@ -1,36 +1,40 @@
 #include "EventRecorder.h"
+#include "RecordableEvent.h"
 #include "Paths.h"
 
-typedef UEventRecorder::FRecordableEvent FRecordableEvent;
-
-std::condition_variable UEventRecorder::CondWaiter;
 std::atomic<bool> UEventRecorder::bStop = false;
-std::atomic<bool> UEventRecorder::bPause = false;
 std::queue<UEventRecorder::EventRef> UEventRecorder::WriteQueue;
 std::mutex UEventRecorder::QueueMutex;
-FString UEventRecorder::FileName = FPaths::ProjectDir() + FString("Logs/events.xml");
+FString UEventRecorder::FileName = FPaths::ProjectDir() + TEXT("Logs/events.xml");
 std::thread UEventRecorder::WriterThread;
 UEventRecorder::FDestructor UEventRecorder::Destructor;
 
-void UEventRecorder::RecordEvent(EventRef rEvent)
+UEventRecorder::FDestructor::~FDestructor()
+{
+	Stop();
+	if (WriterThread.joinable())
+		WriterThread.join();
+}
+
+void UEventRecorder::RecordEvent(EventRef REvent)
 {
 	// Don't record new events if it's stopped
-	if (!bStop && !bPause)
+	if (!bStop)
 	{
-		Push(rEvent);
+		Push(REvent);
 	}
 }
 
-void UEventRecorder::RecordEvent(const FString aName, const UObject* aHandler)
+void UEventRecorder::RecordEvent(const FString EventName, const UObject* Caller)
 {
-	if (aHandler != nullptr)
-		RecordEvent(EventRef(new FRecordableEvent(aName, aHandler)));
+	if (Caller != nullptr)
+		RecordEvent(EventRef(new FRecordableEvent(EventName, Caller)));
 }
 
-void UEventRecorder::RecordEventWithDetails(const FString aName, const UObject* aHandler, const TMap<FString, FString> details)
+void UEventRecorder::RecordEventWithDetails(const FString EventName, const UObject* Caller, const TMap<FString, FString> Details)
 {
-	if (aHandler != nullptr)
-		RecordEvent(EventRef(new FRecordableEvent(aName, aHandler, details)));
+	if (Caller != nullptr)
+		RecordEvent(EventRef(new FRecordableEvent(EventName, Caller, Details)));
 }
 
 const bool UEventRecorder::Start()
@@ -39,26 +43,10 @@ const bool UEventRecorder::Start()
 	if (!WriterThread.joinable())
 	{
 		bStop = false;
-		bPause = false;
 		WriterThread = std::thread(WriteThreadFunction);
 		return true;
 	}
 	return false;
-}
-
-void UEventRecorder::Pause()
-{
-	// Don't let it pause if it's trying to stop
-	if (!bStop)
-	{
-		bPause = true;
-	}
-}
-
-void UEventRecorder::Resume()
-{
-	bPause = false;
-	CondWaiter.notify_all();
 }
 
 void UEventRecorder::Stop()
@@ -67,17 +55,15 @@ void UEventRecorder::Stop()
 	if (!bStop)
 	{
 		bStop = true;
-		bPause = false;
-		CondWaiter.notify_all();
 	}
 }
 
 // Private functions
 
-void UEventRecorder::Push(const EventRef rEventRef)
+void UEventRecorder::Push(const EventRef REventRef)
 {
 	QueueMutex.lock();
-	WriteQueue.push(rEventRef);
+	WriteQueue.push(REventRef);
 	QueueMutex.unlock();
 }
 
@@ -95,43 +81,34 @@ const bool UEventRecorder::Pop(EventPtr& OutEventPtr)
 	return false;
 }
 
-void UEventRecorder::CheckForPause()
-{
-	std::unique_lock<std::mutex> lock;
-	while (bPause)
-	{
-		CondWaiter.wait(lock);
-	}
-}
-
-void WriteToFile(TArray<FString>& eventsInXMLArray, const FString& file)
+void WriteToFile(TArray<FString>& EventsInXMLArray, const FString& File)
 {
 	// This method handles creating, opening, and closing the file
-	if (FFileHelper::SaveStringArrayToFile(eventsInXMLArray, *file, FFileHelper::EEncodingOptions::AutoDetect, &IFileManager::Get(), EFileWrite::FILEWRITE_Append))
+	if (FFileHelper::SaveStringArrayToFile(EventsInXMLArray, *File, FFileHelper::EEncodingOptions::AutoDetect, &IFileManager::Get(), EFileWrite::FILEWRITE_Append))
 	{
-		eventsInXMLArray.Empty(); // clears the array
+		EventsInXMLArray.Empty(); // clears the array
 	}
 }
 
 void UEventRecorder::Write()
 {
 	// SaveStringArrayToFile() handles the addition of line endings
-	TArray<FString> rEventsInXML;
-	EventPtr rEventPtr;
-	while (Pop(rEventPtr))
+	TArray<FString> REventsInXML;
+	EventPtr REventPtr;
+	while (Pop(REventPtr))
 	{
-		rEventsInXML.Append(rEventPtr->GetXMLFormattedOutput());
+		REventsInXML.Append(REventPtr->GetXMLFormattedOutput());
 
 		// Simple optimization - Write in batches of 1000 lines
-		if (rEventsInXML.Num() > 1000) // This checks number of lines in the array, not number of events
+		if (REventsInXML.Num() > 1000) // This checks number of lines in the array, not number of events
 		{
-			WriteToFile(rEventsInXML, FileName);
+			WriteToFile(REventsInXML, FileName);
 		}
 	}
 	// If Queue is empty we may as well write whatever events we've currently got
-	if (rEventsInXML.Num()) // false = 0, true = everything else
+	if (REventsInXML.Num()) // false = 0, true = everything else
 	{
-		WriteToFile(rEventsInXML, FileName);
+		WriteToFile(REventsInXML, FileName);
 	}
 }
 
@@ -140,25 +117,7 @@ void UEventRecorder::WriteThreadFunction()
 	while (!bStop)
 	{
 		Write();
-		CheckForPause();
 	}
 	// One last check to catch any events that may have been pushed between the last check and bStop being set
 	Write();
-}
-
-const TArray<FString> FRecordableEvent::GetXMLFormattedOutput() const
-{
-	TArray<FString> output;
-	output.Add("<event>");
-	output.Add("\t<time>" + timestamp + "</time>");
-	output.Add("\t<gametime>" + gameTimestamp + "</gametime>");
-	output.Add("\t<name>" + name + "</name>");
-	output.Add("\t<handler>" + handler + "</hander>");
-	for (const FRecordableEvent::Pair& pair : details)
-	{
-		output.Add("\t<" + pair.Key + ">" + pair.Value + "</" + pair.Key + ">");
-	}
-	output.Add("</event>");
-
-	return output;
 }

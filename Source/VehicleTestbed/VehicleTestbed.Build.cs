@@ -8,7 +8,13 @@ public class VehicleTestbed : ModuleRules
 	{
 		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
 	
+
 		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "UMG", "Slate", "SlateCore" });
+
+		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore","ROSIntegration" });
+
+        PublicIncludePaths.AddRange(new string[] { "RosIntegration/Public", "RosIntegration/Classes" });
+
 
 		PrivateDependencyModuleNames.AddRange(new string[] {  });
 

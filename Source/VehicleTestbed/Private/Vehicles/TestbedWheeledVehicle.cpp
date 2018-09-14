@@ -36,19 +36,6 @@ ATestbedWheeledVehicle::~ATestbedWheeledVehicle()
 
 }
 
-void ATestbedWheeledVehicle::SetupPlayerInputComponent(class UInputComponent* InputComponent)
-{
-	Super::SetupPlayerInputComponent(InputComponent);
-
-	// Binds actions to player input which are based on the functions in UE under Project Settings->Input
-	InputComponent->BindAxis("MoveForward", this, &ATestbedWheeledVehicle::SetThrottleInput);
-	InputComponent->BindAxis("MoveRight", this, &ATestbedWheeledVehicle::SetSteeringInput);
-	InputComponent->BindAxis("Brake", this, &ATestbedWheeledVehicle::SetBrakeInput);
-	InputComponent->BindAction("SwitchToOverhead", EInputEvent::IE_Pressed, this, &ATestbedWheeledVehicle::SwitchToOverheadCamera);
-	InputComponent->BindAction("SwitchToInternal", EInputEvent::IE_Pressed, this, &ATestbedWheeledVehicle::SwitchToInternalCamera);
-	InputComponent->BindAction("SwitchToChase", EInputEvent::IE_Pressed, this, &ATestbedWheeledVehicle::SwitchToChaseCamera);
-}
-
 void ATestbedWheeledVehicle::SetThrottleInput(float Value)
 {
 	GetVehicleMovementComponent()->SetThrottleInput(Value);

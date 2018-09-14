@@ -13,7 +13,7 @@ public:
 	///<summary>Virtual Clone Method, creates a deep copy of the current object
 	///<para>PURE VIRTUAL METHOD: Must be overriden in derived classes</para></summary>
 	///<returns>New DataValueBase</returns>
-	virtual DataValueBase *Clone() const = 0;
+	virtual std::unique_ptr<DataValueBase> Clone() const = 0;
 
 	///<summary>Virtual Print Method, outputs to an <see cref="std::ostream"/>
 	///<para>PURE VIRTUAL METHOD: Must be overriden in derived classes</para></summary>
@@ -42,9 +42,13 @@ public:
 template <typename T>
 class VEHICLETESTBED_API DataValue : public DataValueBase
 {
-private:
-	T Value;
 public:
+	///<summary>Default constructor, initalises value</summary>
+	DataValue()
+	{
+		Value = T{};
+	}
+
 	///<summary>Default constructor</summary>
 	///<param name="value">Value to assign</summary>
 	DataValue(T value)
@@ -64,15 +68,20 @@ public:
 
 	///<summary>Virtual Clone Method, creates a deep copy of the current object</summary>
 	///<returns>New DataValue of current type</returns>
-	virtual DataValue<T> *Clone() const
+	virtual std::unique_ptr<DataValueBase> Clone() const
 	{
-		return new DataValue<T>(*this);
+		return std::make_unique<DataValue<T>>(*this);
 	}
 
 	///<summary>Virtual Print Method, outputs to an <see cref="std::ostream"/></summary>
 	///<param name="os"><see cref="std::ostream"/> object to write to</param>
 	void Print(std::ostream& os) const override
 	{
-		os << Value;
+		if (Value)
+			os << Value;
 	}
+
+private:
+	T Value;
+
 };

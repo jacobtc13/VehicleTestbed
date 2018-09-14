@@ -1,6 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "MountablePawn.h"
+#include "ConstructorHelpers.h"
 
 
 // Sets default values
@@ -8,12 +9,16 @@ AMountablePawn::AMountablePawn()
 {
  	// Set this pawn to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
+}
+
+AMountablePawn::~AMountablePawn()
+{
 
 }
 
-TArray<UGadgetMountingNode*>* AMountablePawn::GetMountingNodes()
+TArray<UGadgetMountingNode*> AMountablePawn::GetMountingNodes()
 {
-	return nullptr;
+	return _mountingNodes;
 }
 
 // Called when the game starts or when spawned
@@ -36,35 +41,26 @@ void AMountablePawn::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 }
 
-void AMountablePawn::MountGadget(AGadget* toAdd, FName filter)
+void AMountablePawn::MountGadget(AGadget* toAdd, FName socketName)
 {
-	TArray<UGadgetMountingNode*> nodes = *(GetMountingNodes());//passed through as a pointer, defrerenced so now nodes is just a normal variable referring to the correct object in memory
-
-	int i = 0;
-	while (i < nodes.Num())
+	for(int i = 0; i < _mountingNodes.Num(); i++)
 	{
-		if (nodes[i]->GetRelatedSocketName() == filter)
+		if (_mountingNodes[i]->GetRelatedSocketName() == socketName)
 		{
-			nodes[i]->SetMountedGadget(toAdd);
+			_mountingNodes[i]->SetMountedGadget(toAdd);
+			break;
 		}
-
-		i += 1;
 	}
 }
 
-void AMountablePawn::DismountGadget(AGadget toDismount)
+void AMountablePawn::DismountGadget(AGadget* toDismount)
 {
-	TArray<UGadgetMountingNode*> nodes = *(GetMountingNodes());//passed through as a pointer, defrerenced so now nodes is just a normal variable referring to the correct object in memory
-
-	int i = 0;
-	while (i < nodes.Num())
+	for(int i = 0; i < _mountingNodes.Num(); i++)
 	{
-		if (*(nodes[i]->GetMountedGadget()) == toDismount)
+		if (_mountingNodes[i]->GetMountedGadget() == toDismount)
 		{
-			nodes[i]->ClearMountedGadget();
+			_mountingNodes[i]->ClearMountedGadget();
 		}
-
-		i += 1;
 	}
 }
 

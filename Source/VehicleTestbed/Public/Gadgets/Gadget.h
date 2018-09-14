@@ -3,7 +3,6 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "GadgetMountingNode.h"
 #include "Gadget.generated.h"
 
 /**
@@ -22,19 +21,22 @@ public:
 	///<summary>Returns true if this Gadget is mounted, otherwise false</summary>
 	bool IsMounted();
 
-	UFUNCTION()
+	//UFUNCTION()
 	///<summary>Returns a pointer to the currently mounted pawn, can be NULL</summary>
 	///<returns>A pointer to the currently mounted Pawn</returns>
-	UGadgetMountingNode* GetMountedMountingNode();
+	//UGadgetMountingNode* GetMountedMountingNode();
 
-	UFUNCTION()
+	//UFUNCTION()
 	///<summary>Sets the internal reference for the currently mounted pawn</summary>
 	///<params name ='toSetTo'>Address of the Pawn this Gadget is mounted to</params>
 	///<returns>Error code, 0 success, 1 success overriding data</returns>
-	int SetMountedMountingNode(UGadgetMountingNode* toSetTo);
+	//void SetMountedMountingNode(UGadgetMountingNode* toSetTo);
+
+	///<summary>Activates the countermeasure based on desired behaviour</summary>
+	virtual void Activate();
 
 private:
 	///<summary>The internal reference for the currently mounted pawn</summary>
-	UGadgetMountingNode* _mountedMountingNode = nullptr;
+	//UGadgetMountingNode* _mountedMountingNode = nullptr;
 
 };

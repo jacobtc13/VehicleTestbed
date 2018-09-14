@@ -6,6 +6,7 @@
 #include "Gadget.h"
 #include "GameFramework/Pawn.h"
 #include "GadgetMountingNode.h"
+#include "Engine/SkeletalMesh.h"
 #include "MountablePawn.generated.h"
 
 /*
@@ -20,19 +21,12 @@ public:
 	// Sets default values for this pawn's properties
 	AMountablePawn();
 
+	~AMountablePawn();
+
 	///<summary>Get a pointer to the internal list of UGadgetMouningNode pointers</summary>
 	///<returns>A pointer to the dynamic array of pointers to mounting nodes</returns>
-	TArray<UGadgetMountingNode*>* GetMountingNodes();
+	TArray<UGadgetMountingNode*> GetMountingNodes();
 
-protected:
-	// Called when the game starts or when spawned
-	virtual void BeginPlay() override;
-
-private:
-	///<summary>Dynamic array of UGadgetMountingNode pointers, holds all of the locations a Gadget can be mounted on the Pawn</summary>
-	TArray<UGadgetMountingNode*> _mountingNodes;
-
-public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
@@ -46,5 +40,17 @@ public:
 
 	///<summary>Removes the AGadget toDismount from all UGadgetMountingNodes in _mountingNodes</summary>
 	///<params name = 'toDismount'>The AGadget to be dismounted</params>
-	void DismountGadget(AGadget toDismount);
+	void DismountGadget(AGadget* toDismount);
+
+protected:
+	// Called when the game starts or when spawned
+	virtual void BeginPlay() override;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Assets")
+	TArray<FName> SocketNames;
+
+private:
+	UPROPERTY()
+	///<summary>Dynamic array of UGadgetMountingNode pointers, holds all of the locations a Gadget can be mounted on the Pawn</summary>
+	TArray<UGadgetMountingNode*> _mountingNodes;
 };

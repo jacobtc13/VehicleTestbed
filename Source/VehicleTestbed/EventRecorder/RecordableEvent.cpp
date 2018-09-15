@@ -10,7 +10,8 @@ UEventRecorder::FRecordableEvent::~FRecordableEvent()
 {}
 
 UEventRecorder::FRecordableEvent::FRecordableEvent(const FRecordableEvent& Other)
-	: Timestamp(Other.Timestamp), Name(Other.Name), Caller(Other.Caller), Details(Other.Details) // This is what the compiler would auto-generate
+	: Timestamp(Other.Timestamp), GameTimestamp(Other.GameTimestamp), 
+	Name(Other.Name), Caller(Other.Caller), Details(Other.Details) // This is what the compiler would auto-generate
 {}
 
 const TArray<FString> UEventRecorder::FRecordableEvent::GetXMLFormattedOutput() const

@@ -3,16 +3,18 @@
 ATestbedPlayerController::ATestbedPlayerController()
 	: APlayerController()
 {
-	pauseMenuComponent = CreateDefaultSubobject<UPauseMenuComponent>("PauseMenuComponent");
-	pawnSwapComponent = CreateDefaultSubobject<UPawnSwapComponent>("PawnSwapComponent");
+	PauseMenuComponent = CreateDefaultSubobject<UPauseMenuComponent>("PauseMenuComponent");
+	PawnSwapComponent = CreateDefaultSubobject<UPawnSwapComponent>("PawnSwapComponent");
+	JackalControlComponent = CreateDefaultSubobject<UJackalControlComponent>("JackalControlComponent");
 }
 
 void ATestbedPlayerController::SetupInputComponent()
 {
 	APlayerController::SetupInputComponent();
 
-	pauseMenuComponent->SetupPlayerInputComponent(InputComponent);
-	pawnSwapComponent->SetupPlayerInputComponent(InputComponent);
+	PauseMenuComponent->SetupPlayerInputComponent(InputComponent);
+	PawnSwapComponent->SetupPlayerInputComponent(InputComponent);
+	JackalControlComponent->SetupPlayerInputComponent(InputComponent);
 }
 
 void ATestbedPlayerController::BeginPlay()

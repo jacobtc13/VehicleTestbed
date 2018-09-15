@@ -1,10 +1,10 @@
 #include "PawnSwapComponent.h"
 
-void UPawnSwapComponent::SetupPlayerInputComponent(UInputComponent* inputComponent)
+void UPawnSwapComponent::SetupPlayerInputComponent(UInputComponent* InputComponent)
 {
-	check(inputComponent);
-	inputComponent->BindAction("CycleCharacterForward", EInputEvent::IE_Pressed, this, &UPawnSwapComponent::CycleCharacterForward);
-	inputComponent->BindAction("CycleCharacterBackward", EInputEvent::IE_Pressed, this, &UPawnSwapComponent::CycleCharacterBackward);
+	check(InputComponent);
+	InputComponent->BindAction("CycleCharacterForward", EInputEvent::IE_Pressed, this, &UPawnSwapComponent::CycleCharacterForward);
+	InputComponent->BindAction("CycleCharacterBackward", EInputEvent::IE_Pressed, this, &UPawnSwapComponent::CycleCharacterBackward);
 }
 
 void UPawnSwapComponent::BeginPlay()
@@ -12,9 +12,9 @@ void UPawnSwapComponent::BeginPlay()
 	UPCComponent::BeginPlay();
 
 	UGameplayStatics::GetAllActorsOfClass((UObject*)GetWorld(), APawn::StaticClass(), ControllablePawns);
-	if (controller->GetPawn() != nullptr)
+	if (Controller->GetPawn() != nullptr)
 	{
-		CurrentPawnIndex = ControllablePawns.Find(controller->GetPawn());
+		CurrentPawnIndex = ControllablePawns.Find(Controller->GetPawn());
 	}
 	else
 	{
@@ -53,5 +53,5 @@ void UPawnSwapComponent::CycleCharacter(bool IsCycleForward)
 			CurrentPawnIndex = ControllablePawns.Num() - 1;
 		}
 	}
-	controller->Possess((APawn*)ControllablePawns[CurrentPawnIndex]);
+	Controller->Possess((APawn*)ControllablePawns[CurrentPawnIndex]);
 }

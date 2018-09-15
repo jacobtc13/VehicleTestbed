@@ -6,7 +6,7 @@
 #include "Components/ActorComponent.h"
 #include "PCComponent.generated.h"
 
-UCLASS(Abstract, Within=TestBedPlayerController)
+UCLASS(Abstract)
 class VEHICLETESTBED_API UPCComponent : public UActorComponent
 {
 	GENERATED_BODY()
@@ -16,12 +16,12 @@ public:
 	UPCComponent()
 		: UActorComponent()
 	{
-		controller = (APlayerController*)GetOwner();
+		Controller = (APlayerController*)GetOwner();
 	}
 
 	///<summary>Needs to be overriden in sub classes.  Put input bindings in here and call this function in the SetupPlayerInputComponent() function of the TestbedPlayerController</summary>
 	///<param name="inputComponent">The input component of the TestbedPlayerController</param>
-	virtual void SetupPlayerInputComponent(UInputComponent* inputComponent)
+	virtual void SetupPlayerInputComponent(UInputComponent* InputComponent)
 	{
 		check(0 && "You must override this");
 	}
@@ -33,5 +33,5 @@ public:
 	}
 
 protected:
-	APlayerController* controller;
+	APlayerController* Controller;
 };

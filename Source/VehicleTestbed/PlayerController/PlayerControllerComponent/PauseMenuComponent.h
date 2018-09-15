@@ -17,13 +17,15 @@ public:
 
 	///<summary>Needs to be overriden in sub classes.  Put input bindings in here and call this function in the SetupPlayerInputComponent() function of the TestbedPlayerController</summary>
 	///<param name="inputComponent">The input component of the TestbedPlayerController</param>
-	void SetupPlayerInputComponent(UInputComponent* inputComponent) override;
+	void SetupPlayerInputComponent(UInputComponent* InputComponent) override;
 
 	///<summary>Called automatically by Unreal.  Instantiates an object of the pause menu.</summary>
 	void BeginPlay() override;
 
 private:
 	TSubclassOf<UUserWidget> pauseMenuClass;
+	
+	UPROPERTY()
 	UUserWidget* pauseMenu;
 
 	///<summary>Adds the pause menu to the screen and pauses the game</summary>

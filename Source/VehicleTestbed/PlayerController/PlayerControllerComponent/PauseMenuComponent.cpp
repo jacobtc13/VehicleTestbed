@@ -11,23 +11,23 @@ UPauseMenuComponent::UPauseMenuComponent()
 	}
 }
 
-void UPauseMenuComponent::SetupPlayerInputComponent(UInputComponent* inputComponent)
+void UPauseMenuComponent::SetupPlayerInputComponent(UInputComponent* InputComponent)
 {
-	check(inputComponent);
-	inputComponent->BindAction("PauseButton", IE_Released, this, &UPauseMenuComponent::Pause);
+	check(InputComponent);
+	InputComponent->BindAction("PauseButton", IE_Released, this, &UPauseMenuComponent::Pause);
 }
 
 void UPauseMenuComponent::BeginPlay()
 {
-	UActorComponent::BeginPlay();
+	UPCComponent::BeginPlay();
 
-	pauseMenu = CreateWidget<UUserWidget>(controller, pauseMenuClass);
+	pauseMenu = CreateWidget<UUserWidget>(Controller, pauseMenuClass);
 }
 
 void UPauseMenuComponent::Pause()
 {
 	pauseMenu->AddToViewport();
-	controller->SetInputMode(FInputModeUIOnly());
-	controller->bShowMouseCursor = true;
-	controller->SetPause(true);
+	Controller->SetInputMode(FInputModeUIOnly());
+	Controller->bShowMouseCursor = true;
+	Controller->SetPause(true);
 }

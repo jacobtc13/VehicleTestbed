@@ -2,6 +2,7 @@
 
 #include "PlayerController/PlayerControllerComponent/PauseMenuComponent.h"
 #include "PlayerController/PlayerControllerComponent/PawnSwapComponent.h"
+#include "PlayerController/PlayerControllerComponent/JackalControlComponent.h"
 
 #include "CoreMinimal.h"
 #include "GameFramework/PlayerController.h"
@@ -23,6 +24,7 @@ public:
 
 	// Components
 protected:
-	UPauseMenuComponent* pauseMenuComponent;
-	UPawnSwapComponent* pawnSwapComponent;
+	UPauseMenuComponent* PauseMenuComponent;
+	UPawnSwapComponent* PawnSwapComponent;
+	UJackalControlComponent* JackalControlComponent;
 };

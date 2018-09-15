@@ -27,7 +27,9 @@ void UPauseMenuComponent::BeginPlay()
 void UPauseMenuComponent::Pause()
 {
 	pauseMenu->AddToViewport();
-	Controller->SetInputMode(FInputModeUIOnly());
+	FInputModeUIOnly InputMode;
+	InputMode.SetWidgetToFocus(pauseMenu->GetSlateWidgetFromName(TEXT("ResumeButton")));
+	Controller->SetInputMode(InputMode);
 	Controller->bShowMouseCursor = true;
 	Controller->SetPause(true);
 }

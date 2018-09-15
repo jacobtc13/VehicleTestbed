@@ -1,17 +1,23 @@
 #pragma once
 
-#include "MessageSender.h"
+#include "Object.h"
+#include <iostream>
+//#include "CommDistributor.generated.h"
 #include <list>
+#include "CommChannel.h"
+#include "SNRModel.h"
 
-#include "CoreMinimal.h"
-#include "Kismet/BlueprintFunctionLibrary.h"
-#include "CommDistributor.generated.h"
-
-UCLASS(Abstract)
-class VEHICLETESTBED_API UCommunicationDistributor : public UBlueprintFunctionLibrary
+UCLASS()
+class VEHICLETESTBED_API CommDistributor : public UObject
 {
 	GENERATED_BODY()
 
 public:
 
+	CommDistributor();
+
+protected:
+	std::list<CommChannel> channelList;
+	SNRModel defaultPropModel;
+	
 };

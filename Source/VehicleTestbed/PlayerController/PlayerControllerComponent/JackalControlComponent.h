@@ -14,7 +14,7 @@ public:
 	///<param name="inputComponent">The input component of the player controller this component is part of</param>
 	void SetupPlayerInputComponent(UInputComponent* InputComponent) override;
 
-	///<summary>Called automatically by Unreal.  Sets up a list of all the pawns in the game world.</summary>
+	///<summary>Called automatically by Unreal</summary>
 	void BeginPlay() override;
 
 	UFUNCTION()

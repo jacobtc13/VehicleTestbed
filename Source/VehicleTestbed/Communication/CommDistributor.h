@@ -6,6 +6,10 @@
 #include <list>
 #include "CommChannel.h"
 #include "SNRModel.h"
+#include "Message.h"
+#include "MessageSender.h"
+#include "MessageReceiver.h"
+#include "SNRModelFrequencyRange.h"
 
 UCLASS()
 class VEHICLETESTBED_API CommDistributor : public UObject
@@ -15,9 +19,12 @@ class VEHICLETESTBED_API CommDistributor : public UObject
 public:
 
 	CommDistributor();
+	void Send(const FMessage<class T>&, UMessageSender sender, float frequency);
+	void Add(SNRModelFrequencyRange freqRange);
+	void Remove(SNRModelFrequencyRange freqRange);
 
 protected:
-	std::list<CommChannel> channelList;
+	TArray<CommChannel> channelList;
 	SNRModel defaultPropModel;
 	
 };

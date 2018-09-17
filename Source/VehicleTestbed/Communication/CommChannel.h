@@ -7,11 +7,12 @@
 class CommChannel
 {
 
-public:
-
-
 private:
 	float frequency;
-	std::list<UMessageReceiver> receivers;
-	SNRModel snrModel = new SNRModel();
+	TArray<UMessageReceiver> receivers;
+	SNRModel snrModel;
+
+public:
+	float GetFrequency();
+
 };

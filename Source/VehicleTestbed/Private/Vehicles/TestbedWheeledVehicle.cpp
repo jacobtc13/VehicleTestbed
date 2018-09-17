@@ -2,6 +2,8 @@
 
 #include "Components/BoxComponent.h"
 #include "Engine/CollisionProfile.h"
+#include "Kismet/GameplayStatics.h"
+#include "JackalWheeledVehicle.h"
 
 #include "WheeledVehicleMovementComponent.h"
 #include "CoreMinimal.h"
@@ -12,10 +14,6 @@ ATestbedWheeledVehicle::ATestbedWheeledVehicle()
 	// Use a spring arm to give the camera smooth, natural-feeling motion.
 	CameraSpringArm = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraSpringArm"));
 	CameraSpringArm->SetupAttachment(RootComponent);
-	CameraSpringArm->RelativeRotation = FRotator(-15.f, 0.f, 0.f);
-	CameraSpringArm->TargetArmLength = 400.0f;
-	CameraSpringArm->bEnableCameraLag = true;
-	CameraSpringArm->CameraLagSpeed = 3.0f;
 
 	// Create a camera and attach to our spring arm
 	ChaseCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("GameCamera"));
@@ -24,21 +22,18 @@ ATestbedWheeledVehicle::ATestbedWheeledVehicle()
 	// Create internal camera for viewing from inside vehicle
 	InternalCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("InternalCamera"));
 	InternalCamera->SetupAttachment(RootComponent);
+
+	// Create overhead camera for viewing from above the vehicle
+	OverheadCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("OverheadCamera"));
+	OverheadCamera->SetupAttachment(RootComponent);
+
+	ActiveCamera = ChaseCamera;
+	ActiveCamera->Activate();
 }
 
 ATestbedWheeledVehicle::~ATestbedWheeledVehicle()
 {
 
-}
-
-void ATestbedWheeledVehicle::SetupPlayerInputComponent(class UInputComponent* InputComponent)
-{
-	Super::SetupPlayerInputComponent(InputComponent);
-
-	// Binds actions to player input which are based on the functions in UE under Project Settings->Input
-	InputComponent->BindAxis("MoveForward", this, &ATestbedWheeledVehicle::SetThrottleInput);
-	InputComponent->BindAxis("MoveRight", this, &ATestbedWheeledVehicle::SetSteeringInput);
-	InputComponent->BindAxis("Brake", this, &ATestbedWheeledVehicle::SetBrakeInput);
 }
 
 void ATestbedWheeledVehicle::SetThrottleInput(float Value)
@@ -62,13 +57,24 @@ float ATestbedWheeledVehicle::GetVehicleForwardSpeed() const
 	return GetVehicleMovementComponent()->GetForwardSpeed() * 0.036f;
 }
 
-UCameraComponent * ATestbedWheeledVehicle::GetChaseCamera()
+void ATestbedWheeledVehicle::SwitchToOverheadCamera()
 {
-	return ChaseCamera;
+	SwitchActiveCamera(OverheadCamera);
 }
 
-UCameraComponent* ATestbedWheeledVehicle::GetInternalCamera()
+void ATestbedWheeledVehicle::SwitchToInternalCamera()
 {
-	return InternalCamera;
+	SwitchActiveCamera(InternalCamera);
 }
 
+void ATestbedWheeledVehicle::SwitchToChaseCamera()
+{
+	SwitchActiveCamera(ChaseCamera);
+}
+
+void ATestbedWheeledVehicle::SwitchActiveCamera(UCameraComponent* NewActiveCamera)
+{
+	ActiveCamera->Deactivate();
+	ActiveCamera = NewActiveCamera;
+	ActiveCamera->Activate();
+}

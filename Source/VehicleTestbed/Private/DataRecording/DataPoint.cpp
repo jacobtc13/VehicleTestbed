@@ -11,12 +11,6 @@ DataPoint::DataPoint()
 	SetTimestamp();
 }
 
-DataPoint::DataPoint(DataValueBase* dataValue)
-{
-	SetTimestamp();
-	Data.push_back(dataValue);
-}
-
 DataPoint::DataPoint(const DataPoint & otherDataPoint)
 {
 	Timestamp = otherDataPoint.Timestamp;
@@ -31,10 +25,7 @@ DataPoint & DataPoint::operator=(const DataPoint & otherDataPoint)
 	if (&otherDataPoint != this) // suicide guard
 	{
 		// Delete this datapoint
-		for (unsigned int i = 0; i < Data.size(); i++)
-		{
-			delete Data[i];
-		}
+		Data.clear();
 
 		// Copy DataPoint
 		Timestamp = otherDataPoint.Timestamp;
@@ -46,9 +37,10 @@ DataPoint & DataPoint::operator=(const DataPoint & otherDataPoint)
 	return *this;
 }
 
-DataPoint::~DataPoint() { }
-
-DataPoint DataPoint::NIL;
+DataPoint::~DataPoint() 
+{
+	Data.clear();
+}
 
 bool DataPoint::operator==(const DataPoint& other) const
 {
@@ -60,10 +52,9 @@ bool DataPoint::operator!=(const DataPoint& other) const
 	return !(*this == other);
 }
 
-void DataPoint::AddData(DataValueBase* dataValue)
+void DataPoint::AddData(std::unique_ptr<DataValueBase> dataValue)
 {
-
-	Data.push_back(dataValue->Clone());
+	Data.push_back(std::move(dataValue));
 }
 
 std::ostream & operator<<(std::ostream & os, const DataPoint & dataPoint)

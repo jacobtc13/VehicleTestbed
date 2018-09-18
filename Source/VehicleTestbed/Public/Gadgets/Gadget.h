@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "TestbedWheeledVehicle.h"
 #include "Gadget.generated.h"
 
 /**
@@ -17,6 +18,8 @@ public:
 	AGadget();
 
 	~AGadget();
+
+	void AttachComponent(ATestbedWheeledVehicle* Vehicle, FName SocketName);
 
 	///<summary>Activates the countermeasure based on desired behaviour</summary>
 	virtual void Activate();

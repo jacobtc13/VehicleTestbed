@@ -13,9 +13,9 @@
 * This class derives from APawn and includes the functionality for mounting/dismounting an AGadet via a dynamic array of UGadgetMouningNodes
 */
 UCLASS()
-class VEHICLETESTBED_API AMountablePawn : public ACharacter
+class VEHICLETESTBED_API AMountablePawn : public APawn
 {
-	GENERATED_UCLASS_BODY()
+	GENERATED_BODY()
 
 public:
 	AMountablePawn();

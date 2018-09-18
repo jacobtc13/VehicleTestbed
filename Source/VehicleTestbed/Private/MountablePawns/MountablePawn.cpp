@@ -8,6 +8,7 @@
 
 AMountablePawn::AMountablePawn()
 {
+
  	// Set this pawn to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
@@ -26,7 +27,7 @@ AMountablePawn::AMountablePawn()
 
 	FName fnWeaponSocket = TEXT("WeaponSocket");
 	m_cUClassWeapon = StaticLoadClass(UObject::StaticClass(), nullptr, TEXT("/Game/Blueprints/CharacterController/BP_Pistol.BP_Pistol_C"));
-	m_cWeapon = GetWorld()->SpawnActor<AWeapon>(m_cUClassWeapon, spawnParams);
+	m_cWeapon = GetWorld()->SpawnActor<AWeapon>(m_cUClassWeapon, spawnParams); 
 	m_cWeapon->AttachRootComponentTo(GetMesh(), fnWeaponSocket, EAttachLocation::SnapToTarget, true);*/
 }
 

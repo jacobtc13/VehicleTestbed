@@ -4,6 +4,8 @@
 
 #include "CoreMinimal.h"
 #include "Vehicles/TestbedWheeledVehicle.h"
+#include "Runtime/Engine/Classes/Components/SkeletalMeshComponent.h"
+#include "Gadget.h"
 #include "JackalWheeledVehicle.generated.h"
 
 UCLASS()
@@ -13,7 +15,16 @@ class VEHICLETESTBED_API AJackalWheeledVehicle : public ATestbedWheeledVehicle
 	GENERATED_BODY()
 
 public:
-	AJackalWheeledVehicle();
+	AJackalWheeledVehicle(const class FObjectInitializer& PCIP);
 
 	~AJackalWheeledVehicle();
+
+	void BeginPlay();
+
+private:
+	UPROPERTY(VisibleAnywhere, Category = "Mesh")
+	USkeletalMeshComponent* JackalMesh;
+
+	UPROPERTY(VisibleAnywhere, Category = "Gadget")
+	AGadget* Gadget;
 };

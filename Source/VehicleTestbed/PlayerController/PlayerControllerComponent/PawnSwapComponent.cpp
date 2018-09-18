@@ -32,14 +32,14 @@ void UPawnSwapComponent::CycleCharacterBackward()
 	CycleCharacter(false);
 }
 
-void UPawnSwapComponent::CycleCharacter(bool IsCycleForward)
+void UPawnSwapComponent::CycleCharacter(bool bIsCycleForward)
 {
 	// TODO: Once the actor is switched, the controller will need to be replaced with an AI controller
 
 	// Returns if the level is null or there are less than 2 actors to choose from
 	if (ControllablePawns.Num() < 2) return;
 
-	if (IsCycleForward)
+	if (bIsCycleForward)
 	{
 		if (!ControllablePawns.IsValidIndex(++CurrentPawnIndex))
 		{

@@ -35,5 +35,5 @@ private:
 	UFUNCTION()
 	///<summary>Cycles through the list of current actors to control</summary>
 	///<param name='IsCycleForward'>Is the character being changed to the next one in the list?</param>  
-	void CycleCharacter(bool IsCycleForward);
+	void CycleCharacter(bool bIsCycleForward);
 };

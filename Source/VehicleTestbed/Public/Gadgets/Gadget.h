@@ -4,18 +4,19 @@
 
 #include "CoreMinimal.h"
 #include "TestbedWheeledVehicle.h"
+#include "Engine/SkeletalMesh.h"
 #include "Gadget.generated.h"
 
 /**
  * Base class for mounting/dismounting to an AMountablePAwn
  */
 UCLASS()
-class VEHICLETESTBED_API AGadget : public AActor
+class VEHICLETESTBED_API AGadget : public APawn
 {
 	GENERATED_BODY()
 
 public:
-	AGadget();
+	AGadget(const class FObjectInitializer& PCIP);
 
 	~AGadget();
 
@@ -23,4 +24,8 @@ public:
 
 	///<summary>Activates the countermeasure based on desired behaviour</summary>
 	virtual void Activate();
+
+private:
+	UPROPERTY(Category=Mesh, VisibleAnywhere)
+	USkeletalMesh* GadgetMesh;
 };

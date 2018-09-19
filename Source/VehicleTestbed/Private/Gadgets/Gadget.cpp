@@ -2,15 +2,14 @@
 
 #include "Gadget.h"
 #include "ConstructorHelpers.h"
-#include "Engine/SkeletalMesh.h"
 
-AGadget::AGadget()
+AGadget::AGadget(const class FObjectInitializer& PCIP)
 {
-	ConstructorHelpers::FObjectFinder<USkeletalMesh> JackalAsset(TEXT("SkeletalMesh'/Game/Vehicle/Countermeasures/JackalProjectileCM.JackalProjectileCM'"));
-	if (JackalAsset.Succeeded())
-	{
-		RootComponent = Cast<USceneComponent>(JackalAsset.Object);
-	}
+	PrimaryActorTick.bCanEverTick = true;
+
+	//ConstructorHelpers::FObjectFinder<USkeletalMesh>MeshRef(TEXT("SkeletalMesh'/Game/Vehicle/Jackal/Jackal_Mesh.Jackal_Mesh'"));
+	GadgetMesh = CreateDefaultSubobject<USkeletalMesh>(TEXT("SkeletalMesh'/Game/Vehicle/Jackal/Jackal_Mesh.Jackal_Mesh'"));
+
 }
 
 AGadget::~AGadget()

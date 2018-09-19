@@ -39,11 +39,11 @@ AJackalWheeledVehicle::AJackalWheeledVehicle(const class FObjectInitializer& PCI
 	OverheadCamera->RelativeLocation = FVector(0.f, 0.f, 1000.f);
 	OverheadCamera->RelativeRotation = FRotator(-90.f, 0.f, 0.f);
 
-	Gadget = NewObject<AGadget>(AGadget::StaticClass());
+	/*Gadget = NewObject<AGadget>(AGadget::StaticClass());
 	if (Gadget != nullptr)
 	{
 		Gadget->AttachComponent(this, FName(TEXT("JackalShield")));
-	}
+	}*/
 }
 
 AJackalWheeledVehicle::~AJackalWheeledVehicle()
@@ -54,9 +54,14 @@ void AJackalWheeledVehicle::BeginPlay()
 {
 	Super::BeginPlay();
 
-	//JackalStaticMeshComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Jackal Mesh"));  //ConstructorHelpers::FObjectFinder<UStaticMeshComponent>MeshRef(TEXT("Game/ThirdPerson/Meshes/CubeMesh.CubeMesh"));
-	//const ConstructorHelpers::FObjectFinder<UStaticMesh> MeshObj(TEXT("Game/Vehicle/Countermeasures/JackalProjectileCM.JackalProjectileCM"));
+	//JackalStaticMeshComponent = CreateDefaultSubobject<AGadget>(TEXT("Jackal Mesh"));  //ConstructorHelpers::FObjectFinder<UStaticMeshComponent>MeshRef(TEXT("Game/ThirdPerson/Meshes/CubeMesh.CubeMesh"));
+	//const ConstructorHelpers::FObjectFinder<Blueprint> GadgetObj(TEXT("Blueprint'/Game/Vehicle/Countermeasures/JackalProjectileCM_BP.JackalProjectileCM_BP'"));
+	//auto Gadgeta = GadgetObj.Object;
 	//JackalStaticMeshComponent->SetStaticMesh(MeshObj.Object);
+	if (Gadget != nullptr)
+	{
+		Gadget->AttachComponent(this, FName(TEXT("JackalShield")));
+	}
 }
 
 

@@ -25,6 +25,6 @@ private:
 	UPROPERTY(VisibleAnywhere, Category = "Mesh")
 	USkeletalMeshComponent* JackalMesh;
 
-	UPROPERTY(VisibleAnywhere, Category = "Gadget")
+	UPROPERTY(EditAnywhere, Category = "Gadget")
 	AGadget* Gadget;
 };

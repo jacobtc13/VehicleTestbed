@@ -5,11 +5,11 @@
 
 AGadget::AGadget(const class FObjectInitializer& PCIP)
 {
-	PrimaryActorTick.bCanEverTick = true;
+	Mesh = CreateDefaultSubobject<USkeletalMeshComponent>("Mesh");
+	RootComponent = Cast<USceneComponent>(Mesh);
 
-	//ConstructorHelpers::FObjectFinder<USkeletalMesh>MeshRef(TEXT("SkeletalMesh'/Game/Vehicle/Jackal/Jackal_Mesh.Jackal_Mesh'"));
-	GadgetMesh = CreateDefaultSubobject<USkeletalMesh>(TEXT("SkeletalMesh'/Game/Vehicle/Jackal/Jackal_Mesh.Jackal_Mesh'"));
-
+	static ConstructorHelpers::FObjectFinder<USkeletalMeshComponent>MeshRef(TEXT("SkeletalMeshComponent'/Game/Vehicle/Jackal/Jackal_Mesh.Jackal_Mesh'"));
+	Mesh = MeshRef.Object;
 }
 
 AGadget::~AGadget()

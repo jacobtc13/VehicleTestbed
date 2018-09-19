@@ -26,6 +26,6 @@ public:
 	virtual void Activate();
 
 private:
-	UPROPERTY(Category=Mesh, VisibleAnywhere)
-	USkeletalMesh* GadgetMesh;
+	UPROPERTY(EditAnywhere)
+	USkeletalMeshComponent* Mesh;
 };

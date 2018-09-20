@@ -3,21 +3,21 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "TestbedWheeledVehicle.h"
-#include "Gadget.generated.h"
+#include "Gadgets/Gadget.h"
+#include "ProjectileCountermeasure.generated.h"
 
 /**
- * Base class for mounting/dismounting to an AMountablePAwn
+ * 
  */
 UCLASS()
-class VEHICLETESTBED_API AGadget : public APawn
+class VEHICLETESTBED_API AProjectileCountermeasure : public AGadget
 {
 	GENERATED_BODY()
-
+	
 public:
-	AGadget();
+	AProjectileCountermeasure();
 
-	~AGadget();
+	~AProjectileCountermeasure();
 
 	void AttachComponent(ATestbedWheeledVehicle* Vehicle, FName SocketName);
 
@@ -25,11 +25,11 @@ public:
 	virtual void Activate();
 
 protected:
-	bool bHasMesh = false;
+	bool bHasMesh = true;
 
 	wchar_t* SkeletalMeshLocation = TEXT("SkeletalMesh'/Game/Vehicle/Jackal/Jackal_Mesh.Jackal_Mesh'");
 
 	wchar_t* PhysicsAssetLocation = TEXT("PhysicsAsset'/Game/Vehicle/Jackal/Jackal_PhysicsAsset.Jackal_PhysicsAsset'");
-
-	void InitialiseMesh();
+	
+	
 };

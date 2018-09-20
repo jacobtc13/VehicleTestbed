@@ -27,9 +27,9 @@ public:
 protected:
 	bool bHasMesh = true;
 
-	wchar_t* SkeletalMeshLocation = TEXT("SkeletalMesh'/Game/Vehicle/Jackal/Jackal_Mesh.Jackal_Mesh'");
+	wchar_t* MeshLocation = TEXT("SkeletalMesh'/Game/Vehicle/Countermeasures/JackalProjectileCM.JackalProjectileCM'");
 
-	wchar_t* PhysicsAssetLocation = TEXT("PhysicsAsset'/Game/Vehicle/Jackal/Jackal_PhysicsAsset.Jackal_PhysicsAsset'");
+	wchar_t* PhysicsAssetLocation = TEXT("PhysicsAsset'/Game/Vehicle/Countermeasures/JackalProjectileCM_PhysicsAsset.JackalProjectileCM_PhysicsAsset'");
 	
-	
+	virtual void InitialiseMesh() override;
 };

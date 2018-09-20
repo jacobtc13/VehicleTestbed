@@ -14,7 +14,19 @@ class VEHICLETESTBED_API AShieldCountermeasure : public AGadget
 {
 	GENERATED_BODY()
 	
-	
+public:
+	AShieldCountermeasure();
+
+	~AShieldCountermeasure();
+
+protected:
+	bool bHasMesh = true;
+
+	wchar_t* MeshLocation = TEXT("StaticMesh'/Game/Vehicle/Countermeasures/JackalShield.JackalShield'");
+
+	wchar_t* PhysicsAssetLocation = TEXT("PhysicsAsset'/Game/Vehicle/Jackal/Jackal_PhysicsAsset.Jackal_PhysicsAsset'");
+
+	virtual void InitialiseMesh() override;
 	
 	
 };

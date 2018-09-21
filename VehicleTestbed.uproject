@@ -11,7 +11,8 @@
 			"AdditionalDependencies": [
 				"PhysXVehicles",
 				"Engine",
-				"ROSIntegrationVision"
+				"ROSIntegrationVision",
+				"ROSIntegration"
 			]
 		}
 	]

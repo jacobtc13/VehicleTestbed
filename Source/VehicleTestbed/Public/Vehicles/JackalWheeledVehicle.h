@@ -6,6 +6,9 @@
 #include "Vehicles/TestbedWheeledVehicle.h"
 #include "Runtime/Engine/Classes/Components/SkeletalMeshComponent.h"
 #include "Gadget.h"
+#include "Runtime/Engine/Classes/Engine/StaticMesh.h"
+#include "Engine/World.h"
+#include "ShieldCountermeasure.h"
 #include "JackalWheeledVehicle.generated.h"
 
 UCLASS()
@@ -21,10 +24,14 @@ public:
 
 	void BeginPlay();
 
+	void AttachGadget();
+
+	void PostInitializeComponents();
+
 private:
 	UPROPERTY(VisibleAnywhere, Category = "Mesh")
 	USkeletalMeshComponent* JackalMesh;
 
 	UPROPERTY(EditAnywhere, Category = "Gadget")
-	AGadget* Gadget;
+	AShieldCountermeasure* Gadget;
 };

@@ -27,6 +27,4 @@ protected:
 	wchar_t* PhysicsAssetLocation = TEXT("PhysicsAsset'/Game/Vehicle/Jackal/Jackal_PhysicsAsset.Jackal_PhysicsAsset'");
 
 	virtual void InitialiseMesh() override;
-	
-	
 };

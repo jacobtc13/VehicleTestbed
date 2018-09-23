@@ -58,9 +58,35 @@ void AJackalWheeledVehicle::BeginPlay()
 	//const ConstructorHelpers::FObjectFinder<Blueprint> GadgetObj(TEXT("Blueprint'/Game/Vehicle/Countermeasures/JackalProjectileCM_BP.JackalProjectileCM_BP'"));
 	//auto Gadgeta = GadgetObj.Object;
 	//JackalStaticMeshComponent->SetStaticMesh(MeshObj.Object);
-	if (Gadget != nullptr)
+	/*if (Gadget != nullptr)
 	{
 		Gadget->AttachComponent(this, FName(TEXT("JackalShield")));
+	}*/
+}
+
+void AJackalWheeledVehicle::PostInitializeComponents()
+{
+	Super::PostInitializeComponents();
+
+	AttachGadget();
+}
+
+void AJackalWheeledVehicle::AttachGadget()
+{
+	//static ConstructorHelpers::FClassFinder<AShieldCountermeasure> ShieldCountermeasure(TEXT("Class'/Script/VehicleTestbed.ShieldCountermeasure'"));
+	//if (ShieldCountermeasure.Succeeded())
+	//{
+		//Gadget = ShieldCountermeasure.Class;
+		//Gadget->AttachToComponent(Cast<USceneComponent>(GetMesh()->SkeletalMesh), FAttachmentTransformRules(EAttachmentRule::SnapToTarget, TEXT("ShieldSocket")));
+	//}
+	FActorSpawnParameters SpawnInfo;
+	SpawnInfo.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+	Gadget = this->GetWorld()->SpawnActor<AShieldCountermeasure>(AShieldCountermeasure::StaticClass(), FVector(93331.0, 182430.0, -49644.0), FRotator::ZeroRotator, SpawnInfo);
+	//Gadget = NewObject<AShieldCountermeasure>(AShieldCountermeasure::StaticClass());
+	if (Gadget != nullptr)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Reached"));
+		Gadget->AttachToActor(this, FAttachmentTransformRules::SnapToTargetIncludingScale, TEXT("ShieldSocket"));
 	}
 }
 

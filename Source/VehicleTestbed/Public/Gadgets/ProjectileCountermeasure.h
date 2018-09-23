@@ -25,8 +25,6 @@ public:
 	virtual void Activate();
 
 protected:
-	bool bHasMesh = true;
-
 	wchar_t* MeshLocation = TEXT("SkeletalMesh'/Game/Vehicle/Countermeasures/JackalProjectileCM.JackalProjectileCM'");
 
 	wchar_t* PhysicsAssetLocation = TEXT("PhysicsAsset'/Game/Vehicle/Countermeasures/JackalProjectileCM_PhysicsAsset.JackalProjectileCM_PhysicsAsset'");

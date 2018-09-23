@@ -7,10 +7,7 @@
 
 AShieldCountermeasure::AShieldCountermeasure()
 {
-	if (bHasMesh)
-	{
-		InitialiseMesh();
-	}
+	InitialiseMesh();
 }
 
 AShieldCountermeasure::~AShieldCountermeasure()
@@ -33,7 +30,7 @@ void AShieldCountermeasure::InitialiseMesh()
 	}
 	else
 	{
-		UE_LOG(LogTemp, Warning, TEXT("The Shield StaticMesh asset cannot be found. Please update the location in C++ if it has been moved."));
+		UE_LOG(LogTemp, Warning, TEXT("The Shield StaticMesh asset cannot be found. Please update the location in the C++ source if it has been moved."));
 	}
 
 	SetActorEnableCollision(true);

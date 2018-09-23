@@ -4,11 +4,10 @@
 
 #include "CoreMinimal.h"
 #include "Vehicles/TestbedWheeledVehicle.h"
-#include "Runtime/Engine/Classes/Components/SkeletalMeshComponent.h"
+
 #include "Gadget.h"
-#include "Runtime/Engine/Classes/Engine/StaticMesh.h"
-#include "Engine/World.h"
-#include "ShieldCountermeasure.h"
+#include "GadgetMountingNode.h"
+
 #include "JackalWheeledVehicle.generated.h"
 
 UCLASS()
@@ -18,13 +17,11 @@ class VEHICLETESTBED_API AJackalWheeledVehicle : public ATestbedWheeledVehicle
 	GENERATED_BODY()
 
 public:
-	AJackalWheeledVehicle(const class FObjectInitializer& PCIP);
+	AJackalWheeledVehicle();
 
 	~AJackalWheeledVehicle();
 
-	void BeginPlay();
-
-	void AttachGadget();
+	void AttachGadget(TSubclassOf<AGadget> GadgetClass, FName SocketName);
 
 	void PostInitializeComponents();
 
@@ -33,5 +30,11 @@ private:
 	USkeletalMeshComponent* JackalMesh;
 
 	UPROPERTY(EditAnywhere, Category = "Gadget")
-	AShieldCountermeasure* Gadget;
+	AGadget* Gadget;
+
+	UPROPERTY(EditAnywhere, Category = "Gadget")
+	TArray<FName> SocketNames = {};
+
+	UPROPERTY(EditAnywhere, Category = "Gadget")
+	TArray<UGadgetMountingNode*> GadgetMountingNodes;
 };

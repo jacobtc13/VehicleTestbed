@@ -20,8 +20,6 @@ public:
 	~AShieldCountermeasure();
 
 protected:
-	bool bHasMesh = true;
-
 	wchar_t* MeshLocation = TEXT("StaticMesh'/Game/Vehicle/Countermeasures/JackalShield.JackalShield'");
 
 	wchar_t* PhysicsAssetLocation = TEXT("PhysicsAsset'/Game/Vehicle/Jackal/Jackal_PhysicsAsset.Jackal_PhysicsAsset'");

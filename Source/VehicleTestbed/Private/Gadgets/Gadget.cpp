@@ -5,11 +5,6 @@
 AGadget::AGadget()
 {
 	PrimaryActorTick.bCanEverTick = true;
-
-	if (bHasMesh)
-	{
-		InitialiseMesh();
-	}
 }
 
 AGadget::~AGadget()

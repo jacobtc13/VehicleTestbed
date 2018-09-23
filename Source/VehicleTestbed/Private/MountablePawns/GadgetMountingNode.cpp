@@ -2,6 +2,8 @@
 
 #include "GadgetMountingNode.h"
 
+#include "TestbedWheeledVehicle.h"
+
 
 UGadgetMountingNode::UGadgetMountingNode()
 {
@@ -16,14 +18,17 @@ AGadget* UGadgetMountingNode::GetMountedGadget()
 	return mountedGadget;
 }
 
-void UGadgetMountingNode::SetMountedGadget(AGadget* toSetTo)
+AGadget* UGadgetMountingNode::SetMountedGadget(TSubclassOf<AGadget> GadgetClass, ATestbedWheeledVehicle* AttachingVehicle)
 {
-	mountedGadget = toSetTo;
+	
+	// TODO: change the FVector
+	return nullptr;
+
 }
 
 void UGadgetMountingNode::RemoveMountedGadget()
 {
-	SetMountedGadget(nullptr);
+	//SetMountedGadget(nullptr);
 }
 
 void UGadgetMountingNode::ActivateGadget()
@@ -31,7 +36,12 @@ void UGadgetMountingNode::ActivateGadget()
 	if (mountedGadget != nullptr) mountedGadget->Activate();
 }
 
-FName UGadgetMountingNode::GetRelatedSocketName()
+FName UGadgetMountingNode::GetSocketName()
 {
 	return relatedSocketName;
+}
+
+void UGadgetMountingNode::SetSocketName(FName SocketName)
+{
+	relatedSocketName = SocketName;
 }

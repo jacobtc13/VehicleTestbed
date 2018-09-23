@@ -25,7 +25,7 @@ public:
 
 	///<summary>Sets the internal refrence for the mounted gadget</summary>
 	///<params name='toSetTo'>Pointer to replace current refrence to mounted gadget</params>
-	void SetMountedGadget(AGadget* toSetTo);
+	AGadget* SetMountedGadget(TSubclassOf<AGadget> GadgetClass, ATestbedWheeledVehicle* AttachingVehicle);
 
 	///<summary>Sets the internal refrence for the mounted Pawn to nullptr</summary>
 	void RemoveMountedGadget();
@@ -35,13 +35,16 @@ public:
 
 	///<summary>Returns the name of the socket on the MountablePawn related to this node</summary>
 	///<returns>FName of related socket</returns>
-	FName GetRelatedSocketName();
+	FName GetSocketName();
+
+	void SetSocketName(FName SocketName);
 
 private:
 	UPROPERTY()
 	///<summary>Internal reference to the Gadget mounted at this position</summary>
 	AGadget* mountedGadget;
 
+	UPROPERTY()
 	///<summary>The name of the socket associated with this mounting node</summary>
 	FName relatedSocketName;
 };

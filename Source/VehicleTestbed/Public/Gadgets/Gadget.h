@@ -25,11 +25,9 @@ public:
 	virtual void Activate();
 
 protected:
-	bool bHasMesh = false;
+	wchar_t* MeshLocation;
 
-	wchar_t* MeshLocation;// = TEXT("SkeletalMesh'/Game/Vehicle/Jackal/Jackal_Mesh.Jackal_Mesh'");
-
-	wchar_t* PhysicsAssetLocation;// = TEXT("PhysicsAsset'/Game/Vehicle/Jackal/Jackal_PhysicsAsset.Jackal_PhysicsAsset'");
+	wchar_t* PhysicsAssetLocation;
 
 	virtual void InitialiseMesh();
 };

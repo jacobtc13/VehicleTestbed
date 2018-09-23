@@ -1,19 +1,18 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "ProjectileCountermeasure.h"
-#include "Runtime/Engine/Classes/PhysicsEngine/PhysicsAsset.h"
+
 #include "Engine/SkeletalMesh.h"
 #include "Runtime/Engine/Classes/Components/SkeletalMeshComponent.h"
+
+#include "Runtime/Engine/Classes/PhysicsEngine/PhysicsAsset.h"
+
 #include "ConstructorHelpers.h"
 
 AProjectileCountermeasure::AProjectileCountermeasure()
 {
 	PrimaryActorTick.bCanEverTick = true;
-
-	if (bHasMesh)
-	{
-		InitialiseMesh();
-	}
+	InitialiseMesh();
 }
 
 AProjectileCountermeasure::~AProjectileCountermeasure()
@@ -47,12 +46,12 @@ void AProjectileCountermeasure::InitialiseMesh()
 		}
 		else
 		{
-			UE_LOG(LogTemp, Warning, TEXT("The Gadget PhysicsAsset cannot be found. Please update the location in C++ if it has been moved."));
+			UE_LOG(LogTemp, Warning, TEXT("The Gadget PhysicsAsset cannot be found. Please update the location in the C++ source if it has been moved."));
 		}
 	}
 	else
 	{
-		UE_LOG(LogTemp, Warning, TEXT("The Gadget SkeletalMesh asset cannot be found. Please update the location in C++ if it has been moved."));
+		UE_LOG(LogTemp, Warning, TEXT("The Gadget SkeletalMesh asset cannot be found. Please update the location in the C++ source if it has been moved."));
 	}
 
 	SetActorEnableCollision(true);

@@ -21,7 +21,7 @@ public:
 
 	~AJackalWheeledVehicle();
 
-	void AttachGadget(TSubclassOf<AGadget> GadgetClass, FName SocketName);
+	void AttachGadget(TSubclassOf<AGadget> GadgetClass, USkeletalMeshSocket* Socket);
 
 	void PostInitializeComponents();
 
@@ -31,9 +31,6 @@ private:
 
 	UPROPERTY(EditAnywhere, Category = "Gadget")
 	AGadget* Gadget;
-
-	UPROPERTY(EditAnywhere, Category = "Gadget")
-	TArray<FName> SocketNames = {};
 
 	UPROPERTY(EditAnywhere, Category = "Gadget")
 	TArray<UGadgetMountingNode*> GadgetMountingNodes;

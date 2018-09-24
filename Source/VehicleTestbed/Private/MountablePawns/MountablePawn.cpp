@@ -62,10 +62,10 @@ void AMountablePawn::MountGadget(AGadget* toAdd, FName socketName)
 {
 	for(int i = 0; i < mountingNodes.Num(); i++)
 	{
-		if (socketName.IsEqual(mountingNodes[i]->GetSocketName()))
+		/*if (socketName.IsEqual(mountingNodes[i]->GetSocketName()))
 		{
 			//mountingNodes[i]->SetMountedGadget(toAdd);
-		}
+		}*/
 	}
 }
 
@@ -73,10 +73,10 @@ void AMountablePawn::DismountGadget(FName socketName)
 {
 	for(int i = 0; i < mountingNodes.Num(); i++)
 	{
-		if (mountingNodes[i]->GetSocketName() == socketName)
+		/*if (mountingNodes[i]->GetSocketName() == socketName)
 		{
 			//mountingNodes[i]->RemoveMountedGadget();
-		}
+		}*/
 	}
 }
 

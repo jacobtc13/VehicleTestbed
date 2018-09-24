@@ -35,9 +35,9 @@ public:
 
 	///<summary>Returns the name of the socket on the MountablePawn related to this node</summary>
 	///<returns>FName of related socket</returns>
-	FName GetSocketName();
+	USkeletalMeshSocket* GetMeshSocket();
 
-	void SetSocketName(FName SocketName);
+	void SetMeshSocket(USkeletalMeshSocket* Socket);
 
 private:
 	UPROPERTY()
@@ -46,5 +46,5 @@ private:
 
 	UPROPERTY()
 	///<summary>The name of the socket associated with this mounting node</summary>
-	FName relatedSocketName;
+	USkeletalMeshSocket* MeshSocket;
 };

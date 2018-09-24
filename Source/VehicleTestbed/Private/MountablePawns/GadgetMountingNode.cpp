@@ -1,7 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "GadgetMountingNode.h"
-
+#include "Engine/SkeletalMeshSocket.h"
 #include "TestbedWheeledVehicle.h"
 
 
@@ -36,12 +36,12 @@ void UGadgetMountingNode::ActivateGadget()
 	if (mountedGadget != nullptr) mountedGadget->Activate();
 }
 
-FName UGadgetMountingNode::GetSocketName()
+USkeletalMeshSocket* UGadgetMountingNode::GetMeshSocket()
 {
-	return relatedSocketName;
+	return MeshSocket;
 }
 
-void UGadgetMountingNode::SetSocketName(FName SocketName)
+void UGadgetMountingNode::SetMeshSocket(USkeletalMeshSocket* Socket)
 {
-	relatedSocketName = SocketName;
+	MeshSocket = Socket;
 }

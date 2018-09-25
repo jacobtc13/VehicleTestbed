@@ -6,10 +6,8 @@
 #include "Gadgets/Gadget.h"
 #include "ProjectileCountermeasure.generated.h"
 
-/**
- * 
- */
 UCLASS()
+///<summary>Gadget that represents a projectile firing countermeasure that can be mounted to a MountablePawn</summary>
 class VEHICLETESTBED_API AProjectileCountermeasure : public AGadget
 {
 	GENERATED_BODY()
@@ -19,8 +17,6 @@ public:
 
 	~AProjectileCountermeasure();
 
-	void AttachComponent(ATestbedWheeledVehicle* Vehicle, FName SocketName);
-
 	///<summary>Activates the countermeasure based on desired behaviour</summary>
 	virtual void Activate();
 
@@ -29,5 +25,6 @@ protected:
 
 	wchar_t* PhysicsAssetLocation = TEXT("PhysicsAsset'/Game/Vehicle/Countermeasures/JackalProjectileCM_PhysicsAsset.JackalProjectileCM_PhysicsAsset'");
 	
+	///<summary>Initializes the asset to use the appropriate mesh and physics assets</summary>
 	virtual void InitialiseMesh() override;
 };

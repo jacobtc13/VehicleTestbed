@@ -4,10 +4,8 @@
 
 #include "CoreMinimal.h"
 #include "Vehicles/TestbedWheeledVehicle.h"
-
 #include "Gadget.h"
 #include "GadgetMountingNode.h"
-
 #include "JackalWheeledVehicle.generated.h"
 
 UCLASS()
@@ -21,17 +19,5 @@ public:
 
 	~AJackalWheeledVehicle();
 
-	void AttachGadget(TSubclassOf<AGadget> GadgetClass, USkeletalMeshSocket* Socket);
-
 	void PostInitializeComponents();
-
-private:
-	UPROPERTY(VisibleAnywhere, Category = "Mesh")
-	USkeletalMeshComponent* JackalMesh;
-
-	UPROPERTY(EditAnywhere, Category = "Gadget")
-	AGadget* Gadget;
-
-	UPROPERTY(EditAnywhere, Category = "Gadget")
-	TArray<UGadgetMountingNode*> GadgetMountingNodes;
 };

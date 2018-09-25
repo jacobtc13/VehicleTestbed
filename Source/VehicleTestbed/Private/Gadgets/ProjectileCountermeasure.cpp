@@ -20,11 +20,6 @@ AProjectileCountermeasure::~AProjectileCountermeasure()
 
 }
 
-void AProjectileCountermeasure::AttachComponent(ATestbedWheeledVehicle* Vehicle, FName SocketName)
-{
-
-}
-
 void AProjectileCountermeasure::InitialiseMesh()
 {
 	// Set up the root scene component for the pawn
@@ -59,5 +54,5 @@ void AProjectileCountermeasure::InitialiseMesh()
 
 void AProjectileCountermeasure::Activate()
 {
-
+	// TODO: Implement firing method
 }

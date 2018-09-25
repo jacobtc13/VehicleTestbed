@@ -25,10 +25,7 @@ public:
 
 	///<summary>Sets the internal refrence for the mounted gadget</summary>
 	///<params name='toSetTo'>Pointer to replace current refrence to mounted gadget</params>
-	AGadget* SetMountedGadget(TSubclassOf<AGadget> GadgetClass, ATestbedWheeledVehicle* AttachingVehicle);
-
-	///<summary>Sets the internal refrence for the mounted Pawn to nullptr</summary>
-	void RemoveMountedGadget();
+	void SetMountedGadget(AGadget* Gadget);
 
 	///<summary>Calls the gadget's Activate method if there is a gadget attached</summary>
 	void ActivateGadget();
@@ -42,7 +39,7 @@ public:
 private:
 	UPROPERTY()
 	///<summary>Internal reference to the Gadget mounted at this position</summary>
-	AGadget* mountedGadget;
+	AGadget* MountedGadget;
 
 	UPROPERTY()
 	///<summary>The name of the socket associated with this mounting node</summary>

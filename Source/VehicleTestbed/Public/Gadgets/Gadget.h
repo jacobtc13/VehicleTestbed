@@ -3,7 +3,6 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "TestbedWheeledVehicle.h"
 #include "Gadget.generated.h"
 
 /**
@@ -19,8 +18,6 @@ public:
 
 	~AGadget();
 
-	void AttachComponent(ATestbedWheeledVehicle* Vehicle, FName SocketName);
-
 	///<summary>Activates the countermeasure based on desired behaviour</summary>
 	virtual void Activate();
 
@@ -29,5 +26,6 @@ protected:
 
 	wchar_t* PhysicsAssetLocation;
 
+	///<summary>Initializes the asset to use the appropriate mesh and physics assets</summary>
 	virtual void InitialiseMesh();
 };

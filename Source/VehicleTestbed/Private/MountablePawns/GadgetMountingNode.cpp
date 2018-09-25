@@ -15,25 +15,17 @@ UGadgetMountingNode::~UGadgetMountingNode()
 
 AGadget* UGadgetMountingNode::GetMountedGadget()
 {
-	return mountedGadget;
+	return MountedGadget;
 }
 
-AGadget* UGadgetMountingNode::SetMountedGadget(TSubclassOf<AGadget> GadgetClass, ATestbedWheeledVehicle* AttachingVehicle)
+void UGadgetMountingNode::SetMountedGadget(AGadget* Gadget)
 {
-	
-	// TODO: change the FVector
-	return nullptr;
-
-}
-
-void UGadgetMountingNode::RemoveMountedGadget()
-{
-	//SetMountedGadget(nullptr);
+	MountedGadget = Gadget;
 }
 
 void UGadgetMountingNode::ActivateGadget()
 {
-	if (mountedGadget != nullptr) mountedGadget->Activate();
+	if (MountedGadget != nullptr) MountedGadget->Activate();
 }
 
 USkeletalMeshSocket* UGadgetMountingNode::GetMeshSocket()

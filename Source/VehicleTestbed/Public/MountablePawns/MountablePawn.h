@@ -3,51 +3,37 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Gadget.h"
-#include "GameFramework/Character.h"
+#include "UObject/Interface.h"
 #include "GadgetMountingNode.h"
-#include "Engine/SkeletalMesh.h"
+#include "Engine/SkeletalMeshSocket.h"
 #include "MountablePawn.generated.h"
 
-/*
-* This class derives from APawn and includes the functionality for mounting/dismounting an AGadet via a dynamic array of UGadgetMouningNodes
-*/
-UCLASS()
-class VEHICLETESTBED_API AMountablePawn : public APawn
+UINTERFACE(MinimalAPI)
+///<summary>This is an interface that allows any class that uses it to have gadgets attached to their sockets on their skeletal mesh</summary>
+class UMountablePawn : public UInterface
+{
+	GENERATED_BODY()
+};
+
+class VEHICLETESTBED_API IMountablePawn
 {
 	GENERATED_BODY()
 
 public:
-	AMountablePawn();
+	UFUNCTION()
+	///<summary>Get a TArray of pointers to the UGadgetMouningNodes on the vehicle</summary>
+	///<returns>A TArray of pointers to the UGadgetMountingNodes</returns>
+	virtual TArray<UGadgetMountingNode*> GetMountingNodes() = 0;
 
-	~AMountablePawn();
+	UFUNCTION()
+	///<summary>Search for and returns a GadgetMountingNode that is associated with a socket name. Can return a nullptr if nothing is found</summary>
+	///<params name = 'SocketName'>The socket name that is associated with the GadgetMountingNode being searched for</params>
+	///<returns>The GadgetMountingNode that is associated with the SocketName</returns>
+	virtual UGadgetMountingNode* GetMountingNodeBySocketName(FName SocketName) = 0;
 
-	///<summary>Get a pointer to the internal list of UGadgetMouningNode pointers</summary>
-	///<returns>A pointer to the dynamic array of pointers to mounting nodes</returns>
-	TArray<UGadgetMountingNode*> GetMountingNodes();
-
-	virtual void Tick(float DeltaTime) override;
-
-	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
-
-	///<summary>Adds the AGadget toAdd to all UGadgetMountingNodes related to the socket denoted by FName toAddTo</summary>
-	///<params name = 'toAdd'>Pointer to AGadget to add to desired UGadgetNodes</params>
-	///<params name = 'socketName'>FName to select socket that will have gadget removed from</params>
-	void MountGadget(AGadget* toAdd, FName socketName);
-
-	///<summary>Removes the AGadget toDismount from all UGadgetMountingNodes in _mountingNodes</summary>
-	///<params name = 'toDismount'>The AGadget to be dismounted</params>
-	///<params name = 'socketName'>FName to select socket that will have gadget removed from</params>
-	void DismountGadget(FName socketName);
-
-protected:
-	virtual void BeginPlay() override;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Assets")
-	TArray<FName> socketNames;
-
-private:
-	UPROPERTY()
-	///<summary>Dynamic array of UGadgetMountingNode pointers, holds all of the locations a Gadget can be mounted on the Pawn</summary>
-	TArray<UGadgetMountingNode*> mountingNodes;
+	UFUNCTION()
+	///<summary> GadgetMountingNodes related to the socket denoted by FName toAddTo</summary>
+	///<params name = 'GadgetClass'>A static class of the gadget that will be attached to the pawn</params>
+	///<params name = 'Socket'>The socket on the skeletal mesh of the pawn</params>
+	virtual void MountGadget(TSubclassOf<AGadget> GadgetClass, USkeletalMeshSocket* Socket) = 0;
 };

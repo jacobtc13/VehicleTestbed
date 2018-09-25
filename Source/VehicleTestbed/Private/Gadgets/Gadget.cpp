@@ -11,11 +11,6 @@ AGadget::~AGadget()
 {
 }
 
-void AGadget::AttachComponent(ATestbedWheeledVehicle* Vehicle, FName SocketName)
-{
-	AttachToComponent(Cast<USceneComponent>(Vehicle->GetMesh()), FAttachmentTransformRules::SnapToTargetIncludingScale, SocketName);
-}
-
 void AGadget::Activate()
 {
 

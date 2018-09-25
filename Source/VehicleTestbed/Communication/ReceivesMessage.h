@@ -17,5 +17,5 @@ class VEHICLETESTBED_API IReceivesMessage : public ITranceiverBase
 	GENERATED_BODY()
 
 public:
-	virtual void Receive(Message message, float SNR);
+	virtual void Receive(const IMessage& message, float SNR) = 0;
 };

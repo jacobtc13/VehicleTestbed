@@ -2,21 +2,21 @@
 
 #include "Message.h"
 
-template <class Message>
-class TMessageTemplate : public FMessage
+template <class M>
+class TMessageTemplate : public IMessage
 {
 public:
-	typedef Message MessageType;
+	typedef M MessageType;
 
-	TMessageTemplate(const Message& aMessage)
+	TMessageTemplate(const MessageType& aMessage)
 		: message(aMessage)
 	{}
 
-	const Message& Get() const
+	const MessageType& Get() const
 	{
-		return message;
+		return Message;
 	}
 
 private:
-	const MessageType message;
+	const MessageType Message;
 };

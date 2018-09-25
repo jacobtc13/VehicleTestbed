@@ -16,6 +16,6 @@ class VEHICLETESTBED_API ITranceiverBase
 {
 	GENERATED_BODY()
 
-protected:
-	typedef FMessage::Message Message;
+public:
+	virtual FVector GetLocation() = 0;
 };

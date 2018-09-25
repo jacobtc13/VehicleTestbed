@@ -1,7 +1,16 @@
 #pragma once
 
-class FMessage
+#include "CoreMinimal.h"
+#include "UObject/Interface.h"
+#include "Message.generated.h"
+
+UINTERFACE(MinimalAPI)
+class UMessage : public UInterface
 {
-public:
-	typedef TSharedRef<FMessage> Message;
+	GENERATED_BODY()
+};
+
+class VEHICLETESTBED_API IMessage
+{
+	GENERATED_BODY()
 };

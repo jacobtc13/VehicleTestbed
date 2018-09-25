@@ -5,7 +5,7 @@
 AJackalWheeledVehicle::AJackalWheeledVehicle()
 {
 	// Setup Jackal specific camera distances
-	ChaseCamera->RelativeLocation = FVector(-300.0f, 15.0f, 50.0f);
+	ChaseCamera->RelativeLocation = FVector(-315.0f, 2.0f, 104.0f);
 	CameraSpringArm->RelativeRotation = FRotator(-15.f, 0.f, 0.f);
 	CameraSpringArm->TargetArmLength = 400.0f;
 	CameraSpringArm->bEnableCameraLag = true;

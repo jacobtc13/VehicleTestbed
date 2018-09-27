@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Configurator/RapidXML/rapidxml.hpp"
+
 #include "CoreMinimal.h"
 #include "AgentConfig.generated.h"
 
@@ -11,6 +13,9 @@ class VEHICLETESTBED_API UAgentConfig : public UObject
 public:
 	UAgentConfig();
 	~UAgentConfig();
+
+	virtual rapidxml::xml_node<>* GetXMLNode();
+
 protected:
 	UClass * AgentClass;
 };

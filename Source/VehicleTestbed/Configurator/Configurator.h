@@ -1,6 +1,12 @@
 #pragma once
 
 #include "Configurator/RapidXML/rapidxml.hpp"
+#include "Configurator/RapidXML/rapidxml_print.hpp"
+#include <iostream>
+#include <fstream>
+#include <string>
+
+#include "Configurator/AgentConfig.h"
 
 #include "CoreMinimal.h"
 #include "Kismet/BlueprintFunctionLibrary.h"
@@ -15,9 +21,8 @@ class UConfigurator : public UBlueprintFunctionLibrary
 	GENERATED_BODY()
 
 public:
+	static UAgentConfig* LoadAgentConfig(std::string Filename);
 
-	static void LoadAgentConfig(FString file);
-
-	static void SaveAgentConfig(FString file, UClass* agent);
+	static void SaveAgentConfig(std::string Filename, UAgentConfig* AgentConfig);
 };
 

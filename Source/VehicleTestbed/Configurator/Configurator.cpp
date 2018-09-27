@@ -1,11 +1,11 @@
 #include "Configurator.h"
 
-UAgentConfig* UConfigurator::LoadAgentConfig(std::string Filename)
+UConfigBase* UConfigurator::LoadConfig(std::string Filename)
 {
 	using namespace rapidxml;
 	xml_document<> doc;
 
-	UAgentConfig* AgentConfig = NewObject<UAgentConfig>();
+	UConfigBase* configObject;
 
 	// Read in and parse file
 	std::ifstream is(Filename, std::ifstream::binary);
@@ -31,12 +31,26 @@ UAgentConfig* UConfigurator::LoadAgentConfig(std::string Filename)
 		// error occured reading file
 	}
 	// TODO: define code for decoding the DOM and setting the parameters of the AgentConfig
+	std::string firstNodeName = doc.first_node()->name();
+	if (firstNodeName == "Agent")
+	{
+		configObject = NewObject<UAgentConfig>();
+	}
+	else if (firstNodeName == "Scenario")
+	{
+		//configObject = NewObject<UScenario>(doc.first_node);
+		configObject = NewObject<UConfigBase>();
+	}
+	else
+	{
+		configObject = NewObject<UConfigBase>();
+	}
 
-	return AgentConfig;
+	return configObject;
 
 }
 
-void UConfigurator::SaveAgentConfig(std::string Filename, UAgentConfig* AgentConfig)
+void UConfigurator::SaveConfig(std::string Filename, UAgentConfig* AgentConfig)
 {
 	using namespace rapidxml;
 	xml_document<> doc;

@@ -21,8 +21,8 @@ class UConfigurator : public UBlueprintFunctionLibrary
 	GENERATED_BODY()
 
 public:
-	static UAgentConfig* LoadAgentConfig(std::string Filename);
+	static UConfigBase* LoadConfig(std::string Filename);
 
-	static void SaveAgentConfig(std::string Filename, UAgentConfig* AgentConfig);
+	static void SaveConfig(std::string Filename, UAgentConfig* AgentConfig);
 };
 

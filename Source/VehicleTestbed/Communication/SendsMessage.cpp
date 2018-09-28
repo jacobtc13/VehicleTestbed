@@ -2,6 +2,11 @@
 
 void ISendsMessage::Initialization(float aFrequency, float aMaxSignalStrength)
 {
-	frequency = aFrequency;
-	maxSignalStrength = aMaxSignalStrength;
+	Frequency = aFrequency;
+	MaxSignalStrength = aMaxSignalStrength;
+}
+
+void ISendsMessage::ChangeFrequency(const float& NewFrequency)
+{
+	Frequency = NewFrequency;
 }

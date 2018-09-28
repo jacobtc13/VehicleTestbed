@@ -18,12 +18,16 @@ class VEHICLETESTBED_API ISendsMessage : public ITranceiverBase
 
 public:
 	virtual void Initialization(float aFrequency, float aMaxSignalStrength);
-	virtual void Send(const IMessage& Message, float SignalStrength) = 0;
-	virtual void CalculatePower(float transmissionPower, float targetFrequency, float actualFrequency) = 0;
+
+	virtual void Send(const IMessage& Message, float SignalStrength = 1) = 0;
+
+	virtual float CalculatePower(float TransmissionPower, float TargetFrequency, float ActualFrequency) const = 0;
+
+	virtual void ChangeFrequency(const float& NewFrequency);
 
 protected:
-	float frequency;
-	float maxSignalStrength;
+	float Frequency;
+	float MaxSignalStrength;
 
 private:
 	//TODO Add friend methods from CommunicationDistributor

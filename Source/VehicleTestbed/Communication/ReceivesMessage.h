@@ -18,4 +18,15 @@ class VEHICLETESTBED_API IReceivesMessage : public ITranceiverBase
 
 public:
 	virtual void Receive(const IMessage& message, float SNR) = 0;
+
+	virtual void Initialization(float aMinSNR);
+
+protected:
+	float MinSNR;
+
+	enum EResponseCode
+	{
+		Received,
+		Garbled
+	};
 };

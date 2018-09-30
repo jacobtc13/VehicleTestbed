@@ -1,2 +1,6 @@
+// Fill out your copyright notice in the Description page of Project Settings.
+
 #include "SNRModel.h"
 
+
+// Add default functionality here for any ISNRModel functions that are not pure virtual.

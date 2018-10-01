@@ -4,6 +4,8 @@
 
 #include "CoreMinimal.h"
 #include "UObject/Interface.h"
+#include "MessageSender.h"
+#include "MessageReceiver.h"
 #include "SNRModel.generated.h"
 
 // This class does not need to be modified.
@@ -22,6 +24,6 @@ class VEHICLETESTBED_API ISNRModel
 
 	// Add interface functions to this class. This is the class that will be inherited to implement this interface.
 public:
-	
+	float CalculateSNR(UMessageSender sender, UMessageReceiver receiver);
 	
 };

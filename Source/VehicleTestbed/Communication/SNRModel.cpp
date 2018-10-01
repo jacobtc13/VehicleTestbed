@@ -4,3 +4,7 @@
 
 
 // Add default functionality here for any ISNRModel functions that are not pure virtual.
+float ISNRModel::CalculateSNR(UMessageSender sender, UMessageReceiver receiver)
+{
+
+}

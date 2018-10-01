@@ -4,13 +4,32 @@
 
 
 // Add default functionality here for any ICommDistributor functions that are not pure virtual.
-UCommDistributor::CommDistributor()
+ICommDistributor::CommDistributor()
 {
 
 }
 
 //Sends the message to the designated channel.
-void Send(const FMessage<class T>&, UMessageSender sender, float frequency)
+void ICommDistributor::Send(const FMessage<class T>&, UMessageSender sender, float frequency)
+{
+	if (CheckChannel(frequency))
+	{
+
+	}
+}
+
+void ICommDistributor::Add(SNRModelFrequencyRange freqRange)
+{
+	//TODO: Make this method add new channels into the TArray
+
+}
+
+void ICommDistributor::Remove(SNRModelFrequencyRange freqRange)
+{
+	//TODO: Make this Method Remove the channels from the TArray
+}
+
+bool ICommDistributor::CheckForChannel(float frequency)
 {
 	//Check if there are any channels at all
 	if (channelList.IsValidIndex)
@@ -18,30 +37,16 @@ void Send(const FMessage<class T>&, UMessageSender sender, float frequency)
 		if (channelList.Num != 0)
 		{
 			//Check if the channel exists
-			for (ICommChannel::channel : UCommDistributor::channelList)
+			for (ICommChannel::channel : ICommDistributor::channelList)
 			{
 				//Channel exists
 				if (channel.GetFrequency == frequency)
 				{
-					//Send the message in that channel
-					return;
+					return true;
 				}
 			}
-
 			//Channel does not exist
-			//TODO:Add functionality that adds a new Channel then send the message
 		}
 	}
-
-
-}
-
-void UCommDistributor::Add(SNRModelFrequencyRange freqRange)
-{
-	//TODO: Make this method add new channels into the TArray
-}
-
-void UCommDistributor::Remove(SNRModelFrequencyRange freqRange)
-{
-	//TODO: Make this Method Remove the channels from the TArray
+	return false;
 }

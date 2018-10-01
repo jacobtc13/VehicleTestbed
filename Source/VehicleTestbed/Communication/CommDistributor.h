@@ -19,6 +19,7 @@ UINTERFACE(MinimalAPI)
 class UCommDistributor : public UInterface
 {
 	GENERATED_BODY()
+
 };
 
 /**
@@ -29,16 +30,16 @@ class VEHICLETESTBED_API ICommDistributor
 	GENERATED_BODY()
 
 	// Add interface functions to this class. This is the class that will be inherited to implement this interface.
+	
 	public:
-
 		CommDistributor();
 		void Send(const FMessage<class T>&, UMessageSender sender, float frequency);
 		void Add(ISNRModelFrequencyRange::SNRModelFrequencyRange freqRange);
 		void Remove(ISNRModelFrequencyRange::SNRModelFrequencyRange freqRange);
+		bool CheckForChannel(float frequency);
 
 	protected:
 		TArray<CommChannel> channelList;
 		SNRModel defaultPropModel;
-	
 	
 };

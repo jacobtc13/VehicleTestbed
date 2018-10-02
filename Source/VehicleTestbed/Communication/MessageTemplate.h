@@ -9,7 +9,7 @@ public:
 	typedef M MessageType;
 
 	TMessageTemplate(const MessageType& aMessage)
-		: message(aMessage)
+		: Message(aMessage)
 	{}
 
 	const MessageType& Get() const

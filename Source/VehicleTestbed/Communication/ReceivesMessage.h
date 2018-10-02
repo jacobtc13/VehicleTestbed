@@ -21,12 +21,12 @@ public:
 
 	virtual void Initialization(float aMinSNR);
 
-protected:
-	float MinSNR;
-
 	enum EResponseCode
 	{
 		Received,
 		Garbled
 	};
+
+protected:
+	float MinSNR;
 };

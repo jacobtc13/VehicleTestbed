@@ -1,0 +1,41 @@
+#include "TransceiverControllerComponent.h"
+#include "Communication/MessageTemplate.h"
+#include "Communication/ReceivesMessage.h"
+
+void UTransceiverControllerComponent::SetupPlayerInputComponent(UInputComponent* InputComponent)
+{
+
+}
+
+
+void UTransceiverControllerComponent::InterpretMessage(const IMessage & Message)
+{
+	typedef IReceivesMessage::EResponseCode EResponseCode;
+	if (Cast<TMessageTemplate<EResponseCode>>(&Message) != nullptr)
+	{
+		EResponseCode ResponseCode = Cast<TMessageTemplate<EResponseCode>>(&Message)->Get();
+		switch (ResponseCode)
+		{
+		case EResponseCode::Garbled:
+		{
+			// Logic of attempting to resend the message would go here
+			// In this example transceiver the message is not resent
+			break;
+		}
+		case EResponseCode::Received:
+		{
+			// Logic of what to do when the receiver confirms they have received the message
+			break;
+		}
+		default:
+		{
+			break;
+		}
+		}
+	}
+	else
+	{
+		// Doesn't understand the message
+		// Assume it is not meant for this unit
+	}
+}

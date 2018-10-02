@@ -4,12 +4,12 @@
 #include "Communication/ReceivesMessage.h"
 
 #include "CoreMinimal.h"
-#include "PCComponent.h"
+#include "Components/ActorComponent.h"
 #include "PerfectTransceiver.generated.h"
 
 
 UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
-class VEHICLETESTBED_API UPerfectTransceiver : public UPCComponent, public ISendsMessage, public IReceivesMessage
+class VEHICLETESTBED_API UPerfectTransceiver : public UActorComponent, public ISendsMessage, public IReceivesMessage
 {
 	GENERATED_BODY()
 
@@ -20,8 +20,6 @@ public:
 	void Init(float aFrequency, float aMaxSignalStrength, float aMinSNR);
 
 public:
-	virtual void SetupPlayerInputComponent(UInputComponent* InputComponent) override;
-
 	virtual void Send(const IMessage& Message, float SignalStrength = 1) override;
 
 	virtual float CalculatePower(float TransmissionPower, float TargetFrequency, float ActualFrequency) const override;

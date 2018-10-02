@@ -1,6 +1,9 @@
 #include "PerfectTransceiver.h"
 #include "GameFramework/Actor.h"
+#include "GameFramework/Pawn.h"
+#include "GameFramework/Controller.h"
 #include "Communication/MessageTemplate.h"
+#include "PlayerController/PlayerControllerComponent/TransceiverControllerComponent.h"
 
 UPerfectTransceiver::UPerfectTransceiver()
 {
@@ -21,12 +24,6 @@ void UPerfectTransceiver::Init(float aFrequency, float aMaxSignalStrength, float
 	ISendsMessage::Initialization(aFrequency, aMaxSignalStrength);
 	IReceivesMessage::Initialization(aMinSNR);
 }
-
-void SetupPlayerInputComponent(UInputComponent* InputComponent)
-{
-	// No inputs to setup
-}
-
 void UPerfectTransceiver::Send(const IMessage& Message, float SignalStrength)
 {
 
@@ -43,6 +40,8 @@ float UPerfectTransceiver::CalculatePower(float TransmissionPower, float TargetF
 
 void UPerfectTransceiver::Receive(const IMessage& message, float SNR)
 {
+	UEventRecorder::RecordEvent(TEXT("Received message"), this);
+
 	if (SNR <= 0)
 	{
 		// Can't distinguish from background noise
@@ -51,28 +50,15 @@ void UPerfectTransceiver::Receive(const IMessage& message, float SNR)
 	else if (SNR < MinSNR)
 	{
 		// Heard something but cannot understand message
-		//Send(TMessageTemplate<EResponseCode>(Garbled));
 	}
 	else
 	{
 		// Received Message loud enough to understand
-		Send(TMessageTemplate<EResponseCode>(Received));
-
-		if (Cast<TMessageTemplate<EResponseCode>>(&message) != nullptr)
+		// Send it to the player controller of the pawn this is attached to
+		UTransceiverControllerComponent* TransceiverLogic = ((APawn*)GetOwner())->GetController()->FindComponentByClass<UTransceiverControllerComponent>();
+		if (TransceiverLogic != nullptr)
 		{
-			EResponseCode ResponseCode = Cast<TMessageTemplate<EResponseCode>>(&message)->Get();
-			switch (ResponseCode)
-			{
-			case Garbled:
-				// Logic of attempting to resend the message would go here
-				// In this example transceiver the message is not resent
-				break;
-			case Received:
-				// Logic of what to do when the receiver confirms they have received the message
-				break;
-			default:
-				break;
-			}
+			TransceiverLogic->InterpretMessage(message);
 		}
 	}
 }

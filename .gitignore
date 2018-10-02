@@ -12,6 +12,6 @@ Saved
 *.suo
 *.xcodeproj
 *.xcworkspace
+data.csv
 Docs/
-
 !/Plugins/RosIntegration-master/ThirdParty/bson/lib

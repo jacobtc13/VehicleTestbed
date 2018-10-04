@@ -30,7 +30,7 @@ public:
 	float GetMinFrequency();
 
 	void SetMaxFrequency(float);
-	float GetMaxFrequency()
+	float GetMaxFrequency();
 
 	void SetSNRModel(ISNRModel);
 	ISNRModel SetSNRModel();

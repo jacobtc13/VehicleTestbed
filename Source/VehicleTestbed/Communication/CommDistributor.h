@@ -25,21 +25,23 @@ class UCommDistributor : public UInterface
 /**
  * 
  */
-class VEHICLETESTBED_API ICommDistributor
+static class VEHICLETESTBED_API ICommDistributor
 {
 	GENERATED_BODY()
 
 	// Add interface functions to this class. This is the class that will be inherited to implement this interface.
 	
 	public:
-		CommDistributor();
+		ICommDistributor();
 		void Send(const FMessage<class T>&, UMessageSender sender, float frequency);
-		void Add(ISNRModelFrequencyRange::SNRModelFrequencyRange freqRange);
-		void Remove(ISNRModelFrequencyRange::SNRModelFrequencyRange freqRange);
+		void AddToChannel(float frequency, UMessageReceiver receiver);
+		void RemoveFromChannel(float frequency, UMessageReceiver receiver);
 		bool CheckForChannel(float frequency);
+		void CreateChannel(float frequency);
+		ICommChannel GetChannels(float frequency, float variance);
 
 	protected:
-		TArray<CommChannel> channelList;
-		SNRModel defaultPropModel;
+		TArray<ICommChannel> channelList;
+		//SNRModel defaultPropModel;
 	
 };

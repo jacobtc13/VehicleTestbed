@@ -25,13 +25,16 @@ class VEHICLETESTBED_API ICommChannel
 	GENERATED_BODY()
 
 	// Add interface functions to this class. This is the class that will be inherited to implement this interface.
+	
 private:
 	float frequency;
 	TArray<UMessageReceiver> receivers;
-	SNRModel snrModel;
+	ISNRModel snrModel;
 
 public:
+	ICommChannel(float);
 	float GetFrequency();
+	void AddReceivers(TArray <UMessageReceiver>);
 	
 	
 };

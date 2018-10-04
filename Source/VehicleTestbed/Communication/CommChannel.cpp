@@ -2,6 +2,10 @@
 
 #include "CommChannel.h"
 
+ICommChannel::ICommChannel(float channel)
+{
+	ICommChannel::frequency = channel;
+}
 
 // Add default functionality here for any ICommChannel functions that are not pure virtual.
 

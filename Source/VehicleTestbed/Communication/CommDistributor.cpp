@@ -4,30 +4,39 @@
 
 
 // Add default functionality here for any ICommDistributor functions that are not pure virtual.
-ICommDistributor::CommDistributor()
+ICommDistributor::ICommDistributor()
 {
 
 }
 
 //Sends the message to the designated channel.
-void ICommDistributor::Send(const FMessage<class T>&, UMessageSender sender, float frequency)
+void ICommDistributor::Send(const FMessage<class T>&, UMessageSender sender, float variance)
 {
-	if (CheckChannel(frequency))
-	{
-
-	}
+	//TODO: Create functionality
 }
 
-void ICommDistributor::Add(SNRModelFrequencyRange freqRange)
+//Creates a channel, if required, and adds that reciever to that channel
+void ICommDistributor::AddToChannel(float frequency, UMessageReceiver receiver)
 {
 	//TODO: Make this method add new channels into the TArray
-
+	//Channel does not exist
+	if (!CheckForChannel(frequency))
+	{
+		CreateChannel(frequency);
+	}
+	for (ICommChannel channel : GetChannels(frequency, 0))//TODO: workout how to get the GETCHANNELs here
+	{
+		//TODO: add reciever to the newly created channel
+	}
 }
-
-void ICommDistributor::Remove(SNRModelFrequencyRange freqRange)
+	
+//TODO: Make a method that removes Recievers from channels
+/*
+void ICommDistributor::RemoveFromChannel(float frequency, UMessageReceiver receiver)
 {
 	//TODO: Make this Method Remove the channels from the TArray
 }
+*/
 
 bool ICommDistributor::CheckForChannel(float frequency)
 {
@@ -37,10 +46,10 @@ bool ICommDistributor::CheckForChannel(float frequency)
 		if (channelList.Num != 0)
 		{
 			//Check if the channel exists
-			for (ICommChannel::channel : ICommDistributor::channelList)
+			for (ICommDistributor channel : ICommDistributor::channelList)//TODO: workout how to get the channellist here
 			{
 				//Channel exists
-				if (channel.GetFrequency == frequency)
+				if (channel.GetFrequency == frequency)//TODO: workout how to get the frequency here
 				{
 					return true;
 				}
@@ -49,4 +58,26 @@ bool ICommDistributor::CheckForChannel(float frequency)
 		}
 	}
 	return false;
+}
+
+//Creates a channel and adds it to the list of channels
+void ICommDistributor::CreateChannel(float frequency)
+{
+	this::channelList.Add(new ICommChannel(frequency));
+}
+
+//Retrieves an array of channels that are in the frequency range
+TArray<ICommChannel> ICommDistributor::GetChannels(float frequency, float variance)//TODO: workout
+{
+	TArray<ICommChannel> output;
+	float upperRange = frequency + variance;
+	float lowerRange = frequency - variance;
+	for (ICommChannel channel : channelList)//TODO: workout how to get the channellist here
+	{
+		if (channel.GetFrequency() >= lowerRange  && channel.GetFrequency() <= upperRange)
+		{
+			output.Add(channel);
+		}
+	}
+	return output;
 }

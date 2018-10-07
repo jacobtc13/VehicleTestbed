@@ -11,7 +11,7 @@
 UINTERFACE(MinimalAPI)
 class USNRModelFrequencyRange : public UInterface
 {
-	GENERATED_BODY()
+	//GENERATED_BODY()
 };
 
 /**
@@ -19,7 +19,7 @@ class USNRModelFrequencyRange : public UInterface
  */
 class VEHICLETESTBED_API ISNRModelFrequencyRange
 {
-	GENERATED_BODY()
+	//GENERATED_BODY()
 
 	// Add interface functions to this class. This is the class that will be inherited to implement this interface.
 private:

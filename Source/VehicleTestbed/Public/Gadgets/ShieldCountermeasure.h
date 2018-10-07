@@ -13,8 +13,10 @@ class VEHICLETESTBED_API AShieldCountermeasure : public AGadget
 	GENERATED_BODY()
 	
 public:
+	///<summary>Default Constructor</summary>
 	AShieldCountermeasure();
 
+	///<summary>Default Deconstructor</summary>
 	~AShieldCountermeasure();
 
 protected:

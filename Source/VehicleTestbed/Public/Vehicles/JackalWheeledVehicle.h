@@ -15,9 +15,12 @@ class VEHICLETESTBED_API AJackalWheeledVehicle : public ATestbedWheeledVehicle
 	GENERATED_BODY()
 
 public:
+	///<summary>Default Constructor</summary>
 	AJackalWheeledVehicle();
 
+	///<summary>Default Deconstructor</summary>
 	~AJackalWheeledVehicle();
 
+	///<summary>Allow actors to initialize themselves on the C++ side</summary>
 	void PostInitializeComponents();
 };

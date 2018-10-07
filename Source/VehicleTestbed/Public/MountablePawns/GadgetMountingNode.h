@@ -15,8 +15,10 @@ class VEHICLETESTBED_API UGadgetMountingNode : public UObject
 	GENERATED_BODY()
 
 public:
+	///<summary>Default Constructor</summary>
 	UGadgetMountingNode();
 
+	///<summary>Default Deconstructor</summary>
 	~UGadgetMountingNode();
 
 	///<summary>Returns the pointer to the mounted gadget, can be nullptr</summary>
@@ -34,6 +36,8 @@ public:
 	///<returns>FName of related socket</returns>
 	USkeletalMeshSocket* GetMeshSocket();
 
+	///<summary>Sets the SkeletalMeshSocket for the GadgetMountingNode</summary>
+	///<params name='Socket'>Pointer to the SkeletalMeshSocket that will be set</params>
 	void SetMeshSocket(USkeletalMeshSocket* Socket);
 
 private:

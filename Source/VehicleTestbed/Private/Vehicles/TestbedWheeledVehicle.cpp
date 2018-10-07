@@ -4,7 +4,7 @@
 #include "Engine/CollisionProfile.h"
 #include "Kismet/GameplayStatics.h"
 
-#include "ShieldCountermeasure.h"
+#include "ProjectileCountermeasure.h"
 #include "Runtime/Engine/Classes/Components/SkeletalMeshComponent.h"
 #include "Engine/SkeletalMeshSocket.h"
 #include "Runtime/Engine/Classes/PhysicsEngine/PhysicsAsset.h"
@@ -57,8 +57,6 @@ void ATestbedWheeledVehicle::PostInitializeComponents()
 			MountingNode->SetMeshSocket(AllSockets[i]);
 			GadgetMountingNodes.Add(MountingNode);
 		}
-
-		MountGadget(AShieldCountermeasure::StaticClass(), AllSockets[0]);
 	}
 }
 

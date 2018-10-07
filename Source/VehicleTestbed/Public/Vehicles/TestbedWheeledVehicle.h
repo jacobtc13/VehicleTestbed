@@ -16,10 +16,13 @@ class VEHICLETESTBED_API ATestbedWheeledVehicle : public AWheeledVehicle, public
 	GENERATED_BODY()
 
 public:
+	///<summary>Default Constructor</summary>
 	ATestbedWheeledVehicle();
 	
+	///<summary>Default Deconstructor</summary>
 	~ATestbedWheeledVehicle();
 
+	///<summary>Allow actors to initialize themselves on the C++ side</summary>
 	void PostInitializeComponents();
 
 	UFUNCTION()

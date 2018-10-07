@@ -29,7 +29,7 @@ AJackalWheeledVehicle::~AJackalWheeledVehicle()
 
 void AJackalWheeledVehicle::PostInitializeComponents()
 {
-	Super::PostInitializeComponents();
+	ATestbedWheeledVehicle::PostInitializeComponents();
 }
 
 

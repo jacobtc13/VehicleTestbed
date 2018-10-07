@@ -14,8 +14,10 @@ class VEHICLETESTBED_API AGadget : public APawn
 	GENERATED_BODY()
 
 public:
+	///<summary>Default Constructor</summary>
 	AGadget();
 
+	///<summary>Default Deconstructor</summary>
 	~AGadget();
 
 	///<summary>Activates the countermeasure based on desired behaviour</summary>

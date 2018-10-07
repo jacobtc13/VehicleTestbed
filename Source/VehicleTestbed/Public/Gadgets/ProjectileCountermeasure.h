@@ -13,8 +13,10 @@ class VEHICLETESTBED_API AProjectileCountermeasure : public AGadget
 	GENERATED_BODY()
 	
 public:
+	///<summary>Default Constructor</summary>
 	AProjectileCountermeasure();
 
+	///<summary>Default Deconstructor</summary>
 	~AProjectileCountermeasure();
 
 	///<summary>Activates the countermeasure based on desired behaviour</summary>

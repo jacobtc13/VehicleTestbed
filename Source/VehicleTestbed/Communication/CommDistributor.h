@@ -37,6 +37,7 @@ static class VEHICLETESTBED_API ICommDistributor
 		void AddToChannel(float frequency, UMessageReceiver receiver);
 		void RemoveFromChannel(float frequency, UMessageReceiver receiver);
 		bool CheckForChannel(float frequency);
+		bool CheckForMultiChannels(float frequency, float variance);
 		void CreateChannel(float frequency);
 		TArray<ICommChannel> GetChannels(float frequency, float variance);
 

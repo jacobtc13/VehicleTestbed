@@ -35,6 +35,5 @@ public:
 	ICommChannel(float);
 	float GetFrequency();
 	void AddReceivers(TArray <UMessageReceiver>);
-	
-	
+	void RemoveReceivers(TArray <UMessageReceiver> input);
 };

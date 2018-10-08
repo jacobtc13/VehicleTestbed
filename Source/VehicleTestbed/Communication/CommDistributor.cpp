@@ -12,33 +12,49 @@ ICommDistributor::ICommDistributor()
 //Sends the message to the designated channel.
 void ICommDistributor::Send(const FMessage<class T>& message, UMessageSender sender, float variance)
 {
-	//TODO: Create functionality
-
+	//TODO: Need to talk to Matt about getting the sender's frequency
+	if (CheckForMultiChannels(sender.getFrequency, variance))
+	{
+		for (ICommChannel channel : GetChannels(sender.getFrequency, variance))
+		{
+			//Broadcast message
+		}
+	}
+	//No channels exist within range, Perhaps log an event?
 }
 
-//Creates a channel, if required, and adds that reciever to that channel
+//Adds a UMessageReceiver to a specific channel, Also creates a channel non-existant
 void ICommDistributor::AddToChannel(float frequency, UMessageReceiver receiver)
 {
-	//TODO: Make this method add new channels into the TArray
 	//Channel does not exist
 	if (!CheckForChannel(frequency))
 	{
 		CreateChannel(frequency);
 	}
-	for (ICommChannel channel : GetChannels(frequency, 0))//TODO: workout how to get the GETCHANNELs here
+	for (ICommChannel channel : GetChannels(frequency, 0))
 	{
-		//TODO: add reciever to the newly created channel
+		//package the input reciever into a TArray of UMessageReceivers
+		TArray<UMessageReceiver> temp;
+		temp.AddUnique(receiver);
+
+		channel.AddReceivers(temp);
 	}
 }
 	
-//TODO: Make a method that removes Recievers from channels
-
+//Removes UMessageReceiver from a specific Channel
 void ICommDistributor::RemoveFromChannel(float frequency, UMessageReceiver receiver)
 {
-	//TODO: Make this Method Remove the channels from the TArray
+	for (ICommChannel channel : GetChannels(frequency, 0))
+	{
+		//package the input reciever into a TArray of UMessageReceivers
+		TArray<UMessageReceiver> temp;
+		temp.AddUnique(receiver);
+
+		channel.RemoveReceivers(temp);
+	}
 }
 
-
+//Checks if a single channel exist
 bool ICommDistributor::CheckForChannel(float frequency)
 {
 	//Check if there are any channels at all
@@ -56,6 +72,27 @@ bool ICommDistributor::CheckForChannel(float frequency)
 				}
 			}
 			//Channel does not exist
+		}
+	}
+	return false;
+}
+
+//Returns true if a single channel exists within a range of frequencies
+bool ICommDistributor::CheckForMultiChannels(float frequency, float variance)
+{
+	float upperRange = frequency + variance;
+	float lowerRange = frequency - variance;
+	if (channelList.IsValidIndex)
+	{
+		if (channelList.Num != 0)
+		{
+			for (ICommChannel channel : channelList)
+			{
+				if (channel.GetFrequency() >= lowerRange && channel.GetFrequency() <= upperRange)
+				{
+					return true;
+				}
+			}
 		}
 	}
 	return false;

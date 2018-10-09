@@ -21,6 +21,9 @@ public:
 	virtual void Send(const IMessage& Message, float SignalStrength) = 0;
 	virtual void CalculatePower(float transmissionPower, float targetFrequency, float actualFrequency) = 0;
 
+	virtual const float GetFrequency() const;
+	virtual void SetFrequency(const float& NewFrequency);
+
 protected:
 	float frequency;
 	float maxSignalStrength;

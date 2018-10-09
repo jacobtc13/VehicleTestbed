@@ -43,6 +43,7 @@ static class VEHICLETESTBED_API ICommDistributor
 
 	protected:
 		static TArray<ICommChannel> channelList;
-		//SNRModel defaultPropModel;
+		TArray<ISNRModelFrequencyRange> propergateList;
+		ISNRModel defaultProp;
 	
 };

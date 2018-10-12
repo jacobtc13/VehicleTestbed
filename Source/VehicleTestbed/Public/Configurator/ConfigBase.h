@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Configurator/RapidXML/rapidxml.hpp"
+#include "rapidxml.hpp"
 
 #include "CoreMinimal.h"
 #include "ConfigBase.generated.h"

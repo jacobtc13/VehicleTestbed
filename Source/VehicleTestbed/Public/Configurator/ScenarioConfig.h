@@ -1,9 +1,9 @@
 #pragma once
 
+#include "ConfigBase.h"
 #include "AgentConfig.h"
 
 #include "CoreMinimal.h"
-#include "Configurator/ConfigBase.h"
 #include "ScenarioConfig.generated.h"
 
 UCLASS()

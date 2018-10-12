@@ -1,12 +1,12 @@
 #pragma once
 
-#include "Configurator/RapidXML/rapidxml.hpp"
-#include "Configurator/RapidXML/rapidxml_print.hpp"
+#include "rapidxml.hpp"
+#include "rapidxml_print.hpp"
 #include <iostream>
 #include <fstream>
 #include <string>
 
-#include "Configurator/AgentConfig.h"
+#include "AgentConfig.h"
 
 #include "CoreMinimal.h"
 #include "Kismet/BlueprintFunctionLibrary.h"

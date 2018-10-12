@@ -1,7 +1,7 @@
 #pragma once
 
-#include "Configurator/RapidXML/rapidxml.hpp"
-#include "Configurator/ConfigBase.h"
+#include "rapidxml.hpp"
+#include "ConfigBase.h"
 #include "PlayerController/TestbedPlayerController.h"
 
 #include "CoreMinimal.h"

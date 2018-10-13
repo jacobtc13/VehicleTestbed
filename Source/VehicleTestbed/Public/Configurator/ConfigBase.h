@@ -1,6 +1,8 @@
 #pragma once
 
+#include "UObject.h"
 #include "rapidxml.hpp"
+#include "Configurator.h"
 
 #include "CoreMinimal.h"
 #include "ConfigBase.generated.h"
@@ -16,5 +18,8 @@ public:
 
 	virtual rapidxml::xml_node<>* GetXMLNode();
 
-};
+private:
+	FString FileLocation;
 
+	friend class UConfigurator;
+};

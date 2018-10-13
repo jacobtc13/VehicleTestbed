@@ -7,6 +7,8 @@
 #include <string>
 
 #include "AgentConfig.h"
+#include "ScenarioConfig.h"
+#include "ConfigBase.h"
 
 #include "CoreMinimal.h"
 #include "Kismet/BlueprintFunctionLibrary.h"
@@ -23,6 +25,8 @@ class UConfigurator : public UBlueprintFunctionLibrary
 public:
 	static UConfigBase* LoadConfig(std::string Filename);
 
-	static void SaveConfig(std::string Filename, UAgentConfig* AgentConfig);
+	static void SaveConfig(std::string Filename, UConfigBase* Config);
+
+	static void ReloadConfig(UConfigBase* Config);
 };
 

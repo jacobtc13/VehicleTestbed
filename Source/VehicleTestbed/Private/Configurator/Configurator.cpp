@@ -39,23 +39,27 @@ UConfigBase* UConfigurator::LoadConfig(std::string Filename)
 	else if (firstNodeName == "Scenario")
 	{
 		//configObject = NewObject<UScenario>(doc.first_node);
-		configObject = NewObject<UConfigBase>();
+		configObject = NewObject<UScenarioConfig>();
 	}
 	else
 	{
 		configObject = NewObject<UConfigBase>();
 	}
 
+	if (configObject != nullptr)
+	{
+		configObject->FileLocation = Filename.c_str();
+	}
 	return configObject;
 
 }
 
-void UConfigurator::SaveConfig(std::string Filename, UAgentConfig* AgentConfig)
+void UConfigurator::SaveConfig(std::string Filename, UConfigBase* Config)
 {
 	using namespace rapidxml;
 	xml_document<> doc;
 
-	doc.append_node(AgentConfig->GetXMLNode());
+	doc.append_node(Config->GetXMLNode());
 
 	// Print doc to string
 	std::string output;
@@ -72,4 +76,18 @@ void UConfigurator::SaveConfig(std::string Filename, UAgentConfig* AgentConfig)
 
 	file.close();
 
+}
+
+void UConfigurator::ReloadConfig(UConfigBase* Config)
+{
+	if (Config != nullptr)
+	{
+		using namespace rapidxml;
+		UConfigBase* NewConfig = LoadConfig(TCHAR_TO_UTF8(*(Config->FileLocation)));
+		if (NewConfig != nullptr)
+		{
+			// Set pointer to new object, old one will get cleaned up by Unreal
+			Config = NewConfig;
+		}
+	}
 }

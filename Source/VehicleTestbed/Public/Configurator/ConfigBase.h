@@ -18,7 +18,10 @@ public:
 
 	virtual rapidxml::xml_node<>* GetXMLNode();
 
-private:
+	FString GetFileLocation() const;
+	void SetFileLocation(const FString& NewLocation);
+
+protected:
 	FString FileLocation;
 
 	friend class UConfigurator;

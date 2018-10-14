@@ -1,8 +1,7 @@
 #pragma once
 
-#include "UObject.h"
+#include "Object.h"
 #include "rapidxml.hpp"
-#include "Configurator.h"
 
 #include "CoreMinimal.h"
 #include "ConfigBase.generated.h"

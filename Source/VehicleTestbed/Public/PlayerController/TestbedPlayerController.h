@@ -1,8 +1,8 @@
 #pragma once
 
-#include "PlayerController/PlayerControllerComponent/PauseMenuComponent.h"
-#include "PlayerController/PlayerControllerComponent/PawnSwapComponent.h"
-#include "PlayerController/PlayerControllerComponent/JackalControlComponent.h"
+#include "PauseMenuComponent.h"
+#include "PawnSwapComponent.h"
+#include "JackalControlComponent.h"
 
 #include "CoreMinimal.h"
 #include "GameFramework/PlayerController.h"

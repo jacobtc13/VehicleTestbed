@@ -6,16 +6,16 @@
 // Add default functionality here for any ICommDistributor functions that are not pure virtual.
 ICommDistributor::ICommDistributor()
 {
+	//TODO: Needs to populate the propergateList that the user has defined.
 
 }
 
 //Sends the message to the designated channel.
 void ICommDistributor::Send(const FMessage<class T>& message, UMessageSender sender, float variance)
 {
-	//TODO: Need to talk to Matt about getting the sender's frequency
-	if (CheckForMultiChannels(sender.getFrequency, variance))
+	if (CheckForMultiChannels(sender.GetFrequency(), variance))
 	{
-		for (ICommChannel channel : GetChannels(sender.getFrequency, variance))
+		for (ICommChannel channel : GetChannels(sender.GetFrequency(), variance))
 		{
 			//Broadcast message
 		}
@@ -24,7 +24,7 @@ void ICommDistributor::Send(const FMessage<class T>& message, UMessageSender sen
 }
 
 //Adds a UMessageReceiver to a specific channel, Also creates a channel non-existant
-void ICommDistributor::AddToChannel(float frequency, UMessageReceiver receiver)
+void ICommDistributor::AddToChannel(float frequency, UMessageReceiver &receiver)
 {
 	//Channel does not exist
 	if (!CheckForChannel(frequency))
@@ -42,7 +42,7 @@ void ICommDistributor::AddToChannel(float frequency, UMessageReceiver receiver)
 }
 	
 //Removes UMessageReceiver from a specific Channel
-void ICommDistributor::RemoveFromChannel(float frequency, UMessageReceiver receiver)
+void ICommDistributor::RemoveFromChannel(float frequency, UMessageReceiver &receiver)
 {
 	for (ICommChannel channel : GetChannels(frequency, 0))
 	{
@@ -52,6 +52,13 @@ void ICommDistributor::RemoveFromChannel(float frequency, UMessageReceiver recei
 
 		channel.RemoveReceivers(temp);
 	}
+}
+
+
+void ICommDistributor::SwitchChannel(float frequency, UMessageReceiver &receiver)
+{
+	RemoveFromChannel(receiver.GetFrequency(), receiver);
+	AddToChannel(frequency, receiver);
 }
 
 //Checks if a single channel exist
@@ -101,7 +108,11 @@ bool ICommDistributor::CheckForMultiChannels(float frequency, float variance)
 //Creates a channel and adds it to the list of channels
 void ICommDistributor::CreateChannel(float frequency)
 {
-	channelList.AddUnique(ICommChannel(frequency));
+	snrRanges = RetrieveSNRRange(frequency);
+	for (ISNRModelFrequencyRange range : snrRanges)
+	{
+		channelList.AddUnique(ICommChannel(frequency, range.)); 
+	}
 }
 
 //Retrieves an array of channels that are in the frequency range
@@ -115,6 +126,20 @@ TArray<ICommChannel> ICommDistributor::GetChannels(float frequency, float varian
 		if (channel.GetFrequency() >= lowerRange  && channel.GetFrequency() <= upperRange)
 		{
 			output.Add(channel);
+		}
+	}
+	return output;
+}
+
+//Retrieves the SNR Model Frequency Range from the list
+TArray<ISNRModelFrequencyRange> ICommDistributor::RetrieveSNRRange(float frequency)
+{
+	TArray<ISNRModelFrequencyRange> output;
+	for (ISNRModelFrequencyRange range : propergateList)
+	{
+		if (range.GetMaxFrequency >= frequency && range.GetMinFrequency <= frequency)
+		{
+			output.AddUnique(range);
 		}
 	}
 	return output;

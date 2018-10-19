@@ -33,5 +33,5 @@ public:
 	float GetMaxFrequency();
 
 	void SetSNRModel(ISNRModel);
-	ISNRModel SetSNRModel();
+	ISNRModel GetSNRModel();
 }; 

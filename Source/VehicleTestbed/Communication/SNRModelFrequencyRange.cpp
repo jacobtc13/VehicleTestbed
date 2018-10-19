@@ -31,7 +31,7 @@ void ISNRModelFrequencyRange::SetSNRModel(ISNRModel value)
 	ISNRModelFrequencyRange::model = value;
 }
 
-ISNRModel ISNRModelFrequencyRange::SetSNRModel()
+ISNRModel ISNRModelFrequencyRange::GetSNRModel()
 {
 	return model;
 }

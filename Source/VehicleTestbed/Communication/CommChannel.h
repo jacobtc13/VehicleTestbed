@@ -32,7 +32,7 @@ private:
 	ISNRModel snrModel;
 
 public:
-	ICommChannel(float);
+	ICommChannel(float, ISNRModel);
 	float GetFrequency();
 	void AddReceivers(TArray <UMessageReceiver>);
 	void RemoveReceivers(TArray <UMessageReceiver> input);

@@ -34,16 +34,20 @@ static class VEHICLETESTBED_API ICommDistributor
 	public:
 		ICommDistributor();
 		void Send(const FMessage<class T>&, UMessageSender sender, float frequency);
-		void AddToChannel(float frequency, UMessageReceiver receiver);
-		void RemoveFromChannel(float frequency, UMessageReceiver receiver);
+		void AddToChannel(float frequency, UMessageReceiver &receiver);
+		void RemoveFromChannel(float frequency, UMessageReceiver &receiver);
 		bool CheckForChannel(float frequency);
 		bool CheckForMultiChannels(float frequency, float variance);
 		void CreateChannel(float frequency);
 		TArray<ICommChannel> GetChannels(float frequency, float variance);
+		void SwitchChannel(float frequency, UMessageReceiver &receiver);
+		TArray<ISNRModelFrequencyRange> RetrieveSNRRange(float);
+
+	private:
+
 
 	protected:
 		static TArray<ICommChannel> channelList;
 		TArray<ISNRModelFrequencyRange> propergateList;
 		ISNRModel defaultProp;
-	
 };

@@ -2,7 +2,7 @@
 
 #include "CommChannel.h"
 
-ICommChannel::ICommChannel(float channel)
+ICommChannel::ICommChannel(float channel, ISNRModel model)
 {
 	ICommChannel::frequency = channel;
 }

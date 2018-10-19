@@ -13,7 +13,7 @@ class VEHICLETESTBED_API UConfigBase : public UObject
 
 public:
 	UConfigBase();
-	~UConfigBase();
+	virtual ~UConfigBase();
 
 	virtual rapidxml::xml_node<>* GetXMLNode();
 
@@ -22,6 +22,4 @@ public:
 
 protected:
 	FString FileLocation;
-
-	friend class UConfigurator;
 };

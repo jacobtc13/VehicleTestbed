@@ -5,7 +5,7 @@ UConfigBase* UConfigurator::LoadConfig(std::string Filename)
 	using namespace rapidxml;
 	xml_document<> doc;
 
-	UConfigBase* configObject;
+	UConfigBase* configObject = nullptr;
 
 	// Read in and parse file
 	std::ifstream is(Filename, std::ifstream::binary);
@@ -43,12 +43,12 @@ UConfigBase* UConfigurator::LoadConfig(std::string Filename)
 	}
 	else
 	{
-		configObject = NewObject<UConfigBase>();
+		//configObject = NewObject<UConfigBase>();
 	}
 
 	if (configObject != nullptr)
 	{
-		configObject->FileLocation = Filename.c_str();
+		configObject->SetFileLocation(Filename.c_str());
 	}
 	return configObject;
 
@@ -83,7 +83,7 @@ void UConfigurator::ReloadConfig(UConfigBase* Config)
 	if (Config != nullptr)
 	{
 		using namespace rapidxml;
-		UConfigBase* NewConfig = LoadConfig(TCHAR_TO_UTF8(*(Config->FileLocation)));
+		UConfigBase* NewConfig = LoadConfig(TCHAR_TO_UTF8(*(Config->GetFileLocation())));
 		if (NewConfig != nullptr)
 		{
 			// Set pointer to new object, old one will get cleaned up by Unreal

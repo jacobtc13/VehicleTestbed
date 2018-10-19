@@ -1,6 +1,6 @@
 #include "ConfigBase.h"
 
-UConfigBase::UConfigBase()
+UConfigBase::UConfigBase() : UObject()
 {
 }
 

@@ -1,5 +1,3 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
 #include "ScenarioConfig.h"
 #include "Configurator.h"
 
@@ -44,7 +42,7 @@ TArray<UAgentConfig*> UScenarioConfig::GetAgents()
 			else
 			{
 				// Not valid
-				// TODO: Error handling when one of the files couldn't be loaded
+				// TODO: Error handling when one of the files couldn't be loaded / what was loaded wasn't an Agent Config
 			}
 		}
 		AgentsArray.Add(Pair.Value);

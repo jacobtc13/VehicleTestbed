@@ -12,11 +12,6 @@ class VEHICLETESTBED_API UScenarioConfig : public UConfigBase
 	GENERATED_BODY()
 	
 public:
-	///<summary>Default Constructor</summary>
-	UScenarioConfig() = default;
-	///<summary>Destructor</summary>
-	~UScenarioConfig() = default;
-	
 	///<summary>Generates a rapidxml node structure from the information in this object</summary>
 	///<returns>A pointer to a rapidxml node structure depicting the information from this object</returns>
 	rapidxml::xml_node<>* GetXMLNode() override;
@@ -58,7 +53,10 @@ public:
 	void SetMapName(FName NewMapName);
 
 private:
+	UPROPERTY()
 	TMap<FString, UAgentConfig*> Agents;
-	// TODO: Spawn points
+	UPROPERTY()
 	FName MapName;
+
+	//TODO: Spawn points
 };

@@ -16,6 +16,10 @@ public:
 	///<returns>A pointer to a rapidxml node structure depicting the information from this object</returns>
 	rapidxml::xml_node<>* GetXMLNode() override;
 
+	///<summary>Initializes this config object from a rapidxml document</summary>
+	///<param="doc">The rapidxml document to parse</summary>
+	bool InitializeFromXML(rapidxml::xml_document<>& doc) override;
+
 	UFUNCTION()
 	///<summary>Returns an array of the file locations of the agent configs used in this scenario</summary>
 	///<returns>An array of file locations of the agents configs used in this scenario</returns>

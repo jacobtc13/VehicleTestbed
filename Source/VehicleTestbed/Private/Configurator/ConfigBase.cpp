@@ -14,6 +14,11 @@ rapidxml::xml_node<>* UConfigBase::GetXMLNode()
 	return nullptr;
 }
 
+bool UConfigBase::InitializeFromXML(rapidxml::xml_document<>& doc)
+{
+	return false;
+}
+
 FString UConfigBase::GetFileLocation() const
 {
 	return FileLocation;

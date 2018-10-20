@@ -38,7 +38,6 @@ UConfigBase* UConfigurator::LoadConfig(std::string Filename)
 	}
 	else if (firstNodeName == "Scenario")
 	{
-		//configObject = NewObject<UScenario>(doc.first_node);
 		configObject = NewObject<UScenarioConfig>();
 	}
 	else
@@ -48,6 +47,10 @@ UConfigBase* UConfigurator::LoadConfig(std::string Filename)
 
 	if (configObject != nullptr)
 	{
+		if (!configObject->InitializeFromXML(doc))
+		{
+			return nullptr;
+		}
 		configObject->SetFileLocation(Filename.c_str());
 	}
 	return configObject;

@@ -17,6 +17,8 @@ public:
 
 	virtual rapidxml::xml_node<>* GetXMLNode();
 
+	virtual bool InitializeFromXML(rapidxml::xml_document<>& doc);
+
 	FString GetFileLocation() const;
 	void SetFileLocation(const FString& NewLocation);
 

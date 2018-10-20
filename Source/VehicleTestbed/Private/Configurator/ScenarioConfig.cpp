@@ -6,6 +6,8 @@ rapidxml::xml_node<>* UScenarioConfig::GetXMLNode()
 	using namespace rapidxml;
 	xml_document<> Doc;
 	xml_node<>* BaseNode = Doc.allocate_node(node_element, "Scenario");
+	xml_node<>* MapNode = Doc.allocate_node(node_element, "Map", TCHAR_TO_UTF8(*MapName.ToString()));
+	BaseNode->append_node(MapNode);
 	TArray<FString> AgentFiles;
 	Agents.GetKeys(AgentFiles);
 	for (FString Agent : AgentFiles)
@@ -13,10 +15,35 @@ rapidxml::xml_node<>* UScenarioConfig::GetXMLNode()
 		xml_node<>* AgentNode = Doc.allocate_node(node_element, "Agent", TCHAR_TO_UTF8(*Agent));
 		BaseNode->append_node(AgentNode);
 	}
-	xml_node<>* MapNode = Doc.allocate_node(node_element, "Map", TCHAR_TO_UTF8(*MapName.ToString()));
-	BaseNode->append_node(MapNode);
 
 	return BaseNode;
+}
+
+bool UScenarioConfig::InitializeFromXML(rapidxml::xml_document<>& Doc)
+{
+	using namespace rapidxml;
+	xml_node<>* Node = Doc.first_node();
+	// Check is a scenario
+	if (Node->name() != "Scenario")
+	{
+		return false;
+	}
+	// Check for a map next
+	if ((Node = Node->next_sibling()) && (Node->name() == "Map"))
+	{
+		MapName = Node->value();
+	}
+	else
+	{
+		return false;
+	}
+	// this is the recommended way to loop through rapidxml
+	// Stops when it gets to a non-Agent node
+	for (Node = Node->next_sibling(); Node && (Node->name() == "Agent"); Node = Node->next_sibling())
+	{
+		Agents.Add(Node->value());
+	}
+	return true;
 }
 
 TArray<FString> UScenarioConfig::GetAgentFileLocations() const

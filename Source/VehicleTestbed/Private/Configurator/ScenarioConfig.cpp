@@ -5,15 +5,32 @@ rapidxml::xml_node<>* UScenarioConfig::GetXMLNode()
 {
 	using namespace rapidxml;
 	xml_document<> Doc;
+	
+	// Save the config as a "Scenario" type
 	xml_node<>* BaseNode = Doc.allocate_node(node_element, "Scenario");
+	
+	// Save the map name
 	xml_node<>* MapNode = Doc.allocate_node(node_element, "Map", TCHAR_TO_UTF8(*MapName.ToString()));
 	BaseNode->append_node(MapNode);
+	
+	// Save the agents used
 	TArray<FString> AgentFiles;
 	Agents.GetKeys(AgentFiles);
 	for (FString Agent : AgentFiles)
 	{
 		xml_node<>* AgentNode = Doc.allocate_node(node_element, "Agent", TCHAR_TO_UTF8(*Agent));
 		BaseNode->append_node(AgentNode);
+	}
+	
+	// Save the spawn points and which agents go with them
+	for (const auto& Pair : SpawnPoints)
+	{
+		xml_node<>* SpawnNode = Doc.allocate_node(node_element, "Spawn");
+		xml_node<>* SpawnNameNode = Doc.allocate_node(node_element, "Name", TCHAR_TO_UTF8(*Pair.Key.ToString()));
+		SpawnNode->append_node(SpawnNameNode);
+		xml_node<>* SpawnAgentNode = Doc.allocate_node(node_element, "Agent", TCHAR_TO_UTF8(*Pair.Value));
+		SpawnNode->append_node(SpawnAgentNode);
+		BaseNode->append_node(SpawnNode);
 	}
 
 	return BaseNode;
@@ -23,11 +40,13 @@ bool UScenarioConfig::InitializeFromXML(rapidxml::xml_document<>& Doc)
 {
 	using namespace rapidxml;
 	xml_node<>* Node = Doc.first_node();
+
 	// Check is a scenario
 	if ((std::string)Node->name() != "Scenario")
 	{
 		return false;
 	}
+
 	// Check for a map next
 	Node = Node->next_sibling();
 	if (Node && ((std::string)Node->name() == "Map"))
@@ -38,12 +57,28 @@ bool UScenarioConfig::InitializeFromXML(rapidxml::xml_document<>& Doc)
 	{
 		return false;
 	}
+
+	// Find agents
 	// this is the recommended way to loop through rapidxml
 	// Stops when it gets to a non-Agent node
 	for (Node = Node->next_sibling(); Node && ((std::string)Node->name() == "Agent"); Node = Node->next_sibling())
 	{
 		Agents.Add(Node->value());
 	}
+
+	// Find spawns
+	for (; Node && (std::string)Node->name() == "Spawn"; Node = Node->next_sibling())
+	{
+		xml_node<>* NameNode = Node->first_node("Name");
+		xml_node<>* AgentNode = Node->first_node("Agent");
+		if (!NameNode || !AgentNode)
+		{
+			// Bad file structure error
+			return false;
+		}
+		SpawnPoints.Add(NameNode->value(), AgentNode->value());
+	}
+
 	return true;
 }
 

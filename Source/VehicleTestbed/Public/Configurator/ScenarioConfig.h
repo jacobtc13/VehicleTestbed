@@ -50,12 +50,12 @@ public:
 	///<summary>Adds an agent to the scenario
 	///<param="AgentFile">The string representation of the file location used for this Agent Config</param>
 	///<param="AgentConfig">An optional Agent Config object if it is already loaded in memory</param>
-	void AddAgent(const FString& AgentFile, UAgentConfig* AgentConfig = nullptr);
+	void AddAgent(const FString AgentFile, UAgentConfig* AgentConfig = nullptr);
 
 	UFUNCTION(BlueprintCallable)
 	///<summary>Removes the selected agent config from this scenario</summary>
 	///<param="AgentFile">The string representation of the file location of the Agent Config to remove</param>
-	void RemoveAgentByFile(const FString& AgentFile);
+	void RemoveAgentByFile(const FString AgentFile);
 
 	UFUNCTION(BlueprintCallable)
 	///<summary>Removes the selected agent config from this scenario</summary>
@@ -66,22 +66,39 @@ public:
 	///<summary>Returns an array of names of the spawn points used with an agent config</summary>
 	///<param="AgentConfig">The agent config to search with</param>
 	///<returns>An array of names of the spawn points used with the agent config, or all if the parameter is nullptr</returns>
-	TArray<FName> GetSpawnPoints(UAgentConfig* AgentConfig = nullptr) const;
+	TArray<FName> GetSpawnPoints(const UAgentConfig* AgentConfig = nullptr) const;
 
 	UFUNCTION(BlueprintCallable)
 	///<summary>Returns the agent config object used at this spawn point</summary>
 	///<param="SpawnName">The name of the spawn point to search with</summary>
 	///<returns>The agent config object used at this spawn point or nullptr if it could not be found or loaded</returns>
-	UAgentConfig* GetAgentBySpawn(FName SpawnName);
+	UAgentConfig* GetAgentBySpawn(const FName SpawnName);
 
 	UFUNCTION(BlueprintCallable)
-	bool AddSpawn(FName SpawnName, UAgentConfig* Agent);
+	///<summary>Adds a new spawn point configuration to this scenario</summary>
+	///<param="SpawnName">The name of the spawn point</param>
+	///<param="AgentConfig">The agent config object to be used</param>
+	///<returns>Whether a spawn point was successfully added or not</returns>
+	bool AddSpawn(const FName SpawnName, const UAgentConfig* AgentConfig);
 
-	bool ChangeAgentAtSpawn(FName SpawnName, UAgentConfig* NewAgent);
+	UFUNCTION(BlueprintCallable)
+	///<summary>Changes the agent spawned at a spawn point</summary>
+	///<param="SpawnName">The name of the spawn point to modify</param>
+	///<param="NewAgentConfig">The config of the new agent to spawn at that point</param>
+	///<returns>Whether the spawn point config was changed or not</returns>
+	bool ChangeAgentAtSpawn(const FName SpawnName, const UAgentConfig* NewAgentConfig);
 
-	void RemoveSpawn(FName SpawnName);
+	UFUNCTION(BlueprintCallable)
+	///<summary>Removes a spawn point from this scenario</summary>
+	///<param="SpawnName">The name of the spawn point to remove</param>
+	///<returns>Whether the spawn point was removed or not</returns>
+	bool RemoveSpawn(const FName SpawnName);
 
-	void RemoveAllSpawnsOfAgent(UAgentConfig* Agent);
+	UFUNCTION(BlueprintCallable)
+	///<summary>Removes all spawn points used by an agent config</summary>
+	///<param="AgentFile">The agent config file to search with</param>
+	///<returns>The number of spawn points removed</summary>
+	int32 RemoveAllSpawnsOfAgent(const FString AgentFile);
 	
 private:
 	UPROPERTY(BlueprintGetter=GetMapName, BlueprintSetter=SetMapName)

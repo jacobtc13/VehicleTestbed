@@ -111,13 +111,15 @@ UAgentConfig* UScenarioConfig::GetAgent(const FString AgentFile)
 	return nullptr;
 }
 
-void UScenarioConfig::AddAgent(const FString& AgentFile, UAgentConfig* AgentConfig/*= nullptr*/)
+void UScenarioConfig::AddAgent(const FString AgentFile, UAgentConfig* AgentConfig/*= nullptr*/)
 {
 	Agents.Add(AgentFile, AgentConfig);
 }
 
-void UScenarioConfig::RemoveAgentByFile(const FString& AgentFile)
+void UScenarioConfig::RemoveAgentByFile(const FString AgentFile)
 {
+
+	RemoveAllSpawnsOfAgent(AgentFile);
 	Agents.Remove(AgentFile);
 }
 
@@ -129,7 +131,7 @@ void UScenarioConfig::RemoveAgentByObject(const UAgentConfig* AgentConfig)
 	}
 }
 
-TArray<FName> UScenarioConfig::GetSpawnPoints(UAgentConfig* AgentConfig/*=nullptr*/) const
+TArray<FName> UScenarioConfig::GetSpawnPoints(const UAgentConfig* AgentConfig/*=nullptr*/) const
 {
 	TArray<FName> SpawnNames;
 	if (AgentConfig == nullptr)
@@ -150,7 +152,7 @@ TArray<FName> UScenarioConfig::GetSpawnPoints(UAgentConfig* AgentConfig/*=nullpt
 	}
 }
 
-UAgentConfig* UScenarioConfig::GetAgentBySpawn(FName SpawnName)
+UAgentConfig* UScenarioConfig::GetAgentBySpawn(const FName SpawnName)
 {
 	FString* AgentFile = SpawnPoints.Find(SpawnName);
 	if (AgentFile != nullptr)
@@ -158,4 +160,53 @@ UAgentConfig* UScenarioConfig::GetAgentBySpawn(FName SpawnName)
 		return GetAgent(*AgentFile);
 	}
 	return nullptr;
+}
+
+bool UScenarioConfig::AddSpawn(const FName SpawnName, const UAgentConfig* AgentConfig)
+{
+	if (AgentConfig != nullptr)
+	{
+		SpawnPoints.Add(SpawnName, AgentConfig->GetFileLocation());
+		return true;
+	}
+	return false;
+}
+
+bool UScenarioConfig::ChangeAgentAtSpawn(const FName SpawnName, const UAgentConfig* NewAgentConfig)
+{
+	if (NewAgentConfig != nullptr)
+	{
+		for (auto& Pair : SpawnPoints)
+		{
+			if (Pair.Key == SpawnName)
+			{
+				Pair.Value = NewAgentConfig->GetFileLocation();
+				return true;
+			}
+		}
+	}
+	return false;
+}
+
+bool UScenarioConfig::RemoveSpawn(const FName SpawnName)
+{
+	return SpawnPoints.Remove(SpawnName);
+}
+
+int32 UScenarioConfig::RemoveAllSpawnsOfAgent(const FString AgentFile)
+{
+	int32 NumRemoved = 0;
+	TArray<FName> SpawnsToRemove;
+	for (const auto& Pair : SpawnPoints)
+	{
+		if (Pair.Value == AgentFile)
+		{
+			SpawnsToRemove.Add(Pair.Key);
+		}
+	}
+	for (FName SpawnName : SpawnsToRemove)
+	{
+		NumRemoved += SpawnPoints.Remove(SpawnName);
+	}
+	return NumRemoved;
 }

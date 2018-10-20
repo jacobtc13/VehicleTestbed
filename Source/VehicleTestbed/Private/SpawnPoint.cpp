@@ -5,6 +5,7 @@
 
 FName spName;
 FVector spLocation;
+FString defName;
 
 
 SpawnPoint::SpawnPoint(FName Name, FVector Location)
@@ -13,8 +14,14 @@ SpawnPoint::SpawnPoint(FName Name, FVector Location)
 	FVector spLocation = Location;
 }
 
+// Default Constructor
+SpawnPoint::SpawnPoint() {
+	
+	SpawnPoint(TEXT("defaultName"), FVector(float(0)));
+}
+
 // Updates Spawnpoint name
-bool setName(FName newName) {
+bool SpawnPoint::setName(FName newName) {
 	
 	spName = newName;
 	
@@ -23,19 +30,19 @@ bool setName(FName newName) {
 }
 
 // Updates SpawnPoint Location
-bool setLocation(FVector newLocation) {
+bool SpawnPoint::setLocation(FVector newLocation) {
 	spLocation = newLocation;
 
 	return true;
 }
 
 // Returns SpawnPoint Name
-FName getName() {
+FName SpawnPoint::getName() {
 	return spName;
 }
 
 // Returns SpawnPoint Location as an FVector
-FVector getLocation() {
+FVector SpawnPoint::getLocation() {
 	return spLocation;
 }
 

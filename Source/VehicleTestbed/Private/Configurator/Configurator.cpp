@@ -1,83 +1,71 @@
 #include "Configurator.h"
+#include "rapidxml_utils.hpp"
+#include "MessageDialog.h"
 
 UConfigBase* UConfigurator::LoadConfig(std::string Filename)
 {
 	using namespace rapidxml;
-	xml_document<> doc;
-
-	UConfigBase* configObject = nullptr;
+	xml_document<> Doc;
+	UConfigBase* ConfigObject = nullptr;
 
 	// Read in and parse file
-	std::ifstream is(Filename, std::ifstream::binary);
-	if (is)
+	try
 	{
-		// find length of file
-		is.seekg(0, is.end);
-		int length = is.tellg();
-		is.seekg(0, is.beg);
-
-		char* buffer = new char[length];
-
-		is.read(buffer, length);
-
-		is.close();
-
-		doc.parse<0>(buffer);
-
-		delete[] buffer;
+		file<> ConfigFile(Filename.c_str());
+		Doc.parse<0>(ConfigFile.data());
 	}
-	else
+	catch (std::runtime_error error)
 	{
-		// error occured reading file
+		FMessageDialog::Open(EAppMsgType::Ok, FText::FromString(TEXT("A config file could not be found. File: ") + FString(Filename.c_str())));
+		return nullptr;
 	}
-	// TODO: define code for decoding the DOM and setting the parameters of the AgentConfig
-	std::string firstNodeName = doc.first_node()->name();
-	if (firstNodeName == "Agent")
+	catch (parse_error error)
 	{
-		configObject = NewObject<UAgentConfig>();
-	}
-	else if (firstNodeName == "Scenario")
-	{
-		configObject = NewObject<UScenarioConfig>();
-	}
-	else
-	{
-		//configObject = NewObject<UConfigBase>();
+		FMessageDialog::Open(EAppMsgType::Ok, FText::FromString(TEXT("The config file is not valid RapidXML. File: ") + FString(Filename.c_str())));
+		return nullptr;
 	}
 
-	if (configObject != nullptr)
+	// Construct the config object as the appropriate config class
+	std::string FirstNodeName = Doc.first_node()->name();
+	if (FirstNodeName == "Agent")
 	{
-		if (!configObject->InitializeFromXML(doc))
+		ConfigObject = NewObject<UAgentConfig>();
+	}
+	else if (FirstNodeName == "Scenario")
+	{
+		ConfigObject = NewObject<UScenarioConfig>();
+	}
+
+	if (ConfigObject != nullptr)
+	{
+		// Initialize the config object from the xml doc
+		if (!ConfigObject->InitializeFromXML(Doc))
 		{
 			return nullptr;
 		}
-		configObject->SetFileLocation(Filename.c_str());
+		ConfigObject->SetFileLocation(Filename.c_str());
 	}
-	return configObject;
+	return ConfigObject;
 
 }
 
 void UConfigurator::SaveConfig(std::string Filename, UConfigBase* Config)
 {
 	using namespace rapidxml;
-	xml_document<> doc;
+	xml_document<> Doc;
 
-	doc.append_node(Config->GetXMLNode());
-
-	// Print doc to string
-	std::string output;
-	print(std::back_inserter(output), doc, 0);
+	Doc.append_node(Config->GetXMLNode());
 
 	// Print output to file
-	std::ofstream file;
-	file.open(Filename, std::ios::out | std::ios::trunc);
+	std::ofstream File;
+	File.open(Filename, std::ios::out | std::ios::trunc);
 
-	if (file.is_open())
+	if (File.is_open())
 	{
-		file << output;
+		File << Doc;
 	}
 
-	file.close();
+	File.close();
 
 }
 

@@ -22,18 +22,23 @@ class UCommChannel : public UInterface
  */
 class VEHICLETESTBED_API ICommChannel
 {
-	//GENERATED_BODY()
+	GENERATED_BODY()
 
 	// Add interface functions to this class. This is the class that will be inherited to implement this interface.
 	
 private:
 	float frequency;
-	TArray<UMessageReceiver> receivers;
+	
 	ISNRModel snrModel;
+
+protected:
+	TArray <UMessageReceiver> receiverList;
 
 public:
 	ICommChannel(float, ISNRModel);
 	float GetFrequency();
+	void Broadcast(const FMessage<class T>& message);
 	void AddReceivers(TArray <UMessageReceiver>);
 	void RemoveReceivers(TArray <UMessageReceiver> input);
+	TArray<UMessageReceiver> GetReceivers();
 };

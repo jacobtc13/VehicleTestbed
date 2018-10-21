@@ -17,10 +17,14 @@ void ICommDistributor::Send(const FMessage<class T>& message, UMessageSender sen
 	{
 		for (ICommChannel channel : GetChannels(sender.GetFrequency(), variance))
 		{
-			//Broadcast message
+			channel.Broadcast(message);
 		}
 	}
-	//No channels exist within range, Perhaps log an event?
+	else
+	{
+		// Log Event - The channel the sender want to broadcast does not exist.
+	}
+	
 }
 
 //Adds a UMessageReceiver to a specific channel, Also creates a channel non-existant
@@ -78,8 +82,9 @@ bool ICommDistributor::CheckForChannel(float frequency)
 					return true;
 				}
 			}
-			//Channel does not exist
+			
 		}
+		//Channel does not exist
 	}
 	return false;
 }
@@ -108,10 +113,11 @@ bool ICommDistributor::CheckForMultiChannels(float frequency, float variance)
 //Creates a channel and adds it to the list of channels
 void ICommDistributor::CreateChannel(float frequency)
 {
-	snrRanges = RetrieveSNRRange(frequency);
+	//Creates a new channel with the associated SNRModel
+	TArray<ISNRModelFrequencyRange> snrRanges = RetrieveSNRRange(frequency);
 	for (ISNRModelFrequencyRange range : snrRanges)
 	{
-		channelList.AddUnique(ICommChannel(frequency, range.)); 
+		channelList.AddUnique(ICommChannel(frequency, range.GetSNRModel)); 
 	}
 }
 

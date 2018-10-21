@@ -1,5 +1,6 @@
 #include "ScenarioConfig.h"
 #include "Configurator.h"
+#include "MessageDialog.h"
 
 rapidxml::xml_node<>* UScenarioConfig::GetXMLNode()
 {
@@ -99,7 +100,7 @@ TArray<FString> UScenarioConfig::GetAgentFileLocations() const
 	return AgentFiles;
 }
 
-bool LoadAgentForMap(TPair<FString, UAgentConfig*>& Pair)
+bool LoadAgentFromFile(TPair<FString, UAgentConfig*>& Pair)
 {
 	if (UAgentConfig* NewAgent = dynamic_cast<UAgentConfig*>(UConfigurator::LoadConfig(TCHAR_TO_UTF8(*Pair.Key))))
 	{
@@ -111,7 +112,7 @@ bool LoadAgentForMap(TPair<FString, UAgentConfig*>& Pair)
 	else
 	{
 		// Not valid
-		// TODO: Error handling when one of the files couldn't be loaded / what was loaded wasn't an Agent Config
+		FMessageDialog::Open(EAppMsgType::Ok, FText::FromString(TEXT("An agent was not loaded from file correctly. Agent: ") + Pair.Key));
 		return false;
 	}
 }
@@ -123,7 +124,7 @@ TArray<UAgentConfig*> UScenarioConfig::GetAgents()
 	{
 		if (Pair.Value == nullptr)
 		{
-			LoadAgentForMap(Pair);
+			LoadAgentFromFile(Pair);
 		}
 		AgentsArray.Add(Pair.Value);
 	}
@@ -138,7 +139,7 @@ UAgentConfig* UScenarioConfig::GetAgent(const FString AgentFile)
 		{
 			if (Pair.Value == nullptr)
 			{
-				LoadAgentForMap(Pair);
+				LoadAgentFromFile(Pair);
 			}
 			return Pair.Value;
 		}
@@ -166,10 +167,10 @@ void UScenarioConfig::RemoveAgentByObject(const UAgentConfig* AgentConfig)
 	}
 }
 
-TArray<FName> UScenarioConfig::GetSpawnPoints(const UAgentConfig* AgentConfig/*=nullptr*/) const
+TArray<FName> UScenarioConfig::GetSpawnPoints(const FString AgentFile/*=TEXT("")*/) const
 {
 	TArray<FName> SpawnNames;
-	if (AgentConfig == nullptr)
+	if (AgentFile == "")
 	{
 		SpawnPoints.GetKeys(SpawnNames);
 		return SpawnNames;
@@ -178,7 +179,7 @@ TArray<FName> UScenarioConfig::GetSpawnPoints(const UAgentConfig* AgentConfig/*=
 	{
 		for (const auto& Pair : SpawnPoints)
 		{
-			if (Pair.Value == AgentConfig->GetFileLocation())
+			if (Pair.Value == AgentFile)
 			{
 				SpawnNames.Add(Pair.Key);
 			}
@@ -197,25 +198,25 @@ UAgentConfig* UScenarioConfig::GetAgentBySpawn(const FName SpawnName)
 	return nullptr;
 }
 
-bool UScenarioConfig::AddSpawn(const FName SpawnName, const UAgentConfig* AgentConfig)
+bool UScenarioConfig::AddSpawn(const FName SpawnName, const FString AgentFile)
 {
-	if (AgentConfig != nullptr)
+	if (AgentFile == "")
 	{
-		SpawnPoints.Add(SpawnName, AgentConfig->GetFileLocation());
+		SpawnPoints.Add(SpawnName, AgentFile);
 		return true;
 	}
 	return false;
 }
 
-bool UScenarioConfig::ChangeAgentAtSpawn(const FName SpawnName, const UAgentConfig* NewAgentConfig)
+bool UScenarioConfig::ChangeAgentAtSpawn(const FName SpawnName, const FString NewAgentFile)
 {
-	if (NewAgentConfig != nullptr)
+	if (NewAgentFile != "")
 	{
 		for (auto& Pair : SpawnPoints)
 		{
 			if (Pair.Key == SpawnName)
 			{
-				Pair.Value = NewAgentConfig->GetFileLocation();
+				Pair.Value = NewAgentFile;
 				return true;
 			}
 		}
@@ -239,7 +240,7 @@ int32 UScenarioConfig::RemoveAllSpawnsOfAgent(const FString AgentFile)
 			SpawnsToRemove.Add(Pair.Key);
 		}
 	}
-	for (FName SpawnName : SpawnsToRemove)
+	for (const FName SpawnName : SpawnsToRemove)
 	{
 		NumRemoved += SpawnPoints.Remove(SpawnName);
 	}

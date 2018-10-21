@@ -66,7 +66,7 @@ public:
 	///<summary>Returns an array of names of the spawn points used with an agent config</summary>
 	///<param="AgentConfig">The agent config to search with</param>
 	///<returns>An array of names of the spawn points used with the agent config, or all if the parameter is nullptr</returns>
-	TArray<FName> GetSpawnPoints(const UAgentConfig* AgentConfig = nullptr) const;
+	TArray<FName> GetSpawnPoints(const FString AgentFile = TEXT("")) const;
 
 	UFUNCTION(BlueprintCallable)
 	///<summary>Returns the agent config object used at this spawn point</summary>
@@ -79,14 +79,14 @@ public:
 	///<param="SpawnName">The name of the spawn point</param>
 	///<param="AgentConfig">The agent config object to be used</param>
 	///<returns>Whether a spawn point was successfully added or not</returns>
-	bool AddSpawn(const FName SpawnName, const UAgentConfig* AgentConfig);
+	bool AddSpawn(const FName SpawnName, const FString AgentFile);
 
 	UFUNCTION(BlueprintCallable)
 	///<summary>Changes the agent spawned at a spawn point</summary>
 	///<param="SpawnName">The name of the spawn point to modify</param>
 	///<param="NewAgentConfig">The config of the new agent to spawn at that point</param>
 	///<returns>Whether the spawn point config was changed or not</returns>
-	bool ChangeAgentAtSpawn(const FName SpawnName, const UAgentConfig* NewAgentConfig);
+	bool ChangeAgentAtSpawn(const FName SpawnName, const FString NewAgentFile);
 
 	UFUNCTION(BlueprintCallable)
 	///<summary>Removes a spawn point from this scenario</summary>

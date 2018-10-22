@@ -1,9 +1,9 @@
 #pragma once
 
-#include "Communication/Message.h"
+#include "Message.h"
 
 #include "CoreMinimal.h"
-#include "PlayerController/PlayerControllerComponent/PCComponent.h"
+#include "PCComponent.h"
 #include "TransceiverControllerComponent.generated.h"
 
 UCLASS()

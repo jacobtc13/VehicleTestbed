@@ -1,9 +1,7 @@
 #include "PerfectTransceiver.h"
-#include "GameFramework/Actor.h"
+#include "MessageTemplate.h"
+#include "TransceiverControllerComponent.h"
 #include "GameFramework/Pawn.h"
-#include "GameFramework/Controller.h"
-#include "Communication/MessageTemplate.h"
-#include "PlayerController/PlayerControllerComponent/TransceiverControllerComponent.h"
 
 UPerfectTransceiver::UPerfectTransceiver()
 {

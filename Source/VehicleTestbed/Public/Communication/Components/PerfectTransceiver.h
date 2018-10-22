@@ -1,7 +1,7 @@
 #pragma once
 
-#include "Communication/SendsMessage.h"
-#include "Communication/ReceivesMessage.h"
+#include "SendsMessage.h"
+#include "ReceivesMessage.h"
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"

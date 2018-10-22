@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Message.h"
-#include "EventRecorder/EventRecorder.h"
+#include "EventRecorder.h"
 
 #include "CoreMinimal.h"
 #include "UObject/Interface.h"

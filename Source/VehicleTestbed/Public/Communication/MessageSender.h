@@ -4,15 +4,15 @@
 
 #include "CoreMinimal.h"
 #include "UObject/Interface.h"
-#include "SendsMessage.generated.h"
+#include "MessageSender.generated.h"
 
 UINTERFACE(MinimalAPI)
-class USendsMessage : public UTranceiverBase
+class UMessageSender : public UTranceiverBase
 {
 	GENERATED_BODY()
 };
 
-class VEHICLETESTBED_API ISendsMessage : public ITranceiverBase
+class VEHICLETESTBED_API IMessageSender : public ITranceiverBase
 {
 	GENERATED_BODY()
 

@@ -1,37 +1,39 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
 #include "CommChannel.h"
 
-ICommChannel::ICommChannel(float channel, ISNRModel model)
+UCommChannel::UCommChannel() : UObject()
+{}
+
+UCommChannel::UCommChannel(float aFrequency, ISNRModel* aModel) : UObject()
 {
-	ICommChannel::frequency = channel;
+	Frequency = aFrequency;
+	SNRModel = aModel;
 }
 
 //Adds a reciever to the channel
-void ICommChannel::AddReceivers(TArray <UMessageReceiver> input)
+void UCommChannel::AddReceivers(TArray<IMessageReceiver*>& Input)
 {
-	for (auto& var : input)
+	for (const auto& var : Input)
 	{
-		receiverList.AddUnique(var);
+		ReceiverList.AddUnique(var);
 	}
 }
 
-void ICommChannel::RemoveReceivers(TArray <UMessageReceiver> input)
+void UCommChannel::RemoveReceivers(TArray<IMessageReceiver*>& Input)
 {
-	for (auto& var : input)
+	for (const auto& var : Input)
 	{
-		receiverList.Remove(var);
+		ReceiverList.Remove(var);
 	}
 }
 
 //Gives each receiver in the channel the message.
 //TODO: Make a method that distributes message to the receivers
-void ICommChannel::Broadcast(const FMessage<class T>& message)
+void UCommChannel::Broadcast(const IMessage& message) const
 {
 	//Check if there are receivers in the list
-	if (GetReceivers().Num > 0)
+	if (GetReceivers().Num() > 0)
 	{
-		for (UMessageReceiver& receiver : GetReceivers())
+		for (const auto& Receiver : GetReceivers())
 		{
 			//Pass message to receiver here
 		}
@@ -40,20 +42,16 @@ void ICommChannel::Broadcast(const FMessage<class T>& message)
 	{
 		//Log event - message was not broadcast to any receiver.
 	}
-	
 }
-
-
-// Add default functionality here for any ICommChannel functions that are not pure virtual.
 
 //Getters
 
-float ICommChannel::GetFrequency()
+float UCommChannel::GetFrequency() const
 {
-	return ICommChannel::frequency;
+	return UCommChannel::Frequency;
 }
 
-TArray<UMessageReceiver> ICommChannel::GetReceivers()
+TArray<IMessageReceiver*> UCommChannel::GetReceivers() const
 {
-	return receiverList;
+	return ReceiverList;
 }

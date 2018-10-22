@@ -1,109 +1,100 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
 #include "CommDistributor.h"
 
+// static initialization
+TArray<UCommChannel> UCommDistributor::ChannelList;
+TArray<USNRModelFrequencyRange> UCommDistributor::PropagateList;
+ISNRModel* UCommDistributor::DefaultProp = nullptr;
 
-// Add default functionality here for any ICommDistributor functions that are not pure virtual.
-ICommDistributor::ICommDistributor()
-{
-	//TODO: Needs to populate the propergateList that the user has defined.
-
-}
+//TODO: Needs to populate the propergateList that the user has defined.
 
 //Sends the message to the designated channel.
-void ICommDistributor::Send(const FMessage<class T>& message, UMessageSender sender, float variance)
+void UCommDistributor::Send(const IMessage& Message, IMessageSender* Sender, float Variance)
 {
-	if (CheckForMultiChannels(sender.GetFrequency(), variance))
+	if (CheckForMultiChannels(Sender->GetFrequency(), Variance))
 	{
-		for (ICommChannel channel : GetChannels(sender.GetFrequency(), variance))
+		for (const UCommChannel& Channel : GetChannels(Sender->GetFrequency(), Variance))
 		{
-			channel.Broadcast(message);
+			Channel.Broadcast(Message);
 		}
 	}
 	else
 	{
 		// Log Event - The channel the sender want to broadcast does not exist.
 	}
-	
+
 }
 
 //Adds a UMessageReceiver to a specific channel, Also creates a channel non-existant
-void ICommDistributor::AddToChannel(float frequency, UMessageReceiver &receiver)
+void UCommDistributor::AddToChannel(float Frequency, IMessageReceiver* Receiver)
 {
 	//Channel does not exist
-	if (!CheckForChannel(frequency))
+	if (!CheckForChannel(Frequency))
 	{
-		CreateChannel(frequency);
+		CreateChannel(Frequency);
 	}
-	for (ICommChannel channel : GetChannels(frequency, 0))
+	for (UCommChannel& Channel : GetChannels(Frequency, 0))
 	{
-		//package the input reciever into a TArray of UMessageReceivers
-		TArray<UMessageReceiver> temp;
-		temp.AddUnique(receiver);
+		//package the input reciever into a TArray of IMessageReceivers
+		TArray<IMessageReceiver*> temp;
+		temp.AddUnique(Receiver);
 
-		channel.AddReceivers(temp);
+		Channel.AddReceivers(temp);
 	}
 }
-	
+
 //Removes UMessageReceiver from a specific Channel
-void ICommDistributor::RemoveFromChannel(float frequency, UMessageReceiver &receiver)
+void UCommDistributor::RemoveFromChannel(float Frequency, IMessageReceiver* Receiver)
 {
-	for (ICommChannel channel : GetChannels(frequency, 0))
+	for (UCommChannel& Channel : GetChannels(Frequency, 0))
 	{
 		//package the input reciever into a TArray of UMessageReceivers
-		TArray<UMessageReceiver> temp;
-		temp.AddUnique(receiver);
+		TArray<IMessageReceiver*> temp;
+		temp.AddUnique(Receiver);
 
-		channel.RemoveReceivers(temp);
+		Channel.RemoveReceivers(temp);
 	}
 }
 
 
-void ICommDistributor::SwitchChannel(float frequency, UMessageReceiver &receiver)
+void UCommDistributor::SwitchChannel(float Frequency, IMessageReceiver* Receiver)
 {
-	RemoveFromChannel(receiver.GetFrequency(), receiver);
-	AddToChannel(frequency, receiver);
+	RemoveFromChannel(Receiver->GetFrequency(), Receiver);
+	AddToChannel(Frequency, Receiver);
 }
 
 //Checks if a single channel exist
-bool ICommDistributor::CheckForChannel(float frequency)
+bool UCommDistributor::CheckForChannel(float Frequency)
 {
 	//Check if there are any channels at all
-	if (channelList.IsValidIndex)
+	if (ChannelList.Num() != 0)
 	{
-		if (channelList.Num != 0)
+		//Check if the channel exists
+		for (const UCommChannel& Channel : ChannelList)
 		{
-			//Check if the channel exists
-			for (ICommChannel channel : channelList)
+			//Channel exists
+			if (Channel.GetFrequency() == Frequency)
 			{
-				//Channel exists
-				if (channel.GetFrequency == frequency)
-				{
-					return true;
-				}
+				return true;
 			}
-			
 		}
-		//Channel does not exist
+
 	}
+	//Channel does not exist
 	return false;
 }
 
 //Returns true if a single channel exists within a range of frequencies
-bool ICommDistributor::CheckForMultiChannels(float frequency, float variance)
+bool UCommDistributor::CheckForMultiChannels(float Frequency, float Variance)
 {
-	float upperRange = frequency + variance;
-	float lowerRange = frequency - variance;
-	if (channelList.IsValidIndex)
+	float UpperRange = Frequency + Variance;
+	float LowerRange = Frequency - Variance;
+	if (ChannelList.Num() != 0)
 	{
-		if (channelList.Num != 0)
+		for (const UCommChannel& Channel : ChannelList)
 		{
-			for (ICommChannel channel : channelList)
+			if (Channel.GetFrequency() >= LowerRange && Channel.GetFrequency() <= UpperRange)
 			{
-				if (channel.GetFrequency() >= lowerRange && channel.GetFrequency() <= upperRange)
-				{
-					return true;
-				}
+				return true;
 			}
 		}
 	}
@@ -111,42 +102,42 @@ bool ICommDistributor::CheckForMultiChannels(float frequency, float variance)
 }
 
 //Creates a channel and adds it to the list of channels
-void ICommDistributor::CreateChannel(float frequency)
+void UCommDistributor::CreateChannel(float Frequency)
 {
 	//Creates a new channel with the associated SNRModel
-	TArray<ISNRModelFrequencyRange> snrRanges = RetrieveSNRRange(frequency);
-	for (ISNRModelFrequencyRange range : snrRanges)
+	TArray<USNRModelFrequencyRange> SNRRanges = RetrieveSNRRange(Frequency);
+	for (const USNRModelFrequencyRange& Range : SNRRanges)
 	{
-		channelList.AddUnique(ICommChannel(frequency, range.GetSNRModel)); 
+		ChannelList.AddUnique(UCommChannel(Frequency, Range.GetSNRModel()));
 	}
 }
 
 //Retrieves an array of channels that are in the frequency range
-TArray<ICommChannel> ICommDistributor::GetChannels(float frequency, float variance)
+TArray<UCommChannel> UCommDistributor::GetChannels(float Frequency, float Variance)
 {
-	TArray<ICommChannel> output;
-	float upperRange = frequency + variance;
-	float lowerRange = frequency - variance;
-	for (ICommChannel channel : channelList)
+	TArray<UCommChannel> Output;
+	float UpperRange = Frequency + Variance;
+	float LowerRange = Frequency - Variance;
+	for (const UCommChannel& Channel : ChannelList)
 	{
-		if (channel.GetFrequency() >= lowerRange  && channel.GetFrequency() <= upperRange)
+		if (Channel.GetFrequency() >= LowerRange && Channel.GetFrequency() <= UpperRange)
 		{
-			output.Add(channel);
+			Output.Add(Channel);
 		}
 	}
-	return output;
+	return Output;
 }
 
 //Retrieves the SNR Model Frequency Range from the list
-TArray<ISNRModelFrequencyRange> ICommDistributor::RetrieveSNRRange(float frequency)
+TArray<USNRModelFrequencyRange> UCommDistributor::RetrieveSNRRange(float Frequency)
 {
-	TArray<ISNRModelFrequencyRange> output;
-	for (ISNRModelFrequencyRange range : propergateList)
+	TArray<USNRModelFrequencyRange> Output;
+	for (const USNRModelFrequencyRange& Range : PropagateList)
 	{
-		if (range.GetMaxFrequency >= frequency && range.GetMinFrequency <= frequency)
+		if (Range.GetMaxFrequency() >= Frequency && Range.GetMinFrequency() <= Frequency)
 		{
-			output.AddUnique(range);
+			Output.AddUnique(Range);
 		}
 	}
-	return output;
+	return Output;
 }

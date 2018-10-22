@@ -1,7 +1,7 @@
 #pragma once
 
-#include "SendsMessage.h"
-#include "ReceivesMessage.h"
+#include "MessageSender.h"
+#include "MessageReceiver.h"
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
@@ -9,7 +9,7 @@
 
 
 UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
-class VEHICLETESTBED_API UPerfectTransceiver : public UActorComponent, public ISendsMessage, public IReceivesMessage
+class VEHICLETESTBED_API UPerfectTransceiver : public UActorComponent, public IMessageSender, public IMessageReceiver
 {
 	GENERATED_BODY()
 

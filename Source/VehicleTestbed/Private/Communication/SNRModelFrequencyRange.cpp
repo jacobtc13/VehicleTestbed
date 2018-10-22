@@ -1,37 +1,38 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
 #include "SNRModelFrequencyRange.h"
+#include "VoidSNR.h"
 
-
-// Add default functionality here for any ISNRModelFrequencyRange functions that are not pure virtual.
+USNRModelFrequencyRange::USNRModelFrequencyRange()
+{
+	Model = NewObject<UVoidSNR>();
+}
 
 //Getters and setters
-void ISNRModelFrequencyRange::SetMinFrequency(float value)
+void USNRModelFrequencyRange::SetMinFrequency(float NewMin)
 {
-	ISNRModelFrequencyRange::minFrequency = value;
+	MinFrequency = NewMin;
 }
 
-float ISNRModelFrequencyRange::GetMinFrequency()
+float USNRModelFrequencyRange::GetMinFrequency() const
 {
-	return ISNRModelFrequencyRange::minFrequency;
+	return MinFrequency;
 }
 
-void ISNRModelFrequencyRange::SetMaxFrequency(float value)
+void USNRModelFrequencyRange::SetMaxFrequency(float NewMax)
 {
-	ISNRModelFrequencyRange::maxFrequency = value;
+	MaxFrequency = NewMax;
 }
 
-float ISNRModelFrequencyRange::GetMaxFrequency()
+float USNRModelFrequencyRange::GetMaxFrequency() const
 {
-	return ISNRModelFrequencyRange::maxFrequency;
+	return MaxFrequency;
 }
 
-void ISNRModelFrequencyRange::SetSNRModel(ISNRModel value)
+void USNRModelFrequencyRange::SetSNRModel(ISNRModel* NewSNR)
 {
-	ISNRModelFrequencyRange::model = value;
+	Model = NewSNR;
 }
 
-ISNRModel ISNRModelFrequencyRange::GetSNRModel()
+ISNRModel* USNRModelFrequencyRange::GetSNRModel() const
 {
-	return model;
+	return Model;
 }

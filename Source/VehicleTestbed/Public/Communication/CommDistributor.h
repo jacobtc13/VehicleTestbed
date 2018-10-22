@@ -1,9 +1,6 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
 #pragma once
 
 #include "CoreMinimal.h"
-#include "UObject/Interface.h"
 
 #include "CommChannel.h"
 #include "SNRModel.h"
@@ -14,40 +11,24 @@
 
 #include "CommDistributor.generated.h"
 
-// This class does not need to be modified.
-UINTERFACE(MinimalAPI)
-class UCommDistributor : public UInterface
+UCLASS(Abstract)
+class VEHICLETESTBED_API UCommDistributor : public UObject
 {
 	GENERATED_BODY()
 
-};
+public:
+	static void Send(const IMessage& Message, IMessageSender* Sender, float Frequency);
+	static void AddToChannel(float Frequency, IMessageReceiver* Receiver);
+	static void RemoveFromChannel(float Frequency, IMessageReceiver* Receiver);
+	static bool CheckForChannel(float Frequency);
+	static bool CheckForMultiChannels(float Frequency, float Variance);
+	static void CreateChannel(float Frequency);
+	static TArray<UCommChannel> GetChannels(float Frequency, float Variance);
+	static void SwitchChannel(float Frequency, IMessageReceiver* Receiver);
+	static TArray<USNRModelFrequencyRange> RetrieveSNRRange(float Frequency);
 
-/**
- * 
- */
-static class VEHICLETESTBED_API ICommDistributor
-{
-	//GENERATED_BODY()
-
-	// Add interface functions to this class. This is the class that will be inherited to implement this interface.
-	
-	public:
-		ICommDistributor();
-		void Send(const FMessage<class T>&, UMessageSender sender, float frequency);
-		void AddToChannel(float frequency, UMessageReceiver &receiver);
-		void RemoveFromChannel(float frequency, UMessageReceiver &receiver);
-		bool CheckForChannel(float frequency);
-		bool CheckForMultiChannels(float frequency, float variance);
-		void CreateChannel(float frequency);
-		TArray<ICommChannel> GetChannels(float frequency, float variance);
-		void SwitchChannel(float frequency, UMessageReceiver &receiver);
-		TArray<ISNRModelFrequencyRange> RetrieveSNRRange(float);
-
-	private:
-
-
-	protected:
-		static TArray<ICommChannel> channelList;
-		TArray<ISNRModelFrequencyRange> propergateList;
-		ISNRModel defaultProp;
+protected:
+	static TArray<UCommChannel> ChannelList;
+	static TArray<USNRModelFrequencyRange> PropagateList;
+	static ISNRModel* DefaultProp;
 };

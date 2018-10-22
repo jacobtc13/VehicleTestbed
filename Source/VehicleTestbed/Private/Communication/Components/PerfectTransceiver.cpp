@@ -7,8 +7,8 @@ UPerfectTransceiver::UPerfectTransceiver()
 {
 	PrimaryComponentTick.bCanEverTick = false;
 
-	ISendsMessage::Initialization(0, 0);
-	IReceivesMessage::Initialization(0);
+	IMessageSender::Initialization(0, 0);
+	IMessageReceiver::Initialization(0);
 }
 
 UPerfectTransceiver::UPerfectTransceiver(float aFrequency, float aMaxSignalStrength, float aMinSNR)
@@ -19,8 +19,8 @@ UPerfectTransceiver::UPerfectTransceiver(float aFrequency, float aMaxSignalStren
 
 void UPerfectTransceiver::Init(float aFrequency, float aMaxSignalStrength, float aMinSNR)
 {
-	ISendsMessage::Initialization(aFrequency, aMaxSignalStrength);
-	IReceivesMessage::Initialization(aMinSNR);
+	IMessageSender::Initialization(aFrequency, aMaxSignalStrength);
+	IMessageReceiver::Initialization(aMinSNR);
 }
 void UPerfectTransceiver::Send(const IMessage& Message, float SignalStrength)
 {

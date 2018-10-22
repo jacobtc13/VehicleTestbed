@@ -1,6 +1,6 @@
 #include "TransceiverControllerComponent.h"
-#include "Communication/MessageTemplate.h"
-#include "Communication/ReceivesMessage.h"
+#include "MessageTemplate.h"
+#include "MessageReceiver.h"
 
 void UTransceiverControllerComponent::SetupPlayerInputComponent(UInputComponent* InputComponent)
 {
@@ -10,7 +10,7 @@ void UTransceiverControllerComponent::SetupPlayerInputComponent(UInputComponent*
 
 void UTransceiverControllerComponent::InterpretMessage(const IMessage & Message)
 {
-	typedef IReceivesMessage::EResponseCode EResponseCode;
+	typedef IMessageReceiver::EResponseCode EResponseCode;
 	if (Cast<TMessageTemplate<EResponseCode>>(&Message) != nullptr)
 	{
 		EResponseCode ResponseCode = Cast<TMessageTemplate<EResponseCode>>(&Message)->Get();

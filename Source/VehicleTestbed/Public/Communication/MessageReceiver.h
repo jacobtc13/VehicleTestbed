@@ -27,6 +27,10 @@ public:
 		Garbled
 	};
 
+	float GetFrequency() const;
+	void SetFrequency(const float NewFrequency);
+
 protected:
+	float Frequency;
 	float MinSNR;
 };

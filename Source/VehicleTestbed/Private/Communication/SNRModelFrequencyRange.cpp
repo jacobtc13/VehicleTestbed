@@ -2,9 +2,7 @@
 #include "VoidSNR.h"
 
 USNRModelFrequencyRange::USNRModelFrequencyRange()
-{
-	Model = NewObject<UVoidSNR>();
-}
+{}
 
 //Getters and setters
 void USNRModelFrequencyRange::SetMinFrequency(float NewMin)
@@ -27,12 +25,12 @@ float USNRModelFrequencyRange::GetMaxFrequency() const
 	return MaxFrequency;
 }
 
-void USNRModelFrequencyRange::SetSNRModel(ISNRModel* NewSNR)
+void USNRModelFrequencyRange::SetSNRModel(USNRModel* NewSNR)
 {
 	Model = NewSNR;
 }
 
-ISNRModel* USNRModelFrequencyRange::GetSNRModel() const
+USNRModel* USNRModelFrequencyRange::GetSNRModel() const
 {
 	return Model;
 }

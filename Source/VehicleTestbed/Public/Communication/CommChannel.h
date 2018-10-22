@@ -14,16 +14,19 @@ private:
 	UPROPERTY()
 	float Frequency;
 	UPROPERTY()
-	TScriptInterface<ISNRModel> SNRModel;
+	USNRModel* SNRModel;
 	UPROPERTY()
-	TArray<IMessageReceiver*> ReceiverList;
+	TArray<UObject*> ReceiverList;
 
 public:
 	UCommChannel();
-	UCommChannel(float aFrequency, ISNRModel* aModel);
+	UCommChannel(float aFrequency, USNRModel* aModel);
+
+	void Initialize(float aFrequency, USNRModel* aModel);
+
 	float GetFrequency() const;
 	void Broadcast(const IMessage& Message) const;
-	void AddReceivers(TArray <IMessageReceiver*>& Input);
-	void RemoveReceivers(TArray <IMessageReceiver*>& input);
-	TArray<IMessageReceiver*> GetReceivers() const;
+	void AddReceivers(const TArray<UObject*>& Receivers);
+	void RemoveReceivers(const TArray<UObject*>& Receivers);
+	TArray<UObject*> GetReceivers() const;
 };

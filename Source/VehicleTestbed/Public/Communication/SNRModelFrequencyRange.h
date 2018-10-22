@@ -15,7 +15,7 @@ private:
 	UPROPERTY(BlueprintSetter=SetMaxFrequency, BlueprintGetter=GetMaxFrequency)
 	float MaxFrequency;
 	UPROPERTY(BlueprintSetter=SetSNRModel, BlueprintGetter=GetSNRModel)
-	ISNRModel* Model;
+	USNRModel* Model;
 
 public:
 	USNRModelFrequencyRange();
@@ -31,7 +31,7 @@ public:
 	float GetMaxFrequency() const;
 
 	UFUNCTION(BlueprintSetter)
-	void SetSNRModel(ISNRModel* NewSNR);
+	void SetSNRModel(USNRModel* NewSNR);
 	UFUNCTION(BlueprintGetter)
-	ISNRModel* GetSNRModel() const;
+	USNRModel* GetSNRModel() const;
 };

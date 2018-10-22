@@ -14,6 +14,7 @@ class USNRModel : public UObject
 public:
 	virtual float CalculateSNR(const FVector& SenderPos, const FVector& ReceiverPos) const
 	{
-		check(0 && "You must override this")
+		check(0 && "You must override this");
+		return 0;
 	}
 };

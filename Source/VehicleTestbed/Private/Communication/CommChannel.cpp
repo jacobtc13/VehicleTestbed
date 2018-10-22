@@ -3,26 +3,37 @@
 UCommChannel::UCommChannel() : UObject()
 {}
 
-UCommChannel::UCommChannel(float aFrequency, ISNRModel* aModel) : UObject()
+UCommChannel::UCommChannel(float aFrequency, USNRModel* aModel) : UCommChannel()
+{
+	Initialize(aFrequency, aModel);
+}
+
+void UCommChannel::Initialize(float aFrequency, USNRModel * aModel)
 {
 	Frequency = aFrequency;
 	SNRModel = aModel;
 }
 
 //Adds a reciever to the channel
-void UCommChannel::AddReceivers(TArray<IMessageReceiver*>& Input)
+void UCommChannel::AddReceivers(const TArray<UObject*>& Receivers)
 {
-	for (const auto& var : Input)
+	for (const auto& Receiver : Receivers)
 	{
-		ReceiverList.AddUnique(var);
+		if (IMessageReceiver* MessageReceiver = Cast<IMessageReceiver>(Receiver))
+		{
+			ReceiverList.AddUnique(Receiver);
+		}
 	}
 }
 
-void UCommChannel::RemoveReceivers(TArray<IMessageReceiver*>& Input)
+void UCommChannel::RemoveReceivers(const TArray<UObject*>& Receivers)
 {
-	for (const auto& var : Input)
+	for (const auto& Receiver : Receivers)
 	{
-		ReceiverList.Remove(var);
+		if (IMessageReceiver* MessageReceiver = Cast<IMessageReceiver>(Receiver))
+		{
+			ReceiverList.Remove(Receiver);
+		}
 	}
 }
 
@@ -51,7 +62,7 @@ float UCommChannel::GetFrequency() const
 	return UCommChannel::Frequency;
 }
 
-TArray<IMessageReceiver*> UCommChannel::GetReceivers() const
+TArray<UObject*> UCommChannel::GetReceivers() const
 {
 	return ReceiverList;
 }

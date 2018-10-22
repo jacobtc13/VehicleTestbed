@@ -1,15 +1,14 @@
 #pragma once
 
-#include "Object.h"
-#include "CoreMinimal.h"
 #include "SNRModel.h"
+#include "CoreMinimal.h"
 #include "VoidSNR.generated.h"
 
 UCLASS()
-class UVoidSNR : public UObject, public ISNRModel
+class UVoidSNR : public USNRModel
 {
 	GENERATED_BODY()
 
 public:
-	float CalculateSNR(IMessageSender* Sender, IMessageReceiver* Receiver) const override;
+	float CalculateSNR(const FVector& SenderPos, const FVector& ReceiverPos) const override;
 };

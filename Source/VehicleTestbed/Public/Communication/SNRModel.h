@@ -1,21 +1,19 @@
 #pragma once
 
+#include "Object.h"
 #include "CoreMinimal.h"
-#include "UObject/Interface.h"
 #include "MessageSender.h"
 #include "MessageReceiver.h"
 #include "SNRModel.generated.h"
 
-UINTERFACE(MinimalAPI)
-class USNRModel : public UInterface
-{
-	GENERATED_BODY()
-};
-
-class VEHICLETESTBED_API ISNRModel
+UCLASS(Abstract)
+class USNRModel : public UObject
 {
 	GENERATED_BODY()
 
 public:
-	virtual float CalculateSNR(IMessageSender* Sender, IMessageReceiver* Receiver) const = 0;
+	virtual float CalculateSNR(const FVector& SenderPos, const FVector& ReceiverPos) const
+	{
+		check(0 && "You must override this")
+	}
 };

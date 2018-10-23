@@ -4,8 +4,8 @@
 
 #include "CoreMinimal.h"
 #include "Array.h"
+#include "VehicleTestbed.h"
 #include "SpawnPoint.h"
-#include "VehicleTestbed.h""
 #include "UObject.h"
 #include "Runtime/Engine/Classes/GameFramework/Actor.h"
 #include "Runtime/Engine/Classes/Kismet/GameplayStatics.h"
@@ -26,5 +26,9 @@ public:
 	
 	SpawnPointList();
 
+	
 	~SpawnPointList();
+
+	bool SpawnPointList::PopulateList();
+
 };

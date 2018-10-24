@@ -1,4 +1,5 @@
 #include "MessageSender.h"
+#include "CommDistributor.h"
 
 void IMessageSender::Initialization(float aFrequency, float aMaxSignalStrength)
 {
@@ -6,12 +7,20 @@ void IMessageSender::Initialization(float aFrequency, float aMaxSignalStrength)
 	MaxSignalStrength = aMaxSignalStrength;
 }
 
+void IMessageSender::Send(const IMessage& Message, float SignalStrength)
+{
+	if (UObject* ThisObject = Cast<UObject>(this))
+	{
+		UCommDistributor::Send(Message, ThisObject, MaxSignalStrength * SignalStrength);
+	}
+}
+
 void IMessageSender::ChangeFrequency(const float& NewFrequency)
 {
 	Frequency = NewFrequency;
 }
 
-const float IMessageSender::GetFrequency() const
+float IMessageSender::GetFrequency() const
 {
 	return Frequency;
 }

@@ -25,7 +25,7 @@ public:
 	void Initialize(float aFrequency, USNRModel* aModel);
 
 	float GetFrequency() const;
-	void Broadcast(const IMessage& Message) const;
+	void Broadcast(const IMessage& Message, const FVector SenderPos) const;
 	void AddReceivers(const TArray<UObject*>& Receivers);
 	void RemoveReceivers(const TArray<UObject*>& Receivers);
 	TArray<UObject*> GetReceivers() const;

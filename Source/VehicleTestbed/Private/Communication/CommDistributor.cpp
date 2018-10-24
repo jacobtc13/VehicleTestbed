@@ -16,7 +16,7 @@ void UCommDistributor::Send(const IMessage& Message, UObject* Sender, float Vari
 		{
 			for (const UCommChannel* Channel : GetChannels(MessageSender->GetFrequency(), Variance))
 			{
-				Channel->Broadcast(Message);
+				Channel->Broadcast(Message, MessageSender->GetLocation());
 			}
 		}
 		else
@@ -54,7 +54,7 @@ void UCommDistributor::RemoveFromChannel(float Frequency, UObject* Receiver)
 	{
 		for (UCommChannel* Channel : GetChannels(Frequency, 0))
 		{
-			//package the input reciever into a TArray of UMessageReceivers
+			//package the input receiver into a TArray of UObjects
 			TArray<UObject*> temp;
 			temp.AddUnique(Receiver);
 
@@ -115,13 +115,23 @@ bool UCommDistributor::CheckForMultiChannels(float Frequency, float Variance)
 void UCommDistributor::CreateChannel(float Frequency)
 {
 	//Creates a new channel with the associated SNRModel
+	UCommChannel* NewChannel = NewObject<UCommChannel>();
+
 	TArray<USNRModelFrequencyRange*> SNRRanges = RetrieveSNRRange(Frequency);
-	for (const USNRModelFrequencyRange* Range : SNRRanges)
+	if (SNRRanges.Num())
 	{
-		UCommChannel* NewChannel = NewObject<UCommChannel>();
-		NewChannel->Initialize(Frequency, Range->GetSNRModel());
-		ChannelList.AddUnique(NewChannel);
+		// Use the last SNRModel in the list
+		for (const USNRModelFrequencyRange* Range : SNRRanges)
+		{
+			NewChannel->Initialize(Frequency, Range->GetSNRModel());
+		}
 	}
+	else
+	{
+		NewChannel->Initialize(Frequency, DefaultProp);
+	}
+
+	ChannelList.AddUnique(NewChannel);
 }
 
 //Retrieves an array of channels that are in the frequency range

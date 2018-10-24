@@ -39,7 +39,7 @@ void UCommChannel::RemoveReceivers(const TArray<UObject*>& Receivers)
 
 //Gives each receiver in the channel the message.
 //TODO: Make a method that distributes message to the receivers
-void UCommChannel::Broadcast(const IMessage& message) const
+void UCommChannel::Broadcast(const IMessage& message, const FVector SenderPos) const
 {
 	//Check if there are receivers in the list
 	if (GetReceivers().Num() > 0)
@@ -47,6 +47,10 @@ void UCommChannel::Broadcast(const IMessage& message) const
 		for (const auto& Receiver : GetReceivers())
 		{
 			//Pass message to receiver here
+			if (IMessageReceiver* MessageReceiver = Cast<IMessageReceiver>(Receiver))
+			{
+				MessageReceiver->Receive(message, SNRModel->CalculateSNR(SenderPos, MessageReceiver->GetLocation()));
+			}
 		}
 	}
 	else

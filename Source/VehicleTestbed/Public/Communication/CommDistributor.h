@@ -32,5 +32,6 @@ public:
 protected:
 	static TArray<UCommChannel*> ChannelList;
 	static TArray<USNRModelFrequencyRange*> PropagateList;
+	// may have issues with this re: garbage collection
 	static USNRModel* DefaultProp;
 };

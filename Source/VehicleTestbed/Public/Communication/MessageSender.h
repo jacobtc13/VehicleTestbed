@@ -19,13 +19,13 @@ class VEHICLETESTBED_API IMessageSender : public ITranceiverBase
 public:
 	virtual void Initialization(float aFrequency, float aMaxSignalStrength);
 
-	virtual void Send(const IMessage& Message, float SignalStrength = 1) = 0;
+	virtual void Send(const IMessage& Message, float SignalStrength = 1);
 
 	virtual float CalculatePower(float TransmissionPower, float TargetFrequency, float ActualFrequency) const = 0;
 
 	virtual void ChangeFrequency(const float& NewFrequency);
 
-	virtual const float GetFrequency() const;
+	virtual float GetFrequency() const;
 	virtual void SetFrequency(const float& NewFrequency);
 
 protected:

@@ -20,7 +20,6 @@ SpawnPoint::SpawnPoint(FName Name, FVector Location, FRotator Rotation, FString 
 // Default Constructor
 SpawnPoint::SpawnPoint() {
 	
-	SpawnPoint();
 	FName spName = TEXT("defaultName");
 	FVector spLocation = FVector(float(0));
 	FRotator spRoation = FRotator(float(0));

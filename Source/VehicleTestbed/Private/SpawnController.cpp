@@ -2,14 +2,14 @@
 
 #include "SpawnController.h"
 
-int CreateSpawnList() {
-	int SpawnPointCount = 0;
+
+SpawnPointList spList;
 
 
+TArray<FName> getSpawnPointRefs() {
+	
+	return spList.getSpawnPointRefs();
 
-
-	return SpawnPointCount;
 }
-
 
 

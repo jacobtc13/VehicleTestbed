@@ -3,6 +3,7 @@
 #include "CoreMinimal.h"
 
 
+
 ///<summary>SpawnPoint class for SpawnList, holds location name, location coordinates, Rotation and Tags to identify the spawnpoint</summary>
 
 

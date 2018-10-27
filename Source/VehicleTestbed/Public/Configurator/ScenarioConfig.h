@@ -99,6 +99,26 @@ public:
 	///<param="AgentFile">The agent config file to search with</param>
 	///<returns>The number of spawn points removed</summary>
 	int32 RemoveAllSpawnsOfAgent(const FString AgentFile);
+
+	UFUNCTION(BlueprintGetter)
+	///<summary>Returns the output file location of the data recording system</summary>
+	///<returns>The string representation of the output location</returns>
+	FString GetDataRecordingOutputFolder() const;
+
+	UFUNCTION(BlueprintSetter)
+	///<summary>Sets the output file location of the data recording system</summary>
+	///<param="NewOutputLocation">The string representation of a new output location</param>
+	void SetDataRecordingOutputFolder(const FString& NewOutputLocation);
+
+	UFUNCTION(BlueprintGetter)
+	///<summary>Returns the output file location of the event recording system</summary>
+	///<returns>The string representation of the output location</returns>
+	FString GetEventRecordingOutputFolder() const;
+
+	UFUNCTION(BlueprintSetter)
+	///<summary>Sets the output file location of the event recording system</summary>
+	///<param="NewOutputLocation">The string representation of a new output location</param>
+	void SetEventRecordingOuptutFolder(const FString& NewOutputLocation);
 	
 private:
 	UPROPERTY(BlueprintGetter=GetMapName, BlueprintSetter=SetMapName)
@@ -107,4 +127,8 @@ private:
 	TMap<FString, UAgentConfig*> Agents;
 	UPROPERTY()
 	TMap<FName, FString> SpawnPoints;
+	UPROPERTY()
+	FString DataRecordOutputFolder;
+	UPROPERTY()
+	FString EventRecordOutputFolder;
 };

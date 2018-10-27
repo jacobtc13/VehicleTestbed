@@ -17,7 +17,7 @@ rapidxml::xml_node<>* UScenarioConfig::GetXMLNode()
 	// Save the agents used
 	TArray<FString> AgentFiles;
 	Agents.GetKeys(AgentFiles);
-	for (FString Agent : AgentFiles)
+	for (const FString& Agent : AgentFiles)
 	{
 		xml_node<>* AgentNode = Doc.allocate_node(node_element, "Agent", TCHAR_TO_UTF8(*Agent));
 		BaseNode->append_node(AgentNode);
@@ -34,6 +34,14 @@ rapidxml::xml_node<>* UScenarioConfig::GetXMLNode()
 		BaseNode->append_node(SpawnNode);
 	}
 
+	// Save the data recording output file
+	xml_node<>* DataRecordingNode = Doc.allocate_node(node_element, "DataRecordingOutput", TCHAR_TO_UTF8(*DataRecordOutputFolder));
+	BaseNode->append_node(DataRecordingNode);
+
+	// Save the event recording output file
+	xml_node<>* EventRecordingNode = Doc.allocate_node(node_element, "EventRecordingOutput", TCHAR_TO_UTF8(*EventRecordOutputFolder));
+	BaseNode->append_node(EventRecordingNode);
+
 	return BaseNode;
 }
 
@@ -43,7 +51,7 @@ bool UScenarioConfig::InitializeFromXML(rapidxml::xml_document<>& Doc)
 	xml_node<>* Node = Doc.first_node();
 
 	// Check is a scenario
-	if ((std::string)Node->name() != "Scenario")
+	if (Node && ((std::string)Node->name() != "Scenario"))
 	{
 		return false;
 	}
@@ -78,6 +86,27 @@ bool UScenarioConfig::InitializeFromXML(rapidxml::xml_document<>& Doc)
 			return false;
 		}
 		SpawnPoints.Add(NameNode->value(), AgentNode->value());
+	}
+
+	// Get data recording output folder
+	if (Node && ((std::string)Node->name() == "DataRecordingOutput"))
+	{
+		DataRecordOutputFolder = Node->value();
+	}
+	else
+	{
+		return false;
+	}
+
+	// Get event recording output folder
+	Node = Node->next_sibling();
+	if (Node && ((std::string)Node->name() == "EventRecordingOutput"))
+	{
+		EventRecordOutputFolder = Node->value();
+	}
+	else
+	{
+		return false;
 	}
 
 	return true;
@@ -245,4 +274,24 @@ int32 UScenarioConfig::RemoveAllSpawnsOfAgent(const FString AgentFile)
 		NumRemoved += SpawnPoints.Remove(SpawnName);
 	}
 	return NumRemoved;
+}
+
+FString UScenarioConfig::GetDataRecordingOutputFolder() const
+{
+	return DataRecordOutputFolder;
+}
+
+void UScenarioConfig::SetDataRecordingOutputFolder(const FString& NewOutputLocation)
+{
+	DataRecordOutputFolder = NewOutputLocation;
+}
+
+FString UScenarioConfig::GetEventRecordingOutputFolder() const
+{
+	return EventRecordOutputFolder;
+}
+
+void UScenarioConfig::SetEventRecordingOuptutFolder(const FString& NewOutputLocation)
+{
+	EventRecordOutputFolder = NewOutputLocation;
 }

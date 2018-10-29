@@ -15,11 +15,6 @@ void IMessageSender::Send(const IMessage& Message, float SignalStrength)
 	}
 }
 
-void IMessageSender::ChangeFrequency(const float& NewFrequency)
-{
-	Frequency = NewFrequency;
-}
-
 float IMessageSender::GetFrequency() const
 {
 	return Frequency;

@@ -1,4 +1,5 @@
 #include "MessageReceiver.h"
+#include "CommDistributor.h"
 
 void IMessageReceiver::Initialization(float aMinSNR)
 {
@@ -13,4 +14,5 @@ float IMessageReceiver::GetFrequency() const
 void IMessageReceiver::SetFrequency(const float NewFrequency)
 {
 	Frequency = NewFrequency;
+	UCommDistributor::SwitchChannel(NewFrequency, Cast<UObject>(this));
 }

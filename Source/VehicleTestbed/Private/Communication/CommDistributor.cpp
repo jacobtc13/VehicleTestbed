@@ -3,7 +3,7 @@
 // static initialization
 TArray<UCommChannel*> UCommDistributor::ChannelList;
 TArray<USNRModelFrequencyRange*> UCommDistributor::PropagateList;
-USNRModel* UCommDistributor::DefaultProp = nullptr;
+TSharedPtr<USNRModel> UCommDistributor::DefaultProp;
 
 //TODO: Needs to populate the propergateList that the user has defined.
 
@@ -114,24 +114,28 @@ bool UCommDistributor::CheckForMultiChannels(float Frequency, float Variance)
 //Creates a channel and adds it to the list of channels
 void UCommDistributor::CreateChannel(float Frequency)
 {
-	//Creates a new channel with the associated SNRModel
-	UCommChannel* NewChannel = NewObject<UCommChannel>();
-
-	TArray<USNRModelFrequencyRange*> SNRRanges = RetrieveSNRRange(Frequency);
-	if (SNRRanges.Num())
+	if (!CheckForChannel(Frequency))
 	{
-		// Use the last SNRModel in the list
-		for (const USNRModelFrequencyRange* Range : SNRRanges)
+		//Creates a new channel with the associated SNRModel
+		UCommChannel* NewChannel = NewObject<UCommChannel>();
+
+		TArray<USNRModelFrequencyRange*> SNRRanges = RetrieveSNRRange(Frequency);
+		if (SNRRanges.Num())
 		{
-			NewChannel->Initialize(Frequency, Range->GetSNRModel());
+			// Use the first SNRModel in the list
+			for (const USNRModelFrequencyRange* Range : SNRRanges)
+			{
+				NewChannel->Initialize(Frequency, Range->GetSNRModel());
+				break;
+			}
 		}
-	}
-	else
-	{
-		NewChannel->Initialize(Frequency, DefaultProp);
-	}
+		else
+		{
+			NewChannel->Initialize(Frequency, DefaultProp.Get());
+		}
 
-	ChannelList.AddUnique(NewChannel);
+		ChannelList.Add(NewChannel);
+	}
 }
 
 //Retrieves an array of channels that are in the frequency range
@@ -140,7 +144,7 @@ TArray<UCommChannel*> UCommDistributor::GetChannels(float Frequency, float Varia
 	TArray<UCommChannel*> Output;
 	float UpperRange = Frequency + Variance;
 	float LowerRange = Frequency - Variance;
-	for (UCommChannel* Channel : ChannelList)
+	for (const auto& Channel : ChannelList)
 	{
 		if (Channel->GetFrequency() >= LowerRange && Channel->GetFrequency() <= UpperRange)
 		{
@@ -154,7 +158,7 @@ TArray<UCommChannel*> UCommDistributor::GetChannels(float Frequency, float Varia
 TArray<USNRModelFrequencyRange*> UCommDistributor::RetrieveSNRRange(float Frequency)
 {
 	TArray<USNRModelFrequencyRange*> Output;
-	for (USNRModelFrequencyRange* Range : PropagateList)
+	for (const auto& Range : PropagateList)
 	{
 		if (Range->GetMaxFrequency() >= Frequency && Range->GetMinFrequency() <= Frequency)
 		{

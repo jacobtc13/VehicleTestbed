@@ -38,7 +38,6 @@ void UCommChannel::RemoveReceivers(const TArray<UObject*>& Receivers)
 }
 
 //Gives each receiver in the channel the message.
-//TODO: Make a method that distributes message to the receivers
 void UCommChannel::Broadcast(const IMessage& message, const FVector SenderPos) const
 {
 	//Check if there are receivers in the list

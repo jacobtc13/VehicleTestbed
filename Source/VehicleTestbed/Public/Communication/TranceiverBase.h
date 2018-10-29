@@ -18,5 +18,7 @@ class VEHICLETESTBED_API ITranceiverBase
 	GENERATED_BODY()
 
 public:
+	///<summary>Returns the location of this object</summary>
+	///<returns>The location of this object</returns>
 	virtual FVector GetLocation() const = 0;
 };

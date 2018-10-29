@@ -10,5 +10,5 @@ class UVoidSNR : public USNRModel
 	GENERATED_BODY()
 
 public:
-	float CalculateSNR(const FVector& SenderPos, const FVector& ReceiverPos) const override;
+	float CalculateSNR(const float SignalPower, const FVector& SenderPos, const FVector& ReceiverPos) const override;
 };

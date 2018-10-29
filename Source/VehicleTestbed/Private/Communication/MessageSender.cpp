@@ -1,10 +1,11 @@
 #include "MessageSender.h"
 #include "CommDistributor.h"
 
-void IMessageSender::Initialization(float aFrequency, float aMaxSignalStrength)
+void IMessageSender::Initialization(float aFrequency, float aMaxSignalStrength, float aVariance)
 {
 	Frequency = aFrequency;
 	MaxSignalStrength = aMaxSignalStrength;
+	Variance = aVariance;
 }
 
 void IMessageSender::Send(const IMessage& Message, float SignalStrength)
@@ -24,4 +25,14 @@ void IMessageSender::SetFrequency(const float& NewFrequency)
 {
 	if (NewFrequency > 0)
 		Frequency = NewFrequency;
+}
+
+float IMessageSender::GetVariance() const
+{
+	return Variance;
+}
+
+void IMessageSender::SetVariance(const float NewVariance)
+{
+	Variance = NewVariance;
 }

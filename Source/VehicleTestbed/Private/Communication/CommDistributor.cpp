@@ -8,15 +8,15 @@ TSharedPtr<USNRModel> UCommDistributor::DefaultProp;
 //TODO: Needs to populate the propergateList that the user has defined.
 
 //Sends the message to the designated channel.
-void UCommDistributor::Send(const IMessage& Message, UObject* Sender, float Variance)
+void UCommDistributor::Send(const IMessage& Message, UObject* Sender, float SignalPower)
 {
 	if (IMessageSender* MessageSender = Cast<IMessageSender>(Sender))
 	{
-		if (CheckForMultiChannels(MessageSender->GetFrequency(), Variance))
+		if (CheckForMultiChannels(MessageSender->GetFrequency(), MessageSender->GetVariance()))
 		{
-			for (const UCommChannel* Channel : GetChannels(MessageSender->GetFrequency(), Variance))
+			for (const UCommChannel* Channel : GetChannels(MessageSender->GetFrequency(), MessageSender->GetVariance()))
 			{
-				Channel->Broadcast(Message, MessageSender->GetLocation());
+				Channel->Broadcast(Message, SignalPower, MessageSender->GetLocation());
 			}
 		}
 		else

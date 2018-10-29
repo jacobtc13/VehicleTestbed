@@ -20,8 +20,8 @@ public:
 	///<summary>Sends a message to all receivers on the chosen frequency</summary>
 	///<param name="Message">The message to send</param>
 	///<param name="Sender">The sender of the message</param>
-	///<param name="Frequency">The frequency to send the message on</param>
-	static void Send(const IMessage& Message, UObject* Sender, float Frequency);
+	///<param name="SignalPower">The signal strength of the message</param>
+	static void Send(const IMessage& Message, UObject* Sender, float SignalPower);
 
 	///<summary>Adds a receiver to a frequency</summary>
 	///<param name="Frequency">The frequency to add to</param>

@@ -38,7 +38,7 @@ void UCommChannel::RemoveReceivers(const TArray<UObject*>& Receivers)
 }
 
 //Gives each receiver in the channel the message.
-void UCommChannel::Broadcast(const IMessage& Message, const float SignalPower, const FVector SenderPos) const
+void UCommChannel::Broadcast(const UMessage* Message, const float SignalPower, const FVector SenderPos) const
 {
 	//Check if there are receivers in the list
 	if (GetReceivers().Num() > 0)

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "TranceiverBase.h"
+#include "CommDistributor.h"
 
 #include "CoreMinimal.h"
 #include "UObject/Interface.h"
@@ -26,7 +27,7 @@ public:
 	///<summary>Sends a message</summary>
 	///<param name="Message">The message to be sent</param>
 	///<param name="SignalStrength">The percentage of the maximum signal strength to transmit at. Values between 0 to 1</param>
-	virtual void Send(const IMessage& Message, float SignalStrength = 1);
+	virtual void Send(const UMessage* Message, float SignalStrength = 1);
 
 	///<summary>Calculates the power messages are sent at in nearby frequencies</summary>
 	///<param name="TransmissionPower">The power at which a message was sent</param>

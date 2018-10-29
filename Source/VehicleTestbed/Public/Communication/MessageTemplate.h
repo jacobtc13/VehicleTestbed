@@ -3,7 +3,7 @@
 #include "Message.h"
 
 template <class M>
-class TMessageTemplate : public IMessage
+class TMessageTemplate : public UMessage
 {
 public:
 	typedef M MessageType;

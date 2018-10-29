@@ -35,7 +35,7 @@ public:
 	///<param name="Message">The message to be sent</param>
 	///<param name="SignalPower">The power the signal is being broadcast at</param>
 	///<param name="SenderPos">The position of the sender of the message</param>
-	void Broadcast(const IMessage& Message, const float SignalPower, const FVector SenderPos) const;
+	void Broadcast(const UMessage* Message, const float SignalPower, const FVector SenderPos) const;
 
 	///<summary>Adds a list of receivers to this frequency</summary>
 	///<param name="Receivers">The list of receivers</param>

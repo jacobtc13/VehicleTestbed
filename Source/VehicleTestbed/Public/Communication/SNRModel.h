@@ -2,8 +2,6 @@
 
 #include "Object.h"
 #include "CoreMinimal.h"
-#include "MessageSender.h"
-#include "MessageReceiver.h"
 #include "SNRModel.generated.h"
 
 UCLASS(Abstract)

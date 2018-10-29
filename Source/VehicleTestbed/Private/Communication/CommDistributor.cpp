@@ -1,4 +1,5 @@
 #include "CommDistributor.h"
+#include "MessageSender.h"
 
 // static initialization
 TArray<UCommChannel*> UCommDistributor::ChannelList;
@@ -8,7 +9,7 @@ TSharedPtr<USNRModel> UCommDistributor::DefaultProp;
 //TODO: Needs to populate the propergateList that the user has defined.
 
 //Sends the message to the designated channel.
-void UCommDistributor::Send(const IMessage& Message, UObject* Sender, float SignalPower)
+void UCommDistributor::Send(const UMessage* Message, UObject* Sender, float SignalPower)
 {
 	if (IMessageSender* MessageSender = Cast<IMessageSender>(Sender))
 	{

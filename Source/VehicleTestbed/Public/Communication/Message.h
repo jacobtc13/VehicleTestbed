@@ -1,16 +1,11 @@
 #pragma once
 
+#include "Object.h"
 #include "CoreMinimal.h"
-#include "UObject/Interface.h"
 #include "Message.generated.h"
 
-UINTERFACE(MinimalAPI)
-class UMessage : public UInterface
-{
-	GENERATED_BODY()
-};
-
-class VEHICLETESTBED_API IMessage
+UCLASS()
+class UMessage : public UObject
 {
 	GENERATED_BODY()
 };

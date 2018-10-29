@@ -6,7 +6,6 @@
 #include "SNRModel.h"
 #include "SNRModelFrequencyRange.h"
 #include "Message.h"
-#include "MessageSender.h"
 #include "MessageReceiver.h"
 
 #include "CommDistributor.generated.h"
@@ -21,7 +20,7 @@ public:
 	///<param name="Message">The message to send</param>
 	///<param name="Sender">The sender of the message</param>
 	///<param name="SignalPower">The signal strength of the message</param>
-	static void Send(const IMessage& Message, UObject* Sender, float SignalPower);
+	static void Send(const UMessage* Message, UObject* Sender, float SignalPower);
 
 	///<summary>Adds a receiver to a frequency</summary>
 	///<param name="Frequency">The frequency to add to</param>

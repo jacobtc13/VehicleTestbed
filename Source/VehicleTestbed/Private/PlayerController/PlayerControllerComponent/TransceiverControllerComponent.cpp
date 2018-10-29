@@ -8,12 +8,12 @@ void UTransceiverControllerComponent::SetupPlayerInputComponent(UInputComponent*
 }
 
 
-void UTransceiverControllerComponent::InterpretMessage(const IMessage & Message)
+void UTransceiverControllerComponent::InterpretMessage(const UMessage* Message)
 {
 	typedef IMessageReceiver::EResponseCode EResponseCode;
-	if (Cast<TMessageTemplate<EResponseCode>>(&Message) != nullptr)
+	if (Cast<TMessageTemplate<EResponseCode>>(Message) != nullptr)
 	{
-		EResponseCode ResponseCode = Cast<TMessageTemplate<EResponseCode>>(&Message)->Get();
+		EResponseCode ResponseCode = Cast<TMessageTemplate<EResponseCode>>(Message)->Get();
 		switch (ResponseCode)
 		{
 		case EResponseCode::Garbled:

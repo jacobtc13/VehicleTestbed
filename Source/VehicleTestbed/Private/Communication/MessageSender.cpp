@@ -1,5 +1,4 @@
 #include "MessageSender.h"
-#include "CommDistributor.h"
 
 void IMessageSender::Initialization(float aFrequency, float aMaxSignalStrength, float aVariance)
 {
@@ -8,7 +7,7 @@ void IMessageSender::Initialization(float aFrequency, float aMaxSignalStrength, 
 	Variance = aVariance;
 }
 
-void IMessageSender::Send(const IMessage& Message, float SignalStrength)
+void IMessageSender::Send(const UMessage* Message, float SignalStrength)
 {
 	if (UObject* ThisObject = Cast<UObject>(this))
 	{

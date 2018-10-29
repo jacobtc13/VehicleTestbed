@@ -20,11 +20,11 @@ public:
 	void Init(float aFrequency, float aMaxSignalStrength, float aMinSNR);
 
 public:
-	virtual void Send(const IMessage& Message, float SignalStrength = 1) override;
+	virtual void Send(const UMessage* Message, float SignalStrength = 1) override;
 
 	virtual float CalculatePower(float TransmissionPower, float TargetFrequency, float ActualFrequency) const override;
 
-	virtual void Receive(const IMessage& message, float SNR) override;
+	virtual void Receive(const UMessage* message, float SNR) override;
 
 	virtual FVector GetLocation() const override;
 };

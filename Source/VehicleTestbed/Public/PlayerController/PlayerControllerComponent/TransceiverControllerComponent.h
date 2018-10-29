@@ -18,5 +18,5 @@ public:
 
 	///<summary>Interprets the message</summary>
 	///<param name="Message">The message to interpret</param>
-	virtual void InterpretMessage(const IMessage& Message);
+	virtual void InterpretMessage(const UMessage* Message);
 };

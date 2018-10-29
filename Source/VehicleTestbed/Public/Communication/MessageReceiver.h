@@ -17,30 +17,35 @@ class VEHICLETESTBED_API IMessageReceiver : public ITranceiverBase
 	GENERATED_BODY()
 
 public:
+	UFUNCTION()
 	///<summary>Receives a message with a signal to noise ratio</summary>
-	///<param name="message">The message being received</param>
+	///<param name="Message">The message being received</param>
 	///<param name="SNR">The signal to noise ratio</param>
-	virtual void Receive(const UMessage* message, float SNR) = 0;
+	virtual void Receive(const UMessage* Message, float SNR) = 0;
 
-	///<summary>Initializes the receiver with a minimum SNR</summary>
-	///<param name="aMinSNR">The minimum SNR at which this receiver can interpet messages</param>
-	virtual void Initialization(float aMinSNR);
-
+	UFUNCTION()
 	///<summary>Returns the frequency this receiver is listening to</summary>
 	///<returns>The frequency</returns>
-	float GetFrequency() const;
+	virtual float GetFrequency() const = 0;
 
+	UFUNCTION()
 	///<summary>Sets the frequency this receiver is listening to</summary>
 	///<param name="NewFrequency">The new frequency to listen to</param>
-	void SetFrequency(const float NewFrequency);
+	virtual void SetFrequency(const float NewFrequency) = 0;
+
+	UFUNCTION()
+	///<summary>Gets the minimum SNR at which this receiver can understand messages</summary>
+	///<returns>The minimum SNR</returns>
+	virtual float GetMinSNR() const = 0;
+
+	UFUNCTION()
+	///<summary>Sets the minimum SNR at which this receiver can understand messages</summary>
+	///<param name="NewMinSNR">The minimum SNR</param>
+	virtual void SetMinSNR(const float NewMinSNR) = 0;
 
 	enum EResponseCode
 	{
 		Received,
 		Garbled
 	};
-
-protected:
-	float Frequency;
-	float MinSNR;
 };

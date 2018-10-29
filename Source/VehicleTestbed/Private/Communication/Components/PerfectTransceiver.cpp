@@ -6,20 +6,14 @@
 UPerfectTransceiver::UPerfectTransceiver()
 {
 	PrimaryComponentTick.bCanEverTick = false;
-
-	IMessageSender::Initialization(0, 0);
-	IMessageReceiver::Initialization(0);
 }
 
-UPerfectTransceiver::UPerfectTransceiver(float aFrequency, float aMaxSignalStrength, float aMinSNR)
+void UPerfectTransceiver::Initialise(const float aMaxSignalStrength, const float aMinSNR, const float aFrequency, const float aVariance)
 {
-	Init(aFrequency, aMaxSignalStrength, aMinSNR);
-}
-
-void UPerfectTransceiver::Init(float aFrequency, float aMaxSignalStrength, float aMinSNR)
-{
-	IMessageSender::Initialization(aFrequency, aMaxSignalStrength);
-	IMessageReceiver::Initialization(aMinSNR);
+	SetMaxSignalStrength(aMaxSignalStrength);
+	SetMinSNR(aMinSNR);
+	SetFrequency(aFrequency);
+	SetVariance(aVariance);
 }
 
 void UPerfectTransceiver::Send(const UMessage* Message, float SignalStrength)
@@ -64,4 +58,45 @@ void UPerfectTransceiver::Receive(const UMessage* message, float SNR)
 FVector UPerfectTransceiver::GetLocation() const
 {
 	return GetOwner()->GetActorLocation();
+}
+
+float UPerfectTransceiver::GetMaxSignalStrength() const
+{
+	return MaxSignalStrength;
+}
+
+void UPerfectTransceiver::SetMaxSignalStrength(const float NewMaxSignalStrength)
+{
+	MaxSignalStrength = NewMaxSignalStrength;
+}
+
+float UPerfectTransceiver::GetMinSNR() const
+{
+	return MinSNR;
+}
+
+void UPerfectTransceiver::SetMinSNR(const float NewMinSNR)
+{
+	MinSNR = NewMinSNR;
+}
+
+float UPerfectTransceiver::GetFrequency() const
+{
+	return Frequency;
+}
+
+void UPerfectTransceiver::SetFrequency(const float NewFrequency)
+{
+	Frequency = NewFrequency;
+	UCommDistributor::SwitchChannel(NewFrequency, Cast<UObject>(this));
+}
+
+float UPerfectTransceiver::GetVariance() const
+{
+	return Variance;
+}
+
+void UPerfectTransceiver::SetVariance(const float NewVariance)
+{
+	Variance = NewVariance;
 }

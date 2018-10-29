@@ -12,11 +12,13 @@ public:
 		: Message(aMessage)
 	{}
 
+	UFUNCTION()
 	const MessageType& Get() const
 	{
 		return Message;
 	}
 
 private:
+	UPROPERTY()
 	const MessageType Message;
 };

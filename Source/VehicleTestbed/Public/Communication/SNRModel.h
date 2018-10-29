@@ -10,6 +10,7 @@ class USNRModel : public UObject
 	GENERATED_BODY()
 
 public:
+	UFUNCTION()
 	///<summary>Calculates the SNR between two positions</summary>
 	///<param name="SignalPower">The power the signal is broadcast at</param>
 	///<param name="SenderPos">The position of the sender of the message</param>

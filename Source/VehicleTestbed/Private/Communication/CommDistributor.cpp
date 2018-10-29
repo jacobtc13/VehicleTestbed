@@ -168,3 +168,29 @@ TArray<USNRModelFrequencyRange*> UCommDistributor::RetrieveSNRRange(float Freque
 	}
 	return Output;
 }
+
+void UCommDistributor::AddSNRModelForFrequencyRange(USNRModelFrequencyRange* FrequencyRange)
+{
+	if (FrequencyRange != nullptr)
+	{
+		PropagateList.Add(FrequencyRange);
+	}
+}
+
+void UCommDistributor::RemoveSNRModelFromFrequencyRange(USNRModelFrequencyRange* FrequencyRange)
+{
+	PropagateList.Remove(FrequencyRange);
+}
+
+USNRModel* UCommDistributor::GetDefaultPropagation()
+{
+	return DefaultProp.Get();
+}
+
+void UCommDistributor::SetDefaultPropagation(USNRModel* NewDefaultProp)
+{
+	if (NewDefaultProp != nullptr)
+	{
+		DefaultProp = TSharedPtr<USNRModel>(NewDefaultProp);
+	}
+}

@@ -72,9 +72,27 @@ public:
 	///<returns>An array of frequency range objects that match the specified frequency</returns>
 	static TArray<USNRModelFrequencyRange*> RetrieveSNRRange(float Frequency);
 
-	// TODO: Connect with Comm config
+	UFUNCTION()
+	///<summary>Adds a frequency range to use</summary>
+	///<param name="FrequencyRange">The frequency range object to add</param>
+	static void AddSNRModelForFrequencyRange(USNRModelFrequencyRange* FrequencyRange);
 
-protected:
+	UFUNCTION()
+	///<summary>Removes a frequency range object</summary>
+	///<param name="FrequencyRange">The frequency range object to remove</param>
+	static void RemoveSNRModelFromFrequencyRange(USNRModelFrequencyRange* FrequencyRange);
+
+	UFUNCTION(BlueprintPure)
+	///<summary>Returns the default propagation model</summary>
+	///<returns>The default propagation model</returns>
+	static USNRModel* GetDefaultPropagation();
+
+	UFUNCTION(BlueprintCallable)
+	///<summary>Sets the default propagation model</summary>
+	///<param name="NewDefaultProp">The new default propagation model</param>
+	static void SetDefaultPropagation(USNRModel* NewDefaultProp);
+
+private:
 	static TArray<UCommChannel*> ChannelList;
 	static TArray<USNRModelFrequencyRange*> PropagateList;
 	static TSharedPtr<USNRModel> DefaultProp;

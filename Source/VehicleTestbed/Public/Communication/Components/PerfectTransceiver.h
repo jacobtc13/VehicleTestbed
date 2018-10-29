@@ -16,15 +16,15 @@ class VEHICLETESTBED_API UPerfectTransceiver : public UActorComponent, public IM
 public:
 	UPerfectTransceiver();
 
-	UFUNCTION()
+	UFUNCTION(BlueprintCallable)
 	///<summary>Initialises this transceiver</summary>
 	///<param name="aMaxSignalStrength">The maximum signal strength this transceiver can output</param>
 	///<param name="aMinSNR">The minimum SNR at which this transceiver can correctly interpret messages</param>
 	///<param name="aFrequency">The frequency this transceiver sends and receives messages on</param>
 	///<param name="aVariance">The variance of the frequency output of this transceiver</param>
-	void Initialise(const float aMaxSignalStrength, const float aMinSNR, const float aFrequency, const float aVariance);
+	void Initialize(const float aMaxSignalStrength, const float aMinSNR, const float aFrequency, const float aVariance);
 
-	UFUNCTION()
+	UFUNCTION(BlueprintCallable)
 	///<summary>Sends a message out into the world</summary>
 	///<param name="Message">The message to be sent</param>
 	///<param name="SignalStrength">The percentage of the maximum signal strength to transmit at. Values between 0 to 1</param>
@@ -42,64 +42,64 @@ public:
 	///<summary>Receives a message with a signal to noise ratio</summary>
 	///<param name="Message">The message being received</param>
 	///<param name="SNR">The signal to noise ratio</param>
-	virtual void Receive(const UMessage* message, float SNR) override;
+	virtual void Receive(const UMessage* Message, float SNR) override;
 
-	UFUNCTION()
+	UFUNCTION(BlueprintPure)
 	///<summary>Returns the location of this object</summary>
 	///<returns>The location of this object</returns>
 	virtual FVector GetLocation() const override;
 
-	UFUNCTION()
+	UFUNCTION(BlueprintGetter)
 	///<summary>Gets the maximum signal strength of this transceiver</summary>
 	///<returns>The maximum signal strength in decibels</returns>
 	virtual float GetMaxSignalStrength() const override;
 
-	UFUNCTION()
+	UFUNCTION(BlueprintSetter)
 	///<summary>Sets the maximum signal strength of this transceiver</summary>
 	///<param name="NewMaxSignalStrength">The new maximum signal strength in decibels</param>
 	virtual void SetMaxSignalStrength(const float NewMaxSignalStrength) override;
 
-	UFUNCTION()
+	UFUNCTION(BlueprintGetter)
 	///<summary>Gets the minimum SNR at which this transceiver can understand messages</summary>
 	///<returns>The minimum SNR</returns>
 	virtual float GetMinSNR() const override;
 
-	UFUNCTION()
+	UFUNCTION(BlueprintSetter)
 	///<summary>Sets the minimum SNR at which this transceiver can understand messages</summary>
 	///<param name="NewMinSNR">The minimum SNR</param>
 	virtual void SetMinSNR(const float NewMinSNR) override;
 
-	UFUNCTION()
+	UFUNCTION(BlueprintGetter)
 	///<summary>Returns the frequency this transceiver sends and receives messages on</summary>
 	///<returns>The frequency</returns>
 	virtual float GetFrequency() const override;
 
-	UFUNCTION()
+	UFUNCTION(BlueprintSetter)
 	///<summary>Sets the frequency this transceiver sends and receives messages on</summary>
 	///<param name="NewFrequency">The new frequency to use</param>
 	virtual void SetFrequency(const float NewFrequency) override;
 
-	UFUNCTION()
+	UFUNCTION(BlueprintGetter)
 	///<summary>Gets the variance of this transceiver's sending component</summary>
 	///<returns>The variance</returns>
 	virtual float GetVariance() const override;
 
-	UFUNCTION()
+	UFUNCTION(BlueprintSetter)
 	///<summary>Sets the variance of this transceiver's sending component</summary>
 	///<param name="NewVariance">The new variance</param>
 	virtual void SetVariance(const float NewVariance) override;
 
 private:
-	UPROPERTY()
+	UPROPERTY(BlueprintGetter=GetMaxSignalStrength, BlueprintSetter=SetMaxSignalStrength)
 	float MaxSignalStrength;
 	
-	UPROPERTY()
+	UPROPERTY(BlueprintGetter=GetMinSNR, BlueprintSetter=SetMinSNR)
 	float MinSNR;
 
-	UPROPERTY()
+	UPROPERTY(BlueprintGetter=GetFrequency, BlueprintSetter=SetFrequency)
 	float Frequency;
 
-	UPROPERTY()
+	UPROPERTY(BlueprintGetter=GetVariance, BlueprintSetter=SetVariance)
 	float Variance;
 
 

@@ -4,6 +4,13 @@
 USNRModelFrequencyRange::USNRModelFrequencyRange()
 {}
 
+void USNRModelFrequencyRange::Initialize(float aMinFrequency, float aMaxFrequency, USNRModel* aModel)
+{
+	SetMinFrequency(aMinFrequency);
+	SetMaxFrequency(aMaxFrequency);
+	SetSNRModel(aModel);
+}
+
 //Getters and setters
 void USNRModelFrequencyRange::SetMinFrequency(float NewMin)
 {

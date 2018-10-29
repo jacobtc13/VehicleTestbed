@@ -8,7 +8,7 @@ UPerfectTransceiver::UPerfectTransceiver()
 	PrimaryComponentTick.bCanEverTick = false;
 }
 
-void UPerfectTransceiver::Initialise(const float aMaxSignalStrength, const float aMinSNR, const float aFrequency, const float aVariance)
+void UPerfectTransceiver::Initialize(const float aMaxSignalStrength, const float aMinSNR, const float aFrequency, const float aVariance)
 {
 	SetMaxSignalStrength(aMaxSignalStrength);
 	SetMinSNR(aMinSNR);
@@ -30,7 +30,7 @@ float UPerfectTransceiver::CalculatePower(float TransmissionPower, float TargetF
 	return 0;
 }
 
-void UPerfectTransceiver::Receive(const UMessage* message, float SNR)
+void UPerfectTransceiver::Receive(const UMessage* Message, float SNR)
 {
 	UEventRecorder::RecordEvent(TEXT("Received message"), this);
 
@@ -38,10 +38,12 @@ void UPerfectTransceiver::Receive(const UMessage* message, float SNR)
 	{
 		// Received Message loud enough to understand
 		// Send it to the player controller of the pawn this is attached to
-		UTransceiverControllerComponent* TransceiverLogic = ((APawn*)GetOwner())->GetController()->FindComponentByClass<UTransceiverControllerComponent>();
-		if (TransceiverLogic != nullptr)
+		if (APawn* Owner = Cast<APawn>(GetOwner()))
 		{
-			TransceiverLogic->InterpretMessage(message);
+			if (UTransceiverControllerComponent* TransceiverLogic = Owner->GetController()->FindComponentByClass<UTransceiverControllerComponent>())
+			{
+				TransceiverLogic->InterpretMessage(Message);
+			}
 		}
 	}
 	else if (SNR > 0)
@@ -88,7 +90,7 @@ float UPerfectTransceiver::GetFrequency() const
 void UPerfectTransceiver::SetFrequency(const float NewFrequency)
 {
 	Frequency = NewFrequency;
-	UCommDistributor::SwitchChannel(NewFrequency, Cast<UObject>(this));
+	UCommDistributor::SwitchChannel(NewFrequency, this);
 }
 
 float UPerfectTransceiver::GetVariance() const

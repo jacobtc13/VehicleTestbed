@@ -20,6 +20,13 @@ private:
 public:
 	USNRModelFrequencyRange();
 
+	UFUNCTION()
+	///<summary>Initialises the object</summary>
+	///<param name="aMinFrequency">The minimum frequency of this range</param>
+	///<param name="aMaxFrequency">The maximum frequency of this range</param>
+	///<param name="aModel">The SNR model used by this range</param>
+	void Initialize(float aMinFrequency, float aMaxFrequency, USNRModel* aModel);
+
 	UFUNCTION(BlueprintSetter)
 	///<summary>Sets the minimum frequency of this range</summary>
 	///<param name="NewMin">The new minimum frequency</param>

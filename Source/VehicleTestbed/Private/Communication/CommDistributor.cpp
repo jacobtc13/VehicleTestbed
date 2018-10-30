@@ -32,17 +32,15 @@ void UCommDistributor::AddToChannel(float Frequency, UObject* Receiver)
 {
 	if (IMessageReceiver* MessageReceiver = Cast<IMessageReceiver>(Receiver))
 	{
-		//Channel does not exist
-		if (!CheckForChannel(Frequency))
+		CreateChannel(Frequency); // Checks if a channel already exists
+
+		TArray<UCommChannel*> SingleChannelInList = GetChannels(Frequency, 0);
+		if (SingleChannelInList.Num())
 		{
-			CreateChannel(Frequency);
-		}
-		for (UCommChannel* Channel : GetChannels(Frequency, 0))
-		{
+			UCommChannel* Channel = SingleChannelInList[0];
 			//package the input reciever into a TArray of IMessageReceivers
 			TArray<UObject*> temp;
-			temp.AddUnique(Receiver);
-
+			temp.Add(Receiver);
 			Channel->AddReceivers(temp);
 		}
 	}
@@ -53,12 +51,13 @@ void UCommDistributor::RemoveFromChannel(float Frequency, UObject* Receiver)
 {
 	if (IMessageReceiver* MessageReceiver = Cast<IMessageReceiver>(Receiver))
 	{
-		for (UCommChannel* Channel : GetChannels(Frequency, 0))
+		TArray<UCommChannel*> SingleChannelInList = GetChannels(Frequency, 0);
+		if (SingleChannelInList.Num())
 		{
+			UCommChannel* Channel = SingleChannelInList[0];
 			//package the input receiver into a TArray of UObjects
 			TArray<UObject*> temp;
-			temp.AddUnique(Receiver);
-
+			temp.Add(Receiver);
 			Channel->RemoveReceivers(temp);
 		}
 	}

@@ -8,7 +8,7 @@
 #include "PerfectTransceiver.generated.h"
 
 
-UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
+UCLASS(ClassGroup = (Communications), meta = (BlueprintSpawnableComponent))
 class VEHICLETESTBED_API UPerfectTransceiver : public UActorComponent, public IMessageSender, public IMessageReceiver
 {
 	GENERATED_BODY()

@@ -89,8 +89,11 @@ float UPerfectTransceiver::GetFrequency() const
 
 void UPerfectTransceiver::SetFrequency(const float NewFrequency)
 {
+	if (UCommDistributor::CheckForChannel(Frequency))
+	{
+		UCommDistributor::SwitchChannel(NewFrequency, this);
+	}
 	Frequency = NewFrequency;
-	UCommDistributor::SwitchChannel(NewFrequency, this);
 }
 
 float UPerfectTransceiver::GetVariance() const

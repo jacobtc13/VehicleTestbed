@@ -69,3 +69,13 @@ TArray<UObject*> UCommChannel::GetReceivers() const
 {
 	return ReceiverList;
 }
+
+USNRModel* UCommChannel::GetSNRModel() const
+{
+	return SNRModel;
+}
+
+void UCommChannel::SetSNRModel(USNRModel* NewSNRModel)
+{
+	SNRModel = NewSNRModel;
+}

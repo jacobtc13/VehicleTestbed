@@ -124,15 +124,16 @@ void UCommDistributor::CreateChannel(float Frequency)
 		if (SNRRanges.Num())
 		{
 			// Use the first SNRModel in the list
-			for (const USNRModelFrequencyRange* Range : SNRRanges)
-			{
-				NewChannel->Initialize(Frequency, Range->GetSNRModel());
-				break;
-			}
+			NewChannel->Initialize(Frequency, SNRRanges[0]->GetSNRModel());
+		}
+		else if (DefaultProp.IsValid())
+		{
+			NewChannel->Initialize(Frequency, DefaultProp.Get());
 		}
 		else
 		{
-			NewChannel->Initialize(Frequency, DefaultProp.Get());
+			// Comm Distributor has not been intialized yet
+			UE_LOG(LogTemp, Fatal, TEXT("Channel attempted to be made before Distributor is initialized"));
 		}
 
 		ChannelList.Add(NewChannel);
@@ -174,12 +175,38 @@ void UCommDistributor::AddSNRModelForFrequencyRange(USNRModelFrequencyRange* Fre
 	if (FrequencyRange != nullptr)
 	{
 		PropagateList.Add(FrequencyRange);
+		for (UCommChannel* Channel : ChannelList)
+		{
+			if (Channel->GetSNRModel() == DefaultProp.Get())
+			{
+				if ((FrequencyRange->GetMinFrequency() <= Channel->GetFrequency()) && (Channel->GetFrequency() <= FrequencyRange->GetMaxFrequency()))
+				{
+					Channel->SetSNRModel(FrequencyRange->GetSNRModel());
+				}
+			}
+		}
 	}
 }
 
 void UCommDistributor::RemoveSNRModelFromFrequencyRange(USNRModelFrequencyRange* FrequencyRange)
 {
 	PropagateList.Remove(FrequencyRange);
+	for (UCommChannel* Channel : ChannelList)
+	{
+		if (Channel->GetSNRModel() == FrequencyRange->GetSNRModel())
+		{
+			auto RangeList = RetrieveSNRRange(Channel->GetFrequency());
+			if (RangeList.Num())
+			{
+				// Use the first SNRModel in the list
+				Channel->SetSNRModel(RangeList[0]->GetSNRModel());
+			}
+			else
+			{
+				Channel->SetSNRModel(DefaultProp.Get());
+			}
+		}
+	}
 }
 
 USNRModel* UCommDistributor::GetDefaultPropagation()

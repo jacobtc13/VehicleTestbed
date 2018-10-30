@@ -13,7 +13,7 @@ class UCommChannel : public UObject
 private:
 	UPROPERTY()
 	float Frequency;
-	UPROPERTY()
+	UPROPERTY(BlueprintGetter=GetSNRModel, BlueprintSetter=SetSNRModel)
 	USNRModel* SNRModel;
 	UPROPERTY()
 	TArray<UObject*> ReceiverList;
@@ -54,4 +54,14 @@ public:
 	///<summary>Returns the list of receivers on this frequency</summary>
 	///<returns>The list of receivers</returns>
 	TArray<UObject*> GetReceivers() const;
+
+	UFUNCTION(BlueprintGetter)
+	///<summary>Gets the SNR model of this channel</summary>
+	///<returns>The SNR model of this channel</returns>
+	USNRModel* GetSNRModel() const;
+
+	UFUNCTION(BlueprintSetter)
+	///<summary>Sets the SNR model of this channel</summary>
+	///<param name="NewSNRModel">The new SNR model to use</param>
+	void SetSNRModel(USNRModel* NewSNRModel);
 };

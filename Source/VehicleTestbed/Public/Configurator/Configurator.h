@@ -6,8 +6,6 @@
 #include <fstream>
 #include <string>
 
-#include "AgentConfig.h"
-#include "ScenarioConfig.h"
 #include "ConfigBase.h"
 
 #include "CoreMinimal.h"

@@ -14,7 +14,7 @@ class VEHICLETESTBED_API UScenarioConfig : public UConfigBase
 public:
 	///<summary>Generates a rapidxml node structure from the information in this object</summary>
 	///<returns>A pointer to a rapidxml node structure depicting the information from this object</returns>
-	rapidxml::xml_node<>* GetXMLNode() override;
+	rapidxml::xml_node<>* GetXMLNode() const override;
 
 	///<summary>Initializes this config object from a rapidxml document</summary>
 	///<param="doc">The rapidxml document to parse</summary>

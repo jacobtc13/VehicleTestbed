@@ -17,7 +17,7 @@ public:
 	UAgentConfig(rapidxml::xml_node<>* Node);
 	~UAgentConfig();
 
-	virtual rapidxml::xml_node<>* GetXMLNode() override;
+	virtual rapidxml::xml_node<>* GetXMLNode() const override;
 
 protected:
 	UClass * AgentClass;

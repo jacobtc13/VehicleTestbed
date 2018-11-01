@@ -5,7 +5,24 @@
 #include "DataRecorder.h"
 #include "EventRecorder/EventRecorder.h"
 
-rapidxml::xml_node<>* UScenarioConfig::GetXMLNode()
+bool LoadAgentFromFile(TPair<FString, UAgentConfig*>& Pair)
+{
+	if (UAgentConfig* NewAgent = Cast<UAgentConfig>(UConfigurator::LoadConfig(TCHAR_TO_UTF8(*Pair.Key))))
+	{
+		// New Agent is valid
+		Pair.Value = NewAgent;
+		// TODO: Register the new agent config with whatever static thing that keeps track of all the configs
+		return true;
+	}
+	else
+	{
+		// Not valid
+		FMessageDialog::Open(EAppMsgType::Ok, FText::FromString(TEXT("An agent was not loaded from file correctly. Agent: ") + Pair.Key));
+		return false;
+	}
+}
+
+rapidxml::xml_node<>* UScenarioConfig::GetXMLNode() const
 {
 	using namespace rapidxml;
 	xml_document<> Doc;
@@ -169,23 +186,6 @@ TArray<FString> UScenarioConfig::GetAgentFileLocations() const
 	TArray<FString> AgentFiles;
 	Agents.GetKeys(AgentFiles);
 	return AgentFiles;
-}
-
-bool LoadAgentFromFile(TPair<FString, UAgentConfig*>& Pair)
-{
-	if (UAgentConfig* NewAgent = Cast<UAgentConfig>(UConfigurator::LoadConfig(TCHAR_TO_UTF8(*Pair.Key))))
-	{
-		// New Agent is valid
-		Pair.Value = NewAgent;
-		// TODO: Register the new agent config with whatever static thing that keeps track of all the configs
-		return true;
-	}
-	else
-	{
-		// Not valid
-		FMessageDialog::Open(EAppMsgType::Ok, FText::FromString(TEXT("An agent was not loaded from file correctly. Agent: ") + Pair.Key));
-		return false;
-	}
 }
 
 TArray<UAgentConfig*> UScenarioConfig::GetAgents()

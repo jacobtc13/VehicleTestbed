@@ -11,7 +11,7 @@ UAgentConfig::~UAgentConfig()
 {
 }
 
-rapidxml::xml_node<>* UAgentConfig::GetXMLNode()
+rapidxml::xml_node<>* UAgentConfig::GetXMLNode() const
 {
 	using namespace rapidxml;
 	xml_document<> doc;

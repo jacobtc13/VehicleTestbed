@@ -1,4 +1,8 @@
 #include "Configurator.h"
+#include "AgentConfig.h"
+#include "ScenarioConfig.h"
+#include "CommConfig.h"
+
 #include "rapidxml_utils.hpp"
 #include "MessageDialog.h"
 
@@ -52,6 +56,10 @@ UConfigBase* UConfigurator::LoadConfig(std::string Filename)
 	else if (FirstNodeName == "Scenario")
 	{
 		ConfigObject = NewObject<UScenarioConfig>();
+	}
+	else if (FirstNodeName == "Communication")
+	{
+		ConfigObject = NewObject<UCommConfig>();
 	}
 
 	if (ConfigObject != nullptr)

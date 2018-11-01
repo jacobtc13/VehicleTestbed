@@ -15,7 +15,7 @@ public:
 	UConfigBase();
 	virtual ~UConfigBase();
 
-	virtual rapidxml::xml_node<>* GetXMLNode();
+	virtual rapidxml::xml_node<>* GetXMLNode() const;
 
 	virtual bool InitializeFromXML(rapidxml::xml_document<>& doc);
 

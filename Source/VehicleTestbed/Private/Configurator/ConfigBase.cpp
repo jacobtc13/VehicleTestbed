@@ -9,7 +9,7 @@ UConfigBase::~UConfigBase()
 {
 }
 
-rapidxml::xml_node<>* UConfigBase::GetXMLNode()
+rapidxml::xml_node<>* UConfigBase::GetXMLNode() const
 {
 	check(0 && "You must override this");
 	return nullptr;

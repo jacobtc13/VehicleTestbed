@@ -20,6 +20,11 @@ public:
 	///<param="doc">The rapidxml document to parse</summary>
 	bool InitializeFromXML(rapidxml::xml_document<>& doc) override;
 
+	UFUNCTION(meta = (WorldContext = ContextObject))
+	///<summary>Instantiates the scenario this config object depicts in the current world (assumes the map has already been loaded)</summary>
+	///<param name="ContextObject">The context object used to load the map</param>
+	bool Instantiate(UObject* ContextObject) override;
+
 	UFUNCTION(BlueprintGetter)
 	///<summary>Returns the name of the map used in this scenario</summmary>
 	///<returns>The name of the map uesd in this scenario</returns>
@@ -65,7 +70,7 @@ public:
 	UFUNCTION(BlueprintPure)
 	///<summary>Returns an array of names of the spawn points used with an agent config</summary>
 	///<param="AgentConfig">The agent config to search with</param>
-	///<returns>An array of names of the spawn points used with the agent config, or all if the parameter is nullptr</returns>
+	///<returns>An array of names of the spawn points used with the agent config, or all if the parameter string is empty</returns>
 	TArray<FName> GetSpawnPoints(const FString AgentFile = TEXT("")) const;
 
 	UFUNCTION(BlueprintCallable)
@@ -127,8 +132,10 @@ private:
 	TMap<FString, UAgentConfig*> Agents;
 	UPROPERTY()
 	TMap<FName, FString> SpawnPoints;
-	UPROPERTY()
+	UPROPERTY(BlueprintGetter=GetDataRecordingOutputFolder, BlueprintSetter=SetDataRecordingOutputFolder)
 	FString DataRecordOutputFolder;
-	UPROPERTY()
+	UPROPERTY(BlueprintGetter=GetEventRecordingOutputFolder, BlueprintSetter=SetEventRecordingOuptutFolder)
 	FString EventRecordOutputFolder;
+
+	//TODO: Add CommConfig
 };

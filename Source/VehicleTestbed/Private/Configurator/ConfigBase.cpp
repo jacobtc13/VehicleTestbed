@@ -11,11 +11,19 @@ UConfigBase::~UConfigBase()
 
 rapidxml::xml_node<>* UConfigBase::GetXMLNode()
 {
+	check(0 && "You must override this");
 	return nullptr;
 }
 
 bool UConfigBase::InitializeFromXML(rapidxml::xml_document<>& doc)
 {
+	check(0 && "You must override this");
+	return false;
+}
+
+bool UConfigBase::Instantiate(UObject* ContextObject)
+{
+	check(0 && "You must override this");
 	return false;
 }
 

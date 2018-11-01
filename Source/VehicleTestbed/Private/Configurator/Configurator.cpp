@@ -2,6 +2,24 @@
 #include "rapidxml_utils.hpp"
 #include "MessageDialog.h"
 
+FString UConfigurator::Scenario;
+
+void UConfigurator::StartScenario(UObject* ContextObject)
+{
+	// Try opening the scenario file
+	if (UScenarioConfig* ScenarioConfig = Cast<UScenarioConfig>(LoadConfig(TCHAR_TO_UTF8(*Scenario))))
+	{
+		// Loaded file successfully
+		if (ScenarioConfig->Instantiate(ContextObject))
+		{
+			return;
+		}
+	}
+	// Failed to load the scenario, error already shown to user by LoadConfig()
+	// Backtrack to the main menu
+	UGameplayStatics::OpenLevel(ContextObject, TEXT("OpenerMap"));
+}
+
 UConfigBase* UConfigurator::LoadConfig(std::string Filename)
 {
 	using namespace rapidxml;
@@ -81,4 +99,14 @@ void UConfigurator::ReloadConfig(UConfigBase* Config)
 			Config = NewConfig;
 		}
 	}
+}
+
+FString UConfigurator::GetScenario()
+{
+	return Scenario;
+}
+
+void UConfigurator::SetScenario(FString ScenarioFile)
+{
+	Scenario = ScenarioFile;
 }

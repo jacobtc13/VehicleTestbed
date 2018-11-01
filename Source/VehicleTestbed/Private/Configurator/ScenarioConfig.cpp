@@ -1,19 +1,22 @@
 #include "ScenarioConfig.h"
 #include "Configurator.h"
 #include "MessageDialog.h"
+#include "GameFramework/GameModeBase.h"
+#include "DataRecorder.h"
+#include "EventRecorder/EventRecorder.h"
 
 rapidxml::xml_node<>* UScenarioConfig::GetXMLNode()
 {
 	using namespace rapidxml;
 	xml_document<> Doc;
-	
+
 	// Save the config as a "Scenario" type
 	xml_node<>* BaseNode = Doc.allocate_node(node_element, "Scenario");
-	
+
 	// Save the map name
 	xml_node<>* MapNode = Doc.allocate_node(node_element, "Map", TCHAR_TO_UTF8(*MapName.ToString()));
 	BaseNode->append_node(MapNode);
-	
+
 	// Save the agents used
 	TArray<FString> AgentFiles;
 	Agents.GetKeys(AgentFiles);
@@ -22,7 +25,7 @@ rapidxml::xml_node<>* UScenarioConfig::GetXMLNode()
 		xml_node<>* AgentNode = Doc.allocate_node(node_element, "Agent", TCHAR_TO_UTF8(*Agent));
 		BaseNode->append_node(AgentNode);
 	}
-	
+
 	// Save the spawn points and which agents go with them
 	for (const auto& Pair : SpawnPoints)
 	{
@@ -41,6 +44,8 @@ rapidxml::xml_node<>* UScenarioConfig::GetXMLNode()
 	// Save the event recording output file
 	xml_node<>* EventRecordingNode = Doc.allocate_node(node_element, "EventRecordingOutput", TCHAR_TO_UTF8(*EventRecordOutputFolder));
 	BaseNode->append_node(EventRecordingNode);
+
+	// Add CommsConfig
 
 	return BaseNode;
 }
@@ -109,6 +114,43 @@ bool UScenarioConfig::InitializeFromXML(rapidxml::xml_document<>& Doc)
 		return false;
 	}
 
+	// Add CommsConfig
+
+	return true;
+}
+
+bool UScenarioConfig::Instantiate(UObject* ContextObject)
+{
+	if (!ContextObject || !ContextObject->ImplementsGetWorld())
+	{
+		return false;
+	}
+	// Set the data recorder output location
+	if (UDataRecorder* DataRecorder = Cast<UDataRecorder>(UGameplayStatics::GetGameMode(ContextObject)->GetDefaultSubobjectByName(TEXT("Data Recorder"))))
+	{
+		DataRecorder->SetFilePath(TCHAR_TO_UTF8(*DataRecordOutputFolder));
+	}
+	else
+	{
+		return false;
+	}
+
+	// Set the event recorder output location
+	UEventRecorder::SetFolderOutput(EventRecordOutputFolder);
+
+	// Load agents
+	for (auto& Agent : Agents)
+	{
+		if (!LoadAgentFromFile(Agent))
+		{
+			return false;
+		}
+	}
+
+	// TODO: Tie in with agent spawn controller
+
+	// TODO: Add CommsConfig
+
 	return true;
 }
 
@@ -131,7 +173,7 @@ TArray<FString> UScenarioConfig::GetAgentFileLocations() const
 
 bool LoadAgentFromFile(TPair<FString, UAgentConfig*>& Pair)
 {
-	if (UAgentConfig* NewAgent = dynamic_cast<UAgentConfig*>(UConfigurator::LoadConfig(TCHAR_TO_UTF8(*Pair.Key))))
+	if (UAgentConfig* NewAgent = Cast<UAgentConfig>(UConfigurator::LoadConfig(TCHAR_TO_UTF8(*Pair.Key))))
 	{
 		// New Agent is valid
 		Pair.Value = NewAgent;

@@ -6,7 +6,7 @@
 #include "CoreMinimal.h"
 #include "ConfigBase.generated.h"
 
-UCLASS(BlueprintType)
+UCLASS(Abstract, BlueprintType)
 class VEHICLETESTBED_API UConfigBase : public UObject
 {
 	GENERATED_BODY()
@@ -18,6 +18,8 @@ public:
 	virtual rapidxml::xml_node<>* GetXMLNode();
 
 	virtual bool InitializeFromXML(rapidxml::xml_document<>& doc);
+
+	virtual bool Instantiate(UObject* ContextObject);
 
 	UFUNCTION(BlueprintGetter)
 	FString GetFileLocation() const;

@@ -11,5 +11,3 @@ TArray<FName> getSpawnPointRefs() {
 	return spList.getSpawnPointRefs();
 
 }
-
-

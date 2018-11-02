@@ -7,6 +7,10 @@
 #include "Array.h"
 #include "SpawnPoint.h"
 #include "SpawnPointList.h"
+#include "Engine/World.h"
+#include "Runtime/Engine/Classes/GameFramework/Actor.h"
+#include "SpawnPointList.h"
+#include "SpawnPoint.h"
 #include "SpawnController.generated.h"
 
 /**
@@ -21,7 +25,6 @@ public:
 
 	TArray<FName> getSpawnPointRefs();
 
-	
 	
 };
 

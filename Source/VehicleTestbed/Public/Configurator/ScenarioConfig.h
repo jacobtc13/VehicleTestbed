@@ -134,7 +134,7 @@ public:
 	///<summary>Sets the file location of the communications config to use</summary>
 	///<param name="NewCommConfig">The file location</param>
 	void SetCommConfig(const FString& NewCommConfig);
-	
+
 private:
 	UPROPERTY(BlueprintGetter=GetMapName, BlueprintSetter=SetMapName)
 	FName MapName;

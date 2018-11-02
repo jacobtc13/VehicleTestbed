@@ -70,18 +70,6 @@ rapidxml::xml_node<>* UScenarioConfig::GetXMLNode() const
 	return BaseNode;
 }
 
-// Checks if the node has the desired name and sets the value of the string variable to the node's value
-bool InitializeStringFromNode(FString& Variable, std::string NodeName, rapidxml::xml_node<>* Node)
-{
-	using namespace rapidxml;
-	if (Node && ((std::string)Node->name() == NodeName))
-	{
-		Variable = Node->value();
-		return true;
-	}
-	return false;
-}
-
 bool UScenarioConfig::InitializeFromXML(rapidxml::xml_document<>& Doc)
 {
 	using namespace rapidxml;
@@ -95,16 +83,18 @@ bool UScenarioConfig::InitializeFromXML(rapidxml::xml_document<>& Doc)
 
 	// Check for a map next
 	Node = Node->next_sibling();
-	FString MapNameString = MapName.ToString();
-	if (!InitializeStringFromNode(MapNameString, "Map", Node)) return false;
-	MapName = FName(*MapNameString);
+	if (Node && ((std::string)Node->name() == "Map"))
+	{
+		SetMapName(Node->value());
+	}
+	else return false;
 
 	// Find agents
 	// this is the recommended way to loop through rapidxml
 	// Stops when it gets to a non-Agent node
 	for (Node = Node->next_sibling(); Node && ((std::string)Node->name() == "Agent"); Node = Node->next_sibling())
 	{
-		Agents.Add(Node->value());
+		AddAgent(Node->value());
 	}
 
 	// Find spawns
@@ -117,19 +107,31 @@ bool UScenarioConfig::InitializeFromXML(rapidxml::xml_document<>& Doc)
 			// Bad file structure error
 			return false;
 		}
-		SpawnPoints.Add(NameNode->value(), AgentNode->value());
+		AddSpawn(NameNode->value(), AgentNode->value());
 	}
 
 	// Get data recording output folder
-	if (!InitializeStringFromNode(DataRecordOutputFolder, "DataRecordingOutput", Node)) return false;
+	if (Node && ((std::string)Node->name() == "DataRecordingOutput"))
+	{
+		SetDataRecordingOutputFolder(Node->value());
+	}
+	else return false;
 
 	// Get event recording output folder
 	Node = Node->next_sibling();
-	if (!InitializeStringFromNode(EventRecordOutputFolder, "EventRecordingOutput", Node)) return false;
+	if (Node && ((std::string)Node->name() == "EventRecordingOutput"))
+	{
+		SetEventRecordingOuptutFolder(Node->value());
+	}
+	else return false;
 
 	// Get the Communications config
 	Node = Node->next_sibling();
-	if (!InitializeStringFromNode(CommConfig, "Communication", Node)) return false;
+	if (Node && ((std::string)Node->name() == "Communication"))
+	{
+		SetCommConfig(Node->value());
+	}
+	else return false;
 
 	return true;
 }
@@ -218,6 +220,24 @@ UAgentConfig* UScenarioConfig::GetAgent(const FString AgentFile)
 
 void UScenarioConfig::AddAgent(const FString AgentFile, UAgentConfig* AgentConfig/*= nullptr*/)
 {
+	if (AgentConfig != nullptr)
+	{
+		if (AgentConfig->GetFileLocation() != AgentFile)
+		{
+			// AgentConfig does not match the given agent file
+			return;
+		}
+	}
+	else
+	{
+		UConfigBase* Agent = UConfigurator::LoadConfig(TCHAR_TO_UTF8(*AgentFile));
+		if (!Agent || !Agent->IsA<UAgentConfig>())
+		{
+			// Agent is not a valid agent config
+			return;
+		}
+		AgentConfig = Cast<UAgentConfig>(Agent);
+	}
 	Agents.Add(AgentFile, AgentConfig);
 }
 
@@ -341,7 +361,11 @@ FString UScenarioConfig::GetCommConfig() const
 	return CommConfig;
 }
 
-void UScenarioConfig::SetCommConfig(const FString & NewCommConfig)
+void UScenarioConfig::SetCommConfig(const FString& NewCommConfig)
 {
-	CommConfig = NewCommConfig;
+	UConfigBase* NewCommConfiguration = UConfigurator::LoadConfig(TCHAR_TO_UTF8(*NewCommConfig));
+	if (NewCommConfiguration && NewCommConfiguration->IsA<UCommConfig>())
+	{
+		CommConfig = NewCommConfig;
+	}
 }

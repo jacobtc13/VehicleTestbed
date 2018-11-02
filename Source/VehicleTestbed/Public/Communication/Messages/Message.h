@@ -4,7 +4,7 @@
 #include "CoreMinimal.h"
 #include "Message.generated.h"
 
-UCLASS()
+UCLASS(Abstract)
 class UMessage : public UObject
 {
 	GENERATED_BODY()

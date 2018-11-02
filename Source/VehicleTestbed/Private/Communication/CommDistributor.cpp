@@ -4,7 +4,7 @@
 // static initialization
 TArray<UCommChannel*> UCommDistributor::ChannelList;
 TArray<USNRModelFrequencyRange*> UCommDistributor::PropagateList;
-TSharedPtr<USNRModel> UCommDistributor::DefaultProp;
+USNRModel* UCommDistributor::DefaultProp = nullptr;
 
 //TODO: Needs to populate the propergateList that the user has defined.
 
@@ -125,9 +125,9 @@ void UCommDistributor::CreateChannel(float Frequency)
 			// Use the first SNRModel in the list
 			NewChannel->Initialize(Frequency, SNRRanges[0]->GetSNRModel());
 		}
-		else if (DefaultProp.IsValid())
+		else if (DefaultProp)
 		{
-			NewChannel->Initialize(Frequency, DefaultProp.Get());
+			NewChannel->Initialize(Frequency, DefaultProp);
 		}
 		else
 		{
@@ -176,7 +176,7 @@ void UCommDistributor::AddSNRModelForFrequencyRange(USNRModelFrequencyRange* Fre
 		PropagateList.Add(FrequencyRange);
 		for (UCommChannel* Channel : ChannelList)
 		{
-			if (Channel->GetSNRModel() == DefaultProp.Get())
+			if (Channel->GetSNRModel() == DefaultProp)
 			{
 				if ((FrequencyRange->GetMinFrequency() <= Channel->GetFrequency()) && (Channel->GetFrequency() <= FrequencyRange->GetMaxFrequency()))
 				{
@@ -202,7 +202,7 @@ void UCommDistributor::RemoveSNRModelFromFrequencyRange(USNRModelFrequencyRange*
 			}
 			else
 			{
-				Channel->SetSNRModel(DefaultProp.Get());
+				Channel->SetSNRModel(DefaultProp);
 			}
 		}
 	}
@@ -210,13 +210,17 @@ void UCommDistributor::RemoveSNRModelFromFrequencyRange(USNRModelFrequencyRange*
 
 USNRModel* UCommDistributor::GetDefaultPropagation()
 {
-	return DefaultProp.Get();
+	return DefaultProp;
 }
 
 void UCommDistributor::SetDefaultPropagation(USNRModel* NewDefaultProp)
 {
-	if (NewDefaultProp != nullptr)
-	{
-		DefaultProp = TSharedPtr<USNRModel>(NewDefaultProp);
-	}
+	DefaultProp = NewDefaultProp;
+}
+
+void UCommDistributor::EndPlay()
+{
+	DefaultProp = nullptr;
+	PropagateList.Empty();
+	ChannelList.Empty();
 }

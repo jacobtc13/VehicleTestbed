@@ -92,8 +92,11 @@ public:
 	///<param name="NewDefaultProp">The new default propagation model</param>
 	static void SetDefaultPropagation(USNRModel* NewDefaultProp);
 
+	UFUNCTION(BlueprintCallable)
+	static void EndPlay();
+
 private:
 	static TArray<UCommChannel*> ChannelList;
 	static TArray<USNRModelFrequencyRange*> PropagateList;
-	static TSharedPtr<USNRModel> DefaultProp;
+	static USNRModel* DefaultProp;
 };

@@ -18,6 +18,7 @@ void UPerfectTransceiver::Initialize(const float aMaxSignalStrength, const float
 
 void UPerfectTransceiver::Send(const UMessage* Message, float SignalStrength)
 {
+	UEventRecorder::RecordEvent(TEXT("Sending message"), this);
 	UCommDistributor::Send(Message, this, MaxSignalStrength * SignalStrength);
 }
 
@@ -32,7 +33,9 @@ float UPerfectTransceiver::CalculatePower(float TransmissionPower, float TargetF
 
 void UPerfectTransceiver::Receive(const UMessage* Message, float SNR)
 {
-	UEventRecorder::RecordEvent(TEXT("Received message"), this);
+	TMap<FString, FString> Details;
+	Details.Add(TEXT("SNR"), FString::SanitizeFloat(SNR));
+	UEventRecorder::RecordEventWithDetails(TEXT("Received message"), this, Details);
 
 	if (SNR >= MinSNR)
 	{

@@ -124,6 +124,16 @@ public:
 	///<summary>Sets the output file location of the event recording system</summary>
 	///<param="NewOutputLocation">The string representation of a new output location</param>
 	void SetEventRecordingOuptutFolder(const FString& NewOutputLocation);
+
+	UFUNCTION(BlueprintGetter)
+	///<summary>Gets the file location of the communications config to use</summary>
+	///<returns>The file location</returns>
+	FString GetCommConfig() const;
+
+	UFUNCTION(BlueprintSetter)
+	///<summary>Sets the file location of the communications config to use</summary>
+	///<param name="NewCommConfig">The file location</param>
+	void SetCommConfig(const FString& NewCommConfig);
 	
 private:
 	UPROPERTY(BlueprintGetter=GetMapName, BlueprintSetter=SetMapName)
@@ -136,6 +146,6 @@ private:
 	FString DataRecordOutputFolder;
 	UPROPERTY(BlueprintGetter=GetEventRecordingOutputFolder, BlueprintSetter=SetEventRecordingOuptutFolder)
 	FString EventRecordOutputFolder;
-
-	//TODO: Add CommConfig
+	UPROPERTY(BlueprintGetter=GetCommConfig, BlueprintSetter=SetCommConfig)
+	FString CommConfig;
 };

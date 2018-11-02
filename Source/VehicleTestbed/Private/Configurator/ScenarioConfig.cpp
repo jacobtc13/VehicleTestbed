@@ -4,6 +4,7 @@
 #include "GameFramework/GameModeBase.h"
 #include "DataRecorder.h"
 #include "EventRecorder/EventRecorder.h"
+#include "CommConfig.h"
 
 bool LoadAgentFromFile(TPair<FString, UAgentConfig*>& Pair)
 {
@@ -62,9 +63,23 @@ rapidxml::xml_node<>* UScenarioConfig::GetXMLNode() const
 	xml_node<>* EventRecordingNode = Doc.allocate_node(node_element, "EventRecordingOutput", TCHAR_TO_UTF8(*EventRecordOutputFolder));
 	BaseNode->append_node(EventRecordingNode);
 
-	// Add CommsConfig
+	// Save the communications config file
+	xml_node<>* CommNode = Doc.allocate_node(node_element, "Communication", TCHAR_TO_UTF8(*CommConfig));
+	BaseNode->append_node(CommNode);
 
 	return BaseNode;
+}
+
+// Checks if the node has the desired name and sets the value of the string variable to the node's value
+bool InitializeStringFromNode(FString& Variable, std::string NodeName, rapidxml::xml_node<>* Node)
+{
+	using namespace rapidxml;
+	if (Node && ((std::string)Node->name() == NodeName))
+	{
+		Variable = Node->value();
+		return true;
+	}
+	return false;
 }
 
 bool UScenarioConfig::InitializeFromXML(rapidxml::xml_document<>& Doc)
@@ -80,14 +95,9 @@ bool UScenarioConfig::InitializeFromXML(rapidxml::xml_document<>& Doc)
 
 	// Check for a map next
 	Node = Node->next_sibling();
-	if (Node && ((std::string)Node->name() == "Map"))
-	{
-		MapName = Node->value();
-	}
-	else
-	{
-		return false;
-	}
+	FString MapNameString = MapName.ToString();
+	if (!InitializeStringFromNode(MapNameString, "Map", Node)) return false;
+	MapName = FName(*MapNameString);
 
 	// Find agents
 	// this is the recommended way to loop through rapidxml
@@ -111,27 +121,15 @@ bool UScenarioConfig::InitializeFromXML(rapidxml::xml_document<>& Doc)
 	}
 
 	// Get data recording output folder
-	if (Node && ((std::string)Node->name() == "DataRecordingOutput"))
-	{
-		DataRecordOutputFolder = Node->value();
-	}
-	else
-	{
-		return false;
-	}
+	if (!InitializeStringFromNode(DataRecordOutputFolder, "DataRecordingOutput", Node)) return false;
 
 	// Get event recording output folder
 	Node = Node->next_sibling();
-	if (Node && ((std::string)Node->name() == "EventRecordingOutput"))
-	{
-		EventRecordOutputFolder = Node->value();
-	}
-	else
-	{
-		return false;
-	}
+	if (!InitializeStringFromNode(EventRecordOutputFolder, "EventRecordingOutput", Node)) return false;
 
-	// Add CommsConfig
+	// Get the Communications config
+	Node = Node->next_sibling();
+	if (!InitializeStringFromNode(CommConfig, "Communication", Node)) return false;
 
 	return true;
 }
@@ -336,4 +334,14 @@ FString UScenarioConfig::GetEventRecordingOutputFolder() const
 void UScenarioConfig::SetEventRecordingOuptutFolder(const FString& NewOutputLocation)
 {
 	EventRecordOutputFolder = NewOutputLocation;
+}
+
+FString UScenarioConfig::GetCommConfig() const
+{
+	return CommConfig;
+}
+
+void UScenarioConfig::SetCommConfig(const FString & NewCommConfig)
+{
+	CommConfig = NewCommConfig;
 }

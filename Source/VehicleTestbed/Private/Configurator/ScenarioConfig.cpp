@@ -23,16 +23,16 @@ bool LoadAgentFromFile(TPair<FString, UAgentConfig*>& Pair)
 	}
 }
 
-rapidxml::xml_node<>* UScenarioConfig::GetXMLNode() const
+void UScenarioConfig::AppendDocument(rapidxml::xml_document<>& OutDocument) const
 {
 	using namespace rapidxml;
-	xml_document<> Doc;
 
 	// Save the config as a "Scenario" type
-	xml_node<>* BaseNode = Doc.allocate_node(node_element, "Scenario");
+	xml_node<>* BaseNode = OutDocument.allocate_node(node_element, "Scenario");
+	OutDocument.append_node(BaseNode);
 
 	// Save the map name
-	xml_node<>* MapNode = Doc.allocate_node(node_element, "Map", TCHAR_TO_UTF8(*MapName.ToString()));
+	xml_node<>* MapNode = OutDocument.allocate_node(node_element, "Map", OutDocument.allocate_string(TCHAR_TO_UTF8(*MapName.ToString())));
 	BaseNode->append_node(MapNode);
 
 	// Save the agents used
@@ -40,34 +40,32 @@ rapidxml::xml_node<>* UScenarioConfig::GetXMLNode() const
 	Agents.GetKeys(AgentFiles);
 	for (const FString& Agent : AgentFiles)
 	{
-		xml_node<>* AgentNode = Doc.allocate_node(node_element, "Agent", TCHAR_TO_UTF8(*Agent));
+		xml_node<>* AgentNode = OutDocument.allocate_node(node_element, "Agent", OutDocument.allocate_string(TCHAR_TO_UTF8(*Agent)));
 		BaseNode->append_node(AgentNode);
 	}
 
 	// Save the spawn points and which agents go with them
 	for (const auto& Pair : SpawnPoints)
 	{
-		xml_node<>* SpawnNode = Doc.allocate_node(node_element, "Spawn");
-		xml_node<>* SpawnNameNode = Doc.allocate_node(node_element, "Name", TCHAR_TO_UTF8(*Pair.Key.ToString()));
+		xml_node<>* SpawnNode = OutDocument.allocate_node(node_element, "Spawn");
+		xml_node<>* SpawnNameNode = OutDocument.allocate_node(node_element, "Name", OutDocument.allocate_string(TCHAR_TO_UTF8(*Pair.Key.ToString())));
 		SpawnNode->append_node(SpawnNameNode);
-		xml_node<>* SpawnAgentNode = Doc.allocate_node(node_element, "Agent", TCHAR_TO_UTF8(*Pair.Value));
+		xml_node<>* SpawnAgentNode = OutDocument.allocate_node(node_element, "Agent", OutDocument.allocate_string(TCHAR_TO_UTF8(*Pair.Value)));
 		SpawnNode->append_node(SpawnAgentNode);
 		BaseNode->append_node(SpawnNode);
 	}
 
 	// Save the data recording output file
-	xml_node<>* DataRecordingNode = Doc.allocate_node(node_element, "DataRecordingOutput", TCHAR_TO_UTF8(*DataRecordOutputFolder));
+	xml_node<>* DataRecordingNode = OutDocument.allocate_node(node_element, "DataRecordingOutput", OutDocument.allocate_string(TCHAR_TO_UTF8(*DataRecordOutputFolder)));
 	BaseNode->append_node(DataRecordingNode);
 
 	// Save the event recording output file
-	xml_node<>* EventRecordingNode = Doc.allocate_node(node_element, "EventRecordingOutput", TCHAR_TO_UTF8(*EventRecordOutputFolder));
+	xml_node<>* EventRecordingNode = OutDocument.allocate_node(node_element, "EventRecordingOutput", OutDocument.allocate_string(TCHAR_TO_UTF8(*EventRecordOutputFolder)));
 	BaseNode->append_node(EventRecordingNode);
 
 	// Save the communications config file
-	xml_node<>* CommNode = Doc.allocate_node(node_element, "Communication", TCHAR_TO_UTF8(*CommConfig));
+	xml_node<>* CommNode = OutDocument.allocate_node(node_element, "Communication", OutDocument.allocate_string(TCHAR_TO_UTF8(*CommConfig)));
 	BaseNode->append_node(CommNode);
-
-	return BaseNode;
 }
 
 bool UScenarioConfig::InitializeFromXML(rapidxml::xml_document<>& Doc)
@@ -82,7 +80,7 @@ bool UScenarioConfig::InitializeFromXML(rapidxml::xml_document<>& Doc)
 	}
 
 	// Check for a map next
-	Node = Node->next_sibling();
+	Node = Node->first_node();
 	if (Node && ((std::string)Node->name() == "Map"))
 	{
 		SetMapName(Node->value());

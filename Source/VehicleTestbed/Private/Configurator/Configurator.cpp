@@ -80,11 +80,10 @@ void UConfigurator::SaveConfig(std::string Filename, UConfigBase* Config)
 	using namespace rapidxml;
 	xml_document<> Doc;
 
-	Doc.append_node(Config->GetXMLNode());
+	Config->AppendDocument(Doc);
 
 	// Print output to file
-	std::ofstream File;
-	File.open(Filename, std::ios::out | std::ios::trunc);
+	std::ofstream File(Filename);
 
 	if (File.is_open())
 	{

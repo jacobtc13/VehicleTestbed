@@ -1,8 +1,8 @@
 #include "CommConfig.h"
 
-rapidxml::xml_node<>* UCommConfig::GetXMLNode() const
+void UCommConfig::AppendDocument(rapidxml::xml_document<>& OutDocument) const
 {
-	return nullptr;
+
 }
 
 bool UCommConfig::InitializeFromXML(rapidxml::xml_document<>& doc)

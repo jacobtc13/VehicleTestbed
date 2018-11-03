@@ -9,10 +9,9 @@ UConfigBase::~UConfigBase()
 {
 }
 
-rapidxml::xml_node<>* UConfigBase::GetXMLNode() const
+void UConfigBase::AppendDocument(rapidxml::xml_document<>& OutDocument) const
 {
 	check(0 && "You must override this");
-	return nullptr;
 }
 
 bool UConfigBase::InitializeFromXML(rapidxml::xml_document<>& doc)

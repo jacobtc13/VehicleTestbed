@@ -17,7 +17,7 @@ public:
 	UAgentConfig(rapidxml::xml_node<>* Node);
 	~UAgentConfig();
 
-	virtual rapidxml::xml_node<>* GetXMLNode() const override;
+	virtual void AppendDocument(rapidxml::xml_document<>& OutDocument) const override;
 
 protected:
 	UClass * AgentClass;

@@ -1,7 +1,7 @@
 #include "ScenarioConfig.h"
 #include "Configurator.h"
 #include "MessageDialog.h"
-#include "GameFramework/GameModeBase.h"
+#include "VehicleTestbedGameModeBase.h"
 #include "DataRecorder.h"
 #include "EventRecorder/EventRecorder.h"
 #include "CommConfig.h"
@@ -140,14 +140,23 @@ bool UScenarioConfig::Instantiate(UObject* ContextObject)
 	{
 		return false;
 	}
-	// Set the data recorder output location
-	if (UDataRecorder* DataRecorder = Cast<UDataRecorder>(UGameplayStatics::GetGameMode(ContextObject)->GetDefaultSubobjectByName(TEXT("Data Recorder"))))
+
+	if (UGameplayStatics::GetCurrentLevelName(ContextObject) != GetMapName().ToString())
 	{
-		DataRecorder->SetFilePath(TCHAR_TO_UTF8(*DataRecordOutputFolder));
+		UGameplayStatics::OpenLevel(ContextObject, GetMapName());
 	}
-	else
+
+	// Set the data recorder output location
+	if (AVehicleTestbedGameModeBase* GameMode = Cast<AVehicleTestbedGameModeBase>(UGameplayStatics::GetGameMode(ContextObject)))
 	{
-		return false;
+		if (UDataRecorder* DataRecorder = GameMode->GetDataRecorder())
+		{
+			DataRecorder->SetFilePath(TCHAR_TO_UTF8(*DataRecordOutputFolder));
+		}
+		else
+		{
+			// Data recorder is null
+		}
 	}
 
 	// Set the event recorder output location

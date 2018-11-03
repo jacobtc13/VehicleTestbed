@@ -2,6 +2,7 @@
 
 #include "Object.h"
 #include "rapidxml.hpp"
+#include <string>
 
 #include "CoreMinimal.h"
 #include "ConfigBase.generated.h"

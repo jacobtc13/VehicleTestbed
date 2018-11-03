@@ -12,8 +12,6 @@ void AVehicleTestbedGameModeBase::PostInitializeComponents()
 {
 	Super::PostInitializeComponents();
 
-	// Load the scenario
-	UConfigurator::StartScenario(this);
 
 	// Add collectors to data recorder
 	// TODO: Rewrite this to load from file/menu and do bindings dynamically
@@ -25,6 +23,10 @@ void AVehicleTestbedGameModeBase::PostInitializeComponents()
 void AVehicleTestbedGameModeBase::BeginPlay()
 {
 	Super::BeginPlay();
+
+	// Load the scenario
+	UConfigurator::StartScenario(this);
+
 	dataRecorder->Start();
 }
 
@@ -32,4 +34,9 @@ void AVehicleTestbedGameModeBase::EndPlay(const EEndPlayReason::Type EndPlayReas
 {
 	dataRecorder->Stop();
 	Super::EndPlay(EndPlayReason);
+}
+
+UDataRecorder* AVehicleTestbedGameModeBase::GetDataRecorder() const
+{
+	return dataRecorder;
 }

@@ -6,6 +6,11 @@
 #include "EventRecorder.h"
 #include "CommConfig.h"
 
+UScenarioConfig::UScenarioConfig()
+{
+	CommConfig.Object = nullptr;
+}
+
 bool LoadAgentFromFile(TPair<FString, UAgentConfig*>& Pair)
 {
 	if (UAgentConfig* NewAgent = Cast<UAgentConfig>(UConfigurator::LoadConfig(TCHAR_TO_UTF8(*Pair.Key))))
@@ -64,7 +69,7 @@ void UScenarioConfig::AppendDocument(rapidxml::xml_document<>& OutDocument) cons
 	BaseNode->append_node(EventRecordingNode);
 
 	// Save the communications config file
-	xml_node<>* CommNode = OutDocument.allocate_node(node_element, "Communication", OutDocument.allocate_string(TCHAR_TO_UTF8(*CommConfig)));
+	xml_node<>* CommNode = OutDocument.allocate_node(node_element, "Communication", OutDocument.allocate_string(TCHAR_TO_UTF8(*GetCommConfig())));
 	BaseNode->append_node(CommNode);
 }
 
@@ -141,9 +146,11 @@ bool UScenarioConfig::Instantiate(UObject* ContextObject)
 		return false;
 	}
 
+	// Check that we're on the right map
 	if (UGameplayStatics::GetCurrentLevelName(ContextObject) != GetMapName().ToString())
 	{
-		UGameplayStatics::OpenLevel(ContextObject, GetMapName());
+		// Not on the expected map
+		return false;
 	}
 
 	// Set the data recorder output location
@@ -173,7 +180,11 @@ bool UScenarioConfig::Instantiate(UObject* ContextObject)
 
 	// TODO: Tie in with agent spawn controller
 
-	// TODO: Add CommsConfig
+	// Set the comms framework
+	if (UCommConfig* CommConfigObject = GetCommConfigObject())
+	{
+		CommConfigObject->Instantiate(ContextObject);
+	}
 
 	return true;
 }
@@ -365,14 +376,23 @@ void UScenarioConfig::SetEventRecordingOuptutFolder(const FString& NewOutputLoca
 
 FString UScenarioConfig::GetCommConfig() const
 {
-	return CommConfig;
+	return CommConfig.File;
+}
+
+UCommConfig* UScenarioConfig::GetCommConfigObject()
+{
+	if (CommConfig.Object == nullptr)
+	{
+		SetCommConfig(CommConfig.File);
+	}
+	return CommConfig.Object;
 }
 
 void UScenarioConfig::SetCommConfig(const FString& NewCommConfig)
 {
-	UConfigBase* NewCommConfiguration = UConfigurator::LoadConfig(TCHAR_TO_UTF8(*NewCommConfig));
-	if (NewCommConfiguration && NewCommConfiguration->IsA<UCommConfig>())
+	if (UCommConfig* NewCommConfigObject = Cast<UCommConfig>(UConfigurator::LoadConfig(TCHAR_TO_UTF8(*NewCommConfig))))
 	{
-		CommConfig = NewCommConfig;
+		CommConfig.File = NewCommConfig;
+		CommConfig.Object = NewCommConfigObject;
 	}
 }

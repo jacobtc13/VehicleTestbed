@@ -2,9 +2,22 @@
 
 #include "ConfigBase.h"
 #include "AgentConfig.h"
+#include "CommConfig.h"
 
 #include "CoreMinimal.h"
 #include "ScenarioConfig.generated.h"
+
+USTRUCT()
+struct FCommConfigStruct
+{
+	GENERATED_USTRUCT_BODY()
+
+public:
+	UPROPERTY()
+	FString File;
+	UPROPERTY()
+	UCommConfig* Object;
+};
 
 UCLASS()
 class VEHICLETESTBED_API UScenarioConfig : public UConfigBase
@@ -12,6 +25,9 @@ class VEHICLETESTBED_API UScenarioConfig : public UConfigBase
 	GENERATED_BODY()
 	
 public:
+	///<summary>Default constructor</summary>
+	UScenarioConfig();
+
 	///<summary>Generates a rapidxml node structure from the information in this object</summary>
 	///<param name="OutDocument">The document to append the xml node to</param>
 	void AppendDocument(rapidxml::xml_document<>& OutDocument) const override;
@@ -125,12 +141,17 @@ public:
 	///<param="NewOutputLocation">The string representation of a new output location</param>
 	void SetEventRecordingOuptutFolder(const FString& NewOutputLocation);
 
-	UFUNCTION(BlueprintGetter)
+	UFUNCTION(BlueprintPure)
 	///<summary>Gets the file location of the communications config to use</summary>
 	///<returns>The file location</returns>
 	FString GetCommConfig() const;
 
-	UFUNCTION(BlueprintSetter)
+	UFUNCTION(BlueprintCallable)
+	///<summary>Gets the communications config object used in this scenario</summary>
+	///<returns>The communications config object</returns>
+	UCommConfig* GetCommConfigObject();
+
+	UFUNCTION(BlueprintCallable)
 	///<summary>Sets the file location of the communications config to use</summary>
 	///<param name="NewCommConfig">The file location</param>
 	void SetCommConfig(const FString& NewCommConfig);
@@ -146,6 +167,6 @@ private:
 	FString DataRecordOutputFolder;
 	UPROPERTY(BlueprintGetter=GetEventRecordingOutputFolder, BlueprintSetter=SetEventRecordingOuptutFolder)
 	FString EventRecordOutputFolder;
-	UPROPERTY(BlueprintGetter=GetCommConfig, BlueprintSetter=SetCommConfig)
-	FString CommConfig;
+	UPROPERTY()
+	FCommConfigStruct CommConfig;
 };

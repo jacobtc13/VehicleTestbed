@@ -2,7 +2,7 @@
 
 #include "rapidxml.hpp"
 #include "ConfigBase.h"
-#include "PlayerController/TestbedPlayerController.h"
+#include "TestbedPlayerController.h"
 
 #include "CoreMinimal.h"
 #include "AgentConfig.generated.h"

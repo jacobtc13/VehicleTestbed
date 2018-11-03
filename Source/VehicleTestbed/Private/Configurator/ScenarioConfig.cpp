@@ -3,7 +3,7 @@
 #include "MessageDialog.h"
 #include "VehicleTestbedGameModeBase.h"
 #include "DataRecorder.h"
-#include "EventRecorder/EventRecorder.h"
+#include "EventRecorder.h"
 #include "CommConfig.h"
 
 bool LoadAgentFromFile(TPair<FString, UAgentConfig*>& Pair)

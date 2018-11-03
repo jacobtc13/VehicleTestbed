@@ -35,6 +35,32 @@ UConfigBase* UConfigurator::LoadConfig(std::string Filename)
 	{
 		file<> ConfigFile(Filename.c_str());
 		Doc.parse<0>(ConfigFile.data());
+
+		// Construct the config object as the appropriate config class
+		std::string FirstNodeName = Doc.first_node()->name();
+		if (FirstNodeName == "Agent")
+		{
+			ConfigObject = NewObject<UAgentConfig>();
+		}
+		else if (FirstNodeName == "Scenario")
+		{
+			ConfigObject = NewObject<UScenarioConfig>();
+		}
+		else if (FirstNodeName == "Communication")
+		{
+			ConfigObject = NewObject<UCommConfig>();
+		}
+
+		if (ConfigObject != nullptr)
+		{
+			// Initialize the config object from the xml doc
+			if (!ConfigObject->InitializeFromXML(Doc))
+			{
+				return nullptr;
+			}
+			ConfigObject->SetFileLocation(Filename.c_str());
+		}
+		return ConfigObject;
 	}
 	catch (std::runtime_error error)
 	{
@@ -46,33 +72,6 @@ UConfigBase* UConfigurator::LoadConfig(std::string Filename)
 		FMessageDialog::Open(EAppMsgType::Ok, FText::FromString(TEXT("The config file is not valid RapidXML. File: ") + FString(Filename.c_str())));
 		return nullptr;
 	}
-
-	// Construct the config object as the appropriate config class
-	std::string FirstNodeName = Doc.first_node()->name();
-	if (FirstNodeName == "Agent")
-	{
-		ConfigObject = NewObject<UAgentConfig>();
-	}
-	else if (FirstNodeName == "Scenario")
-	{
-		ConfigObject = NewObject<UScenarioConfig>();
-	}
-	else if (FirstNodeName == "Communication")
-	{
-		ConfigObject = NewObject<UCommConfig>();
-	}
-
-	if (ConfigObject != nullptr)
-	{
-		// Initialize the config object from the xml doc
-		if (!ConfigObject->InitializeFromXML(Doc))
-		{
-			return nullptr;
-		}
-		ConfigObject->SetFileLocation(Filename.c_str());
-	}
-	return ConfigObject;
-
 }
 
 void UConfigurator::SaveConfig(std::string Filename, UConfigBase* Config)

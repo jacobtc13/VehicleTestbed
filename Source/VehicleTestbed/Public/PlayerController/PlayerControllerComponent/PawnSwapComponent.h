@@ -4,7 +4,7 @@
 #include "GameFramework/Pawn.h"
 
 #include "CoreMinimal.h"
-#include "PlayerController/PlayerControllerComponent/PCComponent.h"
+#include "PCComponent.h"
 #include "PawnSwapComponent.generated.h"
 
 UCLASS()

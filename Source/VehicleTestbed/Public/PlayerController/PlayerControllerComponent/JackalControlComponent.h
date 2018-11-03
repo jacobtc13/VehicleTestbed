@@ -1,7 +1,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "PlayerController/PlayerControllerComponent/PCComponent.h"
+#include "PCComponent.h"
 #include "JackalControlComponent.generated.h"
 
 UCLASS()

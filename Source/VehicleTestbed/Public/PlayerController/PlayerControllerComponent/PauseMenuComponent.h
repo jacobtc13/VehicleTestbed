@@ -3,7 +3,7 @@
 #include "UserWidget.h"
 #include "ConstructorHelpers.h"
 
-#include "PlayerController/PlayerControllerComponent/PCComponent.h"
+#include "PCComponent.h"
 #include "PauseMenuComponent.generated.h"
 
 UCLASS(BlueprintType, meta=(BlueprintSpawnableComponent))

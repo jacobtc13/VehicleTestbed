@@ -90,7 +90,7 @@ void UDataRecorder::ReadFromCollectors()
 void UDataRecorder::WriteToFile()
 {
 	std::fstream fs;
-	fs.open(Filepath+Filename, std::fstream::out | std::fstream::ate);
+	fs.open(Filepath + "/" + Filename, std::fstream::out | std::fstream::ate);
 
 	// Print header row
 	fs << "Timestamp,";

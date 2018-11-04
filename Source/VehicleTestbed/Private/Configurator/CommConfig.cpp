@@ -80,7 +80,7 @@ void UCommConfig::AddFrequencyRange(const FFrequencyRangeStruct& FrequencyRange)
 bool UCommConfig::RemoveFrequencyRange(const FFrequencyRangeStruct& FrequencyRange)
 {
 	// Uses the equality operator defined in the struct
-	FrequencyRanges.Remove(FrequencyRange);
+	return FrequencyRanges.Remove(FrequencyRange);
 }
 
 void UCommConfig::PopulateSNRModelsArray()

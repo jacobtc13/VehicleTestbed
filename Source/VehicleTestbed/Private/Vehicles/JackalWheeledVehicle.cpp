@@ -1,9 +1,15 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "JackalWheeledVehicle.h"
+#include "Runtime/Engine/Classes/Components/SkeletalMeshComponent.h"
+#include "Engine/SkeletalMeshSocket.h"
+#include "Runtime/Engine/Classes/PhysicsEngine/PhysicsAsset.h"
+#include "ConstructorHelpers.h"
 
 AJackalWheeledVehicle::AJackalWheeledVehicle()
 {
+	PrimaryActorTick.bCanEverTick = true;
+
 	// Setup Jackal specific camera distances
 	ChaseCamera->RelativeLocation = FVector(-315.0f, 2.0f, 104.0f);
 	CameraSpringArm->RelativeRotation = FRotator(-15.f, 0.f, 0.f);
@@ -19,6 +25,11 @@ AJackalWheeledVehicle::AJackalWheeledVehicle()
 
 AJackalWheeledVehicle::~AJackalWheeledVehicle()
 {
+}
+
+void AJackalWheeledVehicle::PostInitializeComponents()
+{
+	ATestbedWheeledVehicle::PostInitializeComponents();
 }
 
 

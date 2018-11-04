@@ -25,10 +25,20 @@ public:
 	///<param name="ContextObject">The context object used to load the map, the widget calling this function will suffice</param>
 	static void StartScenario(UObject* ContextObject);
 
-	static UConfigBase* LoadConfig(std::string Filename);
+	UFUNCTION()
+	///<summary>Loads a config object from the specified file</summary>
+	///<param name="Filename">The full path of the file to load from</param>
+	///<returns>The config object which was loaded, or nullptr if it wasn't</returns>
+	static UConfigBase* LoadConfig(FString Filename);
 
-	static void SaveConfig(std::string Filename, UConfigBase* Config);
+	UFUNCTION()
+	///<summary>Saves the config object at the specified file location</summary>
+	///<param name="Config">The config object to save</param>
+	static void SaveConfig(UConfigBase* Config);
 
+	UFUNCTION(BlueprintCallable)
+	///<summary>Reloads a config object from the file it is based on</summary>
+	///<param name="Config">The config object to reload</param>
 	static void ReloadConfig(UConfigBase* Config);
 
 	UFUNCTION(BlueprintGetter)

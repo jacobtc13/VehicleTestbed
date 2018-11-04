@@ -41,6 +41,55 @@ bool UCommConfig::InitializeFromXML(rapidxml::xml_document<>& Doc)
 	{
 		return false;
 	}
+
+	// Get default snr model
+	Node = Node->first_node();
+	if (Node && ((std::string)Node->name() == "DefaultModel") &&
+		IsClassNameValidSNRModel(Node->value()))
+	{
+		DefaultModelName = Node->value();
+	}
+	else return false;
+
+	// Get the frequency ranges
+	Node = Node->next_sibling();
+	if (Node && ((std::string)Node->name() == "FrequencyRanges"))
+	{
+		Node = Node->first_node();
+		for (; Node && ((std::string)Node->name() == "FrequencyRange"); Node = Node->next_sibling())
+		{
+			FFrequencyRangeStruct FrequencyRange;
+
+			// Get snr model for this range
+			xml_node<>* InnerNode = Node->first_node();
+			if (InnerNode && ((std::string)InnerNode->name() == "SNRModel") &&
+				IsClassNameValidSNRModel(InnerNode->value()))
+			{
+				FrequencyRange.ModelName = InnerNode->value();
+			}
+			else return false;
+
+			// Get min frequency for this range
+			InnerNode = InnerNode->next_sibling();
+			if (InnerNode && ((std::string)InnerNode->name() == "MinFrequency"))
+			{
+				FrequencyRange.MinFrequency = FCString::Atof(UTF8_TO_TCHAR(InnerNode->value()));
+			}
+			else return false;
+
+			// Get max frequency for this range
+			InnerNode = InnerNode->next_sibling();
+			if (InnerNode && ((std::string)InnerNode->name() == "MaxFrequency"))
+			{
+				FrequencyRange.MaxFrequency = FCString::Atof(UTF8_TO_TCHAR(InnerNode->value()));
+			}
+			else return false;
+
+			AddFrequencyRange(FrequencyRange);
+		}
+	}
+	else return false;
+
 	return true;
 }
 

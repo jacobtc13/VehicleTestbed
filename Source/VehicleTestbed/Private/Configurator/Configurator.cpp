@@ -11,7 +11,7 @@ FString UConfigurator::Scenario;
 void UConfigurator::StartScenario(UObject* ContextObject)
 {
 	// Try opening the scenario file
-	if (UScenarioConfig* ScenarioConfig = Cast<UScenarioConfig>(LoadConfig(TCHAR_TO_UTF8(*Scenario))))
+	if (UScenarioConfig* ScenarioConfig = Cast<UScenarioConfig>(LoadConfig(Scenario)))
 	{
 		// Loaded file successfully
 		if (ScenarioConfig->Instantiate(ContextObject))
@@ -98,7 +98,7 @@ void UConfigurator::ReloadConfig(UConfigBase* Config)
 	if (Config != nullptr)
 	{
 		using namespace rapidxml;
-		UConfigBase* NewConfig = LoadConfig(TCHAR_TO_UTF8(*(Config->GetFileLocation())));
+		UConfigBase* NewConfig = LoadConfig(Config->GetFileLocation());
 		if (NewConfig != nullptr)
 		{
 			// Set pointer to new object, old one will get cleaned up by Unreal

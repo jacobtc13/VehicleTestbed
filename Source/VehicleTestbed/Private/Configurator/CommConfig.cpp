@@ -48,25 +48,39 @@ TArray<FName> UCommConfig::GetPropagationModelNames()
 	return Names;
 }
 
-FString UCommConfig::GetDefaultModelName() const
+FName UCommConfig::GetDefaultModelName() const
 {
-	return FString();
+	return DefaultModelName;
 }
 
-void UCommConfig::SetDefaultModelName(const FString& NewDefaultProp)
-{}
+void UCommConfig::SetDefaultModelName(const FName& NewDefaultModelName)
+{
+	if (IsClassNameValidSNRModel(NewDefaultModelName))
+	{
+		DefaultModelName = NewDefaultModelName;
+	}
+}
 
 TArray<FFrequencyRangeStruct> UCommConfig::GetFrequenyRanges() const
 {
-	return TArray<FFrequencyRangeStruct>();
+	return FrequencyRanges;
 }
 
 void UCommConfig::AddFrequencyRange(const FFrequencyRangeStruct& FrequencyRange)
-{}
+{
+	if (IsClassNameValidSNRModel(FrequencyRange.ModelName))
+	{
+		if (FrequencyRange.MinFrequency <= FrequencyRange.MaxFrequency)
+		{
+			FrequencyRanges.Add(FrequencyRange);
+		}
+	}
+}
 
 bool UCommConfig::RemoveFrequencyRange(const FFrequencyRangeStruct& FrequencyRange)
 {
-	return false;
+	// Uses the equality operator defined in the struct
+	FrequencyRanges.Remove(FrequencyRange);
 }
 
 void UCommConfig::PopulateSNRModelsArray()
@@ -87,7 +101,20 @@ void UCommConfig::PopulateSNRModelsArray()
 	}
 }
 
-bool FFrequencyRangeStruct::operator==(const FFrequencyRangeStruct& Other)
+bool UCommConfig::IsClassNameValidSNRModel(const FName& ModelName)
+{
+	for (const auto& Class : SNRModels)
+	{
+		if (ModelName == Class.Get()->GetFName())
+		{
+			// found a matching snr model
+			return true;
+		}
+	}
+	return false;
+}
+
+bool FFrequencyRangeStruct::operator==(const FFrequencyRangeStruct& Other) const
 {
 	return ((ModelName == Other.ModelName) &&
 		(MinFrequency == Other.MinFrequency) &&

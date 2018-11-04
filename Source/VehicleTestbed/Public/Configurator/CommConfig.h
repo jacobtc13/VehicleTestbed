@@ -14,13 +14,13 @@ struct FFrequencyRangeStruct
 
 public:
 	UPROPERTY(EditAnywhere)
-	FString ModelName;
+	FName ModelName;
 	UPROPERTY(EditAnywhere)
 	float MinFrequency;
 	UPROPERTY(EditAnywhere)
 	float MaxFrequency;
 
-	bool operator==(const FFrequencyRangeStruct& Other);
+	bool operator==(const FFrequencyRangeStruct& Other) const;
 };
 
 
@@ -53,12 +53,12 @@ public:
 	UFUNCTION(BlueprintGetter)
 	///<summary>Gets the name of the default propagation model used in this config</summary>
 	///<returns>The name of the default propagation model</returns>
-	FString GetDefaultModelName() const;
+	FName GetDefaultModelName() const;
 
 	UFUNCTION(BlueprintSetter)
 	///<summary>Sets the name of the default propagation model used in this config</summary>
-	///<param name="NewDefaultProp">The name of the new default propagation model</param>
-	void SetDefaultModelName(const FString& NewDefaultProp);
+	///<param name="NewDefaultModelName">The name of the new default propagation model</param>
+	void SetDefaultModelName(const FName& NewDefaultModelName);
 
 	UFUNCTION(BlueprintGetter)
 	///<summary>Gets the array of frequency ranges used in this config</summary>
@@ -78,13 +78,20 @@ public:
 
 private:
 	UFUNCTION(BlueprintCallable)
+	///<summary>Finds all child classes of USNRModel and populates the SNRModels array with them</summary>
 	static void PopulateSNRModelsArray();
+
+	UFUNCTION(BlueprintCallable)
+	///<summary>Checks if a name is a valid SNR model class name</summary>
+	///<param name="ModelName">The class name to check</param>
+	///<returns>Whether it is valid</returns>
+	bool IsClassNameValidSNRModel(const FName& ModelName);
 
 private:
 	static TArray<TSubclassOf<USNRModel>> SNRModels;
 
 	UPROPERTY(BlueprintGetter=GetDefaultModelName, BlueprintSetter=SetDefaultModelName)
-	FString DefaultModelName;
+	FName DefaultModelName;
 	UPROPERTY(BlueprintGetter=GetFrequenyRanges)
 	TArray<FFrequencyRangeStruct> FrequencyRanges;
 };

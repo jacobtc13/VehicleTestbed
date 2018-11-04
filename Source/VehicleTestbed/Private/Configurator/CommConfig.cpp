@@ -1,5 +1,6 @@
 #include "CommConfig.h"
 #include "UObjectIterator.h"
+#include "CommDistributor.h"
 
 TArray<TSubclassOf<USNRModel>> UCommConfig::SNRModels;
 
@@ -95,8 +96,52 @@ bool UCommConfig::InitializeFromXML(rapidxml::xml_document<>& Doc)
 
 bool UCommConfig::Instantiate(UObject* ContextObject)
 {
+	if (!ContextObject || !ContextObject->ImplementsGetWorld())
+	{
+		return false;
+	}
 
-	return false;
+	TArray<USNRModel*> SNRModelsMadeSoFar;
+
+	// Set the default propagation model in the CommDistributor
+	if (UClass* SNRModelClass = GetSNRModelClass(GetDefaultModelName()))
+	{
+		USNRModel* SNRModel = NewObject<USNRModel>((UObject*)GetTransientPackage(), SNRModelClass);
+		SNRModelsMadeSoFar.Add(SNRModel);
+		UCommDistributor::SetDefaultPropagation(SNRModel);
+	}
+	else return false;
+
+	// Add the frequency ranges
+	for (const auto& FrequencyRangeStruct : FrequencyRanges)
+	{
+		if (UClass* SNRModelClass = GetSNRModelClass(FrequencyRangeStruct.ModelName))
+		{
+			USNRModel* SNRModel = nullptr;
+			// Check that an object of this SNRModel class doesn't already exist
+			bool found = false;
+			for (const auto& Model : SNRModelsMadeSoFar)
+			{
+				if (Model->StaticClass() == SNRModelClass)
+				{
+					SNRModel = Model;
+					found = true;
+					break;
+				}
+			}
+			if (!found)
+			{
+				SNRModel = NewObject<USNRModel>((UObject*)GetTransientPackage(), SNRModelClass);
+				SNRModelsMadeSoFar.Add(SNRModel);
+			}
+			USNRModelFrequencyRange* FrequencyRange = NewObject<USNRModelFrequencyRange>();
+			FrequencyRange->Initialize(FrequencyRangeStruct.MinFrequency, FrequencyRangeStruct.MaxFrequency, SNRModel);
+			UCommDistributor::AddSNRModelForFrequencyRange(FrequencyRange);
+		}
+		else return false;
+	}
+
+	return true;
 }
 
 TArray<FName> UCommConfig::GetPropagationModelNames()
@@ -182,6 +227,23 @@ bool UCommConfig::IsClassNameValidSNRModel(const FName& ModelName)
 		}
 	}
 	return false;
+}
+
+UClass* UCommConfig::GetSNRModelClass(const FName& ModelName)
+{
+	if (!SNRModels.Num())
+	{
+		PopulateSNRModelsArray();
+	}
+	for (const auto& Class : SNRModels)
+	{
+		if (ModelName == Class.Get()->GetFName())
+		{
+			// found a matching snr model
+			return *Class;
+		}
+	}
+	return nullptr;
 }
 
 bool FFrequencyRangeStruct::operator==(const FFrequencyRangeStruct& Other) const

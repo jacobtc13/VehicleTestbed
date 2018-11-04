@@ -85,7 +85,13 @@ private:
 	///<summary>Checks if a name is a valid SNR model class name</summary>
 	///<param name="ModelName">The class name to check</param>
 	///<returns>Whether it is valid</returns>
-	bool IsClassNameValidSNRModel(const FName& ModelName);
+	static bool IsClassNameValidSNRModel(const FName& ModelName);
+
+	UFUNCTION(BlueprintCallable)
+	///<summary>Gets the UClass matching the model name if it is valid</summary>
+	///<param name="ModelName">The name of the SNR model class to get</param>
+	///<returns>The class of the SNR model or 
+	static UClass* GetSNRModelClass(const FName& ModelName);
 
 private:
 	static TArray<TSubclassOf<USNRModel>> SNRModels;

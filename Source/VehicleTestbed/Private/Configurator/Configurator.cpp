@@ -24,7 +24,7 @@ void UConfigurator::StartScenario(UObject* ContextObject)
 	UGameplayStatics::OpenLevel(ContextObject, TEXT("OpenerMap"));
 }
 
-UConfigBase* UConfigurator::LoadConfig(std::string Filename)
+UConfigBase* UConfigurator::LoadConfig(FString Filename)
 {
 	using namespace rapidxml;
 	xml_document<> Doc;
@@ -33,7 +33,7 @@ UConfigBase* UConfigurator::LoadConfig(std::string Filename)
 	// Read in and parse file
 	try
 	{
-		file<> ConfigFile(Filename.c_str());
+		file<> ConfigFile(TCHAR_TO_UTF8(*Filename));
 		Doc.parse<0>(ConfigFile.data());
 
 		// Construct the config object as the appropriate config class
@@ -58,23 +58,23 @@ UConfigBase* UConfigurator::LoadConfig(std::string Filename)
 			{
 				return nullptr;
 			}
-			ConfigObject->SetFileLocation(Filename.c_str());
+			ConfigObject->SetFileLocation(Filename);
 		}
 		return ConfigObject;
 	}
 	catch (std::runtime_error error)
 	{
-		FMessageDialog::Open(EAppMsgType::Ok, FText::FromString(TEXT("A config file could not be found. File: ") + FString(Filename.c_str())));
+		FMessageDialog::Open(EAppMsgType::Ok, FText::FromString(TEXT("A config file could not be found. File: ") + Filename));
 		return nullptr;
 	}
 	catch (parse_error error)
 	{
-		FMessageDialog::Open(EAppMsgType::Ok, FText::FromString(TEXT("The config file is not valid RapidXML. File: ") + FString(Filename.c_str())));
+		FMessageDialog::Open(EAppMsgType::Ok, FText::FromString(TEXT("The config file is not valid RapidXML. File: ") + Filename));
 		return nullptr;
 	}
 }
 
-void UConfigurator::SaveConfig(std::string Filename, UConfigBase* Config)
+void UConfigurator::SaveConfig(UConfigBase* Config)
 {
 	using namespace rapidxml;
 	xml_document<> Doc;
@@ -82,7 +82,7 @@ void UConfigurator::SaveConfig(std::string Filename, UConfigBase* Config)
 	Config->AppendDocument(Doc);
 
 	// Print output to file
-	std::ofstream File(Filename);
+	std::ofstream File(TCHAR_TO_UTF8(*Config->GetFileLocation()));
 
 	if (File.is_open())
 	{

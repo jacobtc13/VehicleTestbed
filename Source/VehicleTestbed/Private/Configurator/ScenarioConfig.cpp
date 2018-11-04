@@ -13,7 +13,7 @@ UScenarioConfig::UScenarioConfig()
 
 bool LoadAgentFromFile(TPair<FString, UAgentConfig*>& Pair)
 {
-	if (UAgentConfig* NewAgent = Cast<UAgentConfig>(UConfigurator::LoadConfig(TCHAR_TO_UTF8(*Pair.Key))))
+	if (UAgentConfig* NewAgent = Cast<UAgentConfig>(UConfigurator::LoadConfig(Pair.Key)))
 	{
 		// New Agent is valid
 		Pair.Value = NewAgent;
@@ -248,7 +248,7 @@ void UScenarioConfig::AddAgent(const FString AgentFile, UAgentConfig* AgentConfi
 	}
 	else
 	{
-		UConfigBase* Agent = UConfigurator::LoadConfig(TCHAR_TO_UTF8(*AgentFile));
+		UConfigBase* Agent = UConfigurator::LoadConfig(AgentFile);
 		if (!Agent || !Agent->IsA<UAgentConfig>())
 		{
 			// Agent is not a valid agent config
@@ -390,7 +390,7 @@ UCommConfig* UScenarioConfig::GetCommConfigObject()
 
 void UScenarioConfig::SetCommConfig(const FString& NewCommConfig)
 {
-	if (UCommConfig* NewCommConfigObject = Cast<UCommConfig>(UConfigurator::LoadConfig(TCHAR_TO_UTF8(*NewCommConfig))))
+	if (UCommConfig* NewCommConfigObject = Cast<UCommConfig>(UConfigurator::LoadConfig(NewCommConfig)))
 	{
 		CommConfig.File = NewCommConfig;
 		CommConfig.Object = NewCommConfigObject;

@@ -3,7 +3,6 @@
 #include "SpawnController.h"
 
 
-SpawnPointList spList;
 
 
 TArray<FName> getSpawnPointRefs() {

@@ -5,7 +5,7 @@
 
 
 
-TArray<FName> getSpawnPointRefs() {
+TArray<FName> USpawnController::getSpawnPointRefs() {
 	
 	return spList.getSpawnPointRefs();
 

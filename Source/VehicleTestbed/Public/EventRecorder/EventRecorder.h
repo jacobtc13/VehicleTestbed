@@ -13,7 +13,7 @@
 // Abstract tag blocks instantiation of this class.  It is pointless to do so anyway.
 UCLASS(Abstract)
 ///<summary>Collects details of events and writes them to a file</summary>
-class VEHICLETESTBED_API UEventRecorder : public UBlueprintFunctionLibrary
+class VEHICLETESTBED_API UEventRecorder : public UObject
 {
 	GENERATED_BODY()
 
@@ -32,6 +32,7 @@ private:
 	static std::queue<EventRef> WriteQueue;
 	static std::mutex QueueMutex;
 
+	static FString FolderName;
 	static FString FileName;
 
 	static std::atomic<bool> bStop;
@@ -64,6 +65,16 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "EventRecorder")
 	///<summary>Sets the stop variable to true, causing the WriterThread to complete gracefully when it next checks the boolean's value</summary>
 	static void Stop();
+
+	UFUNCTION(BlueprintGetter)
+	///<summary>Returns the output file location</summary>
+	///<returns>The string representation of the output folder location</returns>
+	static FString GetFolderOutput();
+
+	UFUNCTION(BlueprintSetter)
+	///<summary>Sets the output file location</summary>
+	///<param="NewFolderLocation">The string representation of the new folder location</param>
+	static void SetFolderOutput(FString NewFolderLocation);
 
 private:
 	///<summary>Adds a recordable event to the queue</summary>

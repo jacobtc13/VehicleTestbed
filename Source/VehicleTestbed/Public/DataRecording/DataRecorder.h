@@ -64,6 +64,14 @@ public:
 	///<returns>Current clock rate in ms</returns>
 	int GetClockRate();
 
+	///<summary>Sets the path for the output file</summary>
+	///<param name="NewPath">New folder path</param>
+	void SetFilePath(const std::string& NewPath);
+
+	///<summary>Gets the folder path for the output file</summary>
+	///<returns>The folder path</returns>
+	std::string GetFilePath() const;
+
 	///<summary>Add a new collector</summary>
 	///<param name="collector">Const Pointer to the data to collect</param>
 	///<param name="type"><see cref="DataType"> of the pointer</param>
@@ -88,6 +96,7 @@ public:
 
 private:
 	
+	std::string Filepath;
 	std::string Filename;
 	std::atomic<int> ClockRateMS;
 	

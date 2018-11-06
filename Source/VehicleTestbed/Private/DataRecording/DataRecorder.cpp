@@ -19,14 +19,17 @@ void UDataRecorder::Push(std::unique_ptr<DataPoint> item)
 	Cond.notify_one();
 }
 
-UDataRecorder::UDataRecorder() : ClockRateMS(100), Filename("data.csv") { }
+UDataRecorder::UDataRecorder()
+	: ClockRateMS(100), Filename("data.csv"), Filepath(TCHAR_TO_UTF8(*FPaths::ProjectDir())) { }
 
-UDataRecorder::UDataRecorder(int clockRateMS) : ClockRateMS(clockRateMS), Filename("data.csv") { }
+UDataRecorder::UDataRecorder(int clockRateMS)
+	: ClockRateMS(clockRateMS), Filename("data.csv"), Filepath(TCHAR_TO_UTF8(*FPaths::ProjectDir())) { }
 
-UDataRecorder::UDataRecorder(std::string filename) : ClockRateMS(100), Filename(filename) { }
+UDataRecorder::UDataRecorder(std::string filename)
+	: ClockRateMS(100), Filename(filename), Filepath(TCHAR_TO_UTF8(*FPaths::ProjectDir())) { }
 
 UDataRecorder::UDataRecorder(int clockRateMS, std::string filename) 
-	: ClockRateMS(clockRateMS), Filename(filename) { }
+	: ClockRateMS(clockRateMS), Filename(filename), Filepath(TCHAR_TO_UTF8(*FPaths::ProjectDir())) { }
 
 UDataRecorder::~UDataRecorder()
 {
@@ -87,9 +90,7 @@ void UDataRecorder::ReadFromCollectors()
 void UDataRecorder::WriteToFile()
 {
 	std::fstream fs;
-	FString path = FPaths::ProjectDir();
-	std::string filepath = std::string(TCHAR_TO_UTF8(*path));
-	fs.open(filepath+Filename, std::fstream::out | std::fstream::ate);
+	fs.open(Filepath + "/" + Filename, std::fstream::out | std::fstream::ate);
 
 	// Print header row
 	fs << "Timestamp,";
@@ -134,6 +135,16 @@ void UDataRecorder::SetClockRate(int clockRateMS)
 int UDataRecorder::GetClockRate()
 {
 	return ClockRateMS;
+}
+
+void UDataRecorder::SetFilePath(const std::string& NewPath)
+{
+	Filepath = NewPath;
+}
+
+std::string UDataRecorder::GetFilePath() const
+{
+	return Filepath;
 }
 
 void UDataRecorder::AddCollector(DataCollectorBase* collector)

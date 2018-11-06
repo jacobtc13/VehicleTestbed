@@ -1,6 +1,7 @@
 #include "AgentConfig.h"
+#include "UObjectIterator.h"
 
-TMap<FName, UClass*> UAgentConfig::Gadgets;// = { {TEXT("Shield"), } };
+TArray<TSubclassOf<AGadget>> UAgentConfig::Gadgets;
 
 void UAgentConfig::AppendDocument(rapidxml::xml_document<>& OutDocument) const
 {
@@ -16,7 +17,7 @@ void UAgentConfig::AppendDocument(rapidxml::xml_document<>& OutDocument) const
 
 }
 
-bool UAgentConfig::InitializeFromXML(rapidxml::xml_document<>& doc)
+bool UAgentConfig::InitializeFromXML(rapidxml::xml_document<>& Document)
 {
 	return false;
 }
@@ -24,4 +25,19 @@ bool UAgentConfig::InitializeFromXML(rapidxml::xml_document<>& doc)
 bool UAgentConfig::Instantiate(UObject* ContextObject)
 {
 	return false;
+}
+
+void UAgentConfig::InitializeGadgetsMap()
+{
+	for (TObjectIterator<UClass> ClassIterator; ClassIterator; ++ClassIterator)
+	{
+		UClass* Class = *ClassIterator;
+
+		if (!Class->IsChildOf<AGadget>() || Class->HasAnyClassFlags(CLASS_Abstract))
+		{
+			continue;
+		}
+
+		Gadgets.Add(Class);
+	}
 }

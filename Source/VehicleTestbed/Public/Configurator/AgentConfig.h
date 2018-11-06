@@ -3,6 +3,7 @@
 #include "rapidxml.hpp"
 #include "ConfigBase.h"
 #include "TestbedPlayerController.h"
+#include "Gadget.h"
 
 #include "CoreMinimal.h"
 #include "AgentConfig.generated.h"
@@ -15,25 +16,33 @@ class VEHICLETESTBED_API UAgentConfig : public UConfigBase
 public:
 	virtual void AppendDocument(rapidxml::xml_document<>& OutDocument) const override;
 
-	virtual bool InitializeFromXML(rapidxml::xml_document<>& doc) override;
+	virtual bool InitializeFromXML(rapidxml::xml_document<>& Document) override;
 
 	UFUNCTION(meta = (WorldContext = ContextObject))
 	virtual bool Instantiate(UObject* ContextObject) override;
 
-protected:
+	FName GetAgentClassName() const;
+
+	void SetAgentClassName(const FName& NewClassName);
+
+	FName GetAgentName() const;
+
+	void SetAgentName(const FName& NewAgentName);
+
+
+
+private:
 	UPROPERTY()
-	UClass* AgentClass;
+	FName AgentClassName;
 
 	UPROPERTY()
-	FString AgentName;
+	FName AgentName;
 
 	UPROPERTY()
 	ATestbedPlayerController* Controller;
 
-	UPROPERTY()
-	TMap<FString, FString> Properties;
+	static TArray<TSubclassOf<AGadget>> Gadgets;
 
-	// TODO: Redefine this as sub class of gadgets
-	static TMap<FName, UClass*> Gadgets;
+private:
+	void InitializeGadgetsMap();
 };
-

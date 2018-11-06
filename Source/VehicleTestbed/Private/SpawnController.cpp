@@ -5,8 +5,8 @@
 
 
 
-TArray<FName> USpawnController::getSpawnPointRefs() {
-	
-	return spList.getSpawnPointRefs();
+TArray<FName> USpawnController::GetSpawnPointRefs() {
+
+	return spList.GetSpawnPointRefs();
 
 }

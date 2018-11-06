@@ -14,8 +14,8 @@
 #include "SpawnController.generated.h"
 
 /**
- * 
- */
+* CONTROLLER CLASS FOR UPDATING SPAWN LOCATION - MAY NOT BE NEEDED
+*/
 UCLASS()
 class VEHICLETESTBED_API USpawnController : public UBlueprintFunctionLibrary
 {
@@ -23,8 +23,8 @@ class VEHICLETESTBED_API USpawnController : public UBlueprintFunctionLibrary
 
 public:
 
-	TArray<FName> getSpawnPointRefs();
+	TArray<FName> GetSpawnPointRefs();
 
-	
+
 };
 

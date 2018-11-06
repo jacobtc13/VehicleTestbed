@@ -1,15 +1,6 @@
 #include "AgentConfig.h"
 
-
-
-UAgentConfig::UAgentConfig()
-{
-}
-
-
-UAgentConfig::~UAgentConfig()
-{
-}
+TMap<FName, UClass*> UAgentConfig::Gadgets;// = { {TEXT("Shield"), } };
 
 void UAgentConfig::AppendDocument(rapidxml::xml_document<>& OutDocument) const
 {
@@ -23,4 +14,14 @@ void UAgentConfig::AppendDocument(rapidxml::xml_document<>& OutDocument) const
 	xml_node<>* nameNode = OutDocument.allocate_node(node_element, "Name", TCHAR_TO_UTF8(*AgentName));
 	baseNode->append_node(nameNode);
 
+}
+
+bool UAgentConfig::InitializeFromXML(rapidxml::xml_document<>& doc)
+{
+	return false;
+}
+
+bool UAgentConfig::Instantiate(UObject* ContextObject)
+{
+	return false;
 }

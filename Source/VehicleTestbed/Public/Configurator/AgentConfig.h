@@ -7,25 +7,33 @@
 #include "CoreMinimal.h"
 #include "AgentConfig.generated.h"
 
-UCLASS()
+UCLASS(BlueprintType)
 class VEHICLETESTBED_API UAgentConfig : public UConfigBase
 {
 	GENERATED_BODY()
 
 public:
-	UAgentConfig();
-	UAgentConfig(rapidxml::xml_node<>* Node);
-	~UAgentConfig();
-
 	virtual void AppendDocument(rapidxml::xml_document<>& OutDocument) const override;
 
+	virtual bool InitializeFromXML(rapidxml::xml_document<>& doc) override;
+
+	UFUNCTION(meta = (WorldContext = ContextObject))
+	virtual bool Instantiate(UObject* ContextObject) override;
+
 protected:
-	UClass * AgentClass;
+	UPROPERTY()
+	UClass* AgentClass;
+
+	UPROPERTY()
 	FString AgentName;
-	//Mesh??
 
-	TSubclassOf<ATestbedPlayerController> Controller;
+	UPROPERTY()
+	ATestbedPlayerController* Controller;
 
+	UPROPERTY()
 	TMap<FString, FString> Properties;
+
+	// TODO: Redefine this as sub class of gadgets
+	static TMap<FName, UClass*> Gadgets;
 };
 

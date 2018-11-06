@@ -56,19 +56,19 @@ public:
 
 	///<summary>Returns the name of the Spawn Point</summary>
 	///<returns><see cref="FName" /> Name of SpawnPoint</returns>
-	FName GetName();
+	FName GetName() const;
 
 	///<summary>Returns the Location of the Spawn Point</summary>
 	///<returns><see cref="FVector" /> Location of SpawnPoint</returns>
-	FVector GetLocation();
+	FVector GetLocation() const;
 
 	///<summary>Returns the Rotation of the Spawn Point</summary>
 	///<returns><see cref="FRotator" /> Rotation of SpawnPoint</returns>
-	FRotator GetRotation();
+	FRotator GetRotation() const;
 
 	///<summary>Returns the Tags of the Spawn Point</summary>
 	///<returns><see cref="FString" /> Tags of SpawnPoint</returns>
-	FString GetTags();
+	FString GetTags() const;
 
 };
 

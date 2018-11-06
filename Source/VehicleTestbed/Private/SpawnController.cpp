@@ -5,8 +5,7 @@
 
 
 
-TArray<FName> USpawnController::GetSpawnPointRefs() {
-
+TArray<FName> USpawnController::GetSpawnPointRefs() const
+{
 	return spList.GetSpawnPointRefs();
-
 }

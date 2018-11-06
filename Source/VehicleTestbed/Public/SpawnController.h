@@ -23,8 +23,9 @@ class VEHICLETESTBED_API USpawnController : public UBlueprintFunctionLibrary
 
 public:
 
-	TArray<FName> GetSpawnPointRefs();
+	TArray<FName> GetSpawnPointRefs() const;
 
-
+private:
+	SpawnPointList spList;
 };
 

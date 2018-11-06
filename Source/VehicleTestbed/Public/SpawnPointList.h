@@ -41,18 +41,18 @@ public:
 	///<summary>Returns a Spawn Ppoint based on position in Array</summary>
 	///<param name="position">position in TArray of SpawnPoint</param>
 	///<returns><see cref="SpawnPoint" /> SpawnPoint requested</returns>
-	SpawnPoint GetSpawnPointbyPos(int position);
+	SpawnPoint GetSpawnPointbyPos(int position) const;
 
 	///<summary>Returns a SpawnPoint Based on Name of SpawnPoint</summary>
 	///<param name="SpawnPointName">Name of SpawnPoint to be returned</param>
 	///<returns><see cref="SpawnPoint" /> SpawnPoint requested</returns>
-	SpawnPoint GetSpawnPointbyName(FName SpawnPointName);
+	SpawnPoint GetSpawnPointbyName(FName SpawnPointName) const;
 
 	///<summary>Returns an Array of FNames representing all SpawnPoints</summary>
 	///<returns><see cref="TArray"> Returns a TArray of FNames</returns> 
-	TArray<FName> GetSpawnPointRefs();
+	TArray<FName> GetSpawnPointRefs() const;
 
 	///<summary>Returns True if Spawnpoint found in list</summary>
 	///<returns><see cref="TArray"> Returns a TArray of FNames</returns> 
-	bool CheckSpawnPointInList(FName Name);
+	bool CheckSpawnPointInList(FName Name) const;
 };

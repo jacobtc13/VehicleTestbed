@@ -5,16 +5,14 @@
 
 
 //SpawnPoint Constructor
-SpawnPointList::SpawnPointList() {
-	TArray<SpawnPoint> spList;
+SpawnPointList::SpawnPointList()
+{
 	PopulateList();
-
 }
 
-
 //Populate spawnpoint list with Spawnpoints from Desert Map
-bool SpawnPointList::PopulateList() {
-
+bool SpawnPointList::PopulateList()
+{
 	spList.Add(SpawnPoint(FName(TEXT("DEFAULT")), FVector(0, 0, 0), FRotator(0, 0, 0), ""));
 	spList.Add(SpawnPoint(FName(TEXT("ALLY1")), FVector(128581.210938, 161129.390625, -53666.914062), FRotator(0, 0, 165.599533), ""));
 	spList.Add(SpawnPoint(FName(TEXT("ALLY2")), FVector(179069.40625, 137120, -53797.636719), FRotator(0, 0, 161.999588), ""));
@@ -26,43 +24,48 @@ bool SpawnPointList::PopulateList() {
 }
 
 //Returns SpawnPoint based on array position
-SpawnPoint SpawnPointList::GetSpawnPointbyPos(int position) {
-	return spList[position];
+SpawnPoint SpawnPointList::GetSpawnPointbyPos(int position) const
+{
+	if (spList.IsValidIndex(position))
+	{
+		return spList[position];
+	}
+	else
+	{
+		return SpawnPoint();
+	}
 }
 
 //Returns SpawnPoint based on SpawnPoint Name
-SpawnPoint SpawnPointList::GetSpawnPointbyName(FName SpawnPointName) {
-
-	SpawnPoint spFound;
-	int listLength = spList.Num();
-
-
-	TArray<SpawnPoint*> SPLIST;
-
-	for (SpawnPoint* sPoint : SPLIST) {
-		if (sPoint->GetName() == SpawnPointName) {
-			spFound = *sPoint;
+SpawnPoint SpawnPointList::GetSpawnPointbyName(FName SpawnPointName) const
+{
+	for (const SpawnPoint& sPoint : spList)
+	{
+		if (sPoint.GetName() == SpawnPointName)
+		{
+			return sPoint;
 		}
 	}
-	return spFound;
+	return SpawnPoint();
 };
 
 //Returns TArray of Names for all Spawnpoints
-TArray<FName> SpawnPointList::GetSpawnPointRefs() {
+TArray<FName> SpawnPointList::GetSpawnPointRefs() const
+{
 	TArray<FName> spNames;
-	int listLength = spList.Num();
 
-	TArray<SpawnPoint*> SPLIST;
-	for (SpawnPoint* sPoint : SPLIST) {
-		spNames.Add(sPoint->GetName());
+	for (const SpawnPoint& sPoint : spList)
+	{
+		spNames.Add(sPoint.GetName());
 	}
 
 	return spNames;
 }
 
 //Create a new SpawnPoint and add to the SpawnPoint List
-bool SpawnPointList::AddSpawnPoint(FName Name, FVector Location, FRotator Rotation, FString Tags) {
-	SpawnPoint newSpawnPoint = SpawnPoint(Name, Location, Rotation, Tags);
+bool SpawnPointList::AddSpawnPoint(FName Name, FVector Location, FRotator Rotation, FString Tags)
+{
+	SpawnPoint newSpawnPoint(Name, Location, Rotation, Tags);
 
 	spList.Add(newSpawnPoint);
 
@@ -70,23 +73,18 @@ bool SpawnPointList::AddSpawnPoint(FName Name, FVector Location, FRotator Rotati
 
 }
 
-
 //Check whether Spawn Point is in list by Name
-bool SpawnPointList::CheckSpawnPointInList(FName SpawnPointName) {
-	bool found = false;
-
-	TArray<SpawnPoint*> SPLIST;
-
-	for (SpawnPoint* sPoint : SPLIST) {
-		if (sPoint->GetName() == SpawnPointName) {
-			found = true;
+bool SpawnPointList::CheckSpawnPointInList(FName SpawnPointName) const
+{
+	for (const SpawnPoint& sPoint : spList)
+	{
+		if (sPoint.GetName() == SpawnPointName)
+		{
+			return true;
 		}
 	}
-	return found;
+	return false;
 }
-
-
 
 SpawnPointList::~SpawnPointList()
-{
-}
+{}

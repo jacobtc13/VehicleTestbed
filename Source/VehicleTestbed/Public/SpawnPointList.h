@@ -28,7 +28,7 @@ public:
 	///<summary>Update the name of the SpawnPoint</summary>
 	///<param name="newName">Name to be set</param>
 	///<returns><see cref="bool" /> True if update is successful</returns>
-	bool SpawnPointList::PopulateList();
+	bool PopulateList();
 
 	///<summary>Add a new SpawnPoint to the SpawnPointList</summary>
 	///<param name="Name">Name of SpawnPoint</param>

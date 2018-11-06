@@ -2,7 +2,6 @@
 
 #include "SpawnPointList.h"
 
-TArray<SpawnPoint> spList;
 
 
 //SpawnPoint Constructor

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "GameFramework/PlayerController.h"
+#include "EventRecorder/EventRecorder.h"
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"

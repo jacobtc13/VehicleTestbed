@@ -340,7 +340,7 @@ UAgentConfig* UScenarioConfig::GetAgentBySpawn(const FName SpawnName)
 
 bool UScenarioConfig::AddSpawn(const FName SpawnName, const FString AgentFile)
 {
-	if (AgentFile == "")
+	if (AgentFile != "")
 	{
 		SpawnPoints.Add(SpawnName, AgentFile);
 		return true;

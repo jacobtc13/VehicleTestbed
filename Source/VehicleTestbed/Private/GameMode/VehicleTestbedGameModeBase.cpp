@@ -21,6 +21,11 @@ void AVehicleTestbedGameModeBase::PostInitializeComponents()
 	DataCollector<int32>* myCollector = new DataCollector<int32>();
 	myCollector->FGetDelegate.BindUObject(this, &AVehicleTestbedGameModeBase::GetNumPlayers);
 	dataRecorder->AddCollector(myCollector);
+}
+
+void AVehicleTestbedGameModeBase::BeginPlay()
+{
+	Super::BeginPlay();
 
 	UConfigurator::SetScenario(FPaths::ProjectDir() + TEXT("Configurations/Scenarios/DemoScenario.xml"));
 
@@ -57,11 +62,6 @@ void AVehicleTestbedGameModeBase::PostInitializeComponents()
 
 		UCommDistributor::SetDefaultPropagation(NewObject<UThirtyMetreSNR>());
 	}
-}
-
-void AVehicleTestbedGameModeBase::BeginPlay()
-{
-	Super::BeginPlay();
 
 	dataRecorder->Start();
 }
@@ -69,6 +69,7 @@ void AVehicleTestbedGameModeBase::BeginPlay()
 void AVehicleTestbedGameModeBase::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
 	dataRecorder->Stop();
+	UCommDistributor::EndPlay();
 	Super::EndPlay(EndPlayReason);
 }
 

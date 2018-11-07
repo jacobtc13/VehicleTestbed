@@ -215,12 +215,17 @@ USNRModel* UCommDistributor::GetDefaultPropagation()
 
 void UCommDistributor::SetDefaultPropagation(USNRModel* NewDefaultProp)
 {
-	// Garbage collection does not touch root objects
-	if (NewDefaultProp) NewDefaultProp->AddToRoot();
-	// Need to make sure to remove them again, very much like new / delete
-	DefaultProp->RemoveFromRoot();
-
-	DefaultProp = NewDefaultProp;
+	if (NewDefaultProp)
+	{
+		// Garbage collection does not touch root objects
+		NewDefaultProp->AddToRoot();
+		if (DefaultProp)
+		{
+			// Need to make sure to remove them again, very much like new / delete
+			DefaultProp->RemoveFromRoot();
+		}
+		DefaultProp = NewDefaultProp;
+	}
 }
 
 void UCommDistributor::EndPlay()

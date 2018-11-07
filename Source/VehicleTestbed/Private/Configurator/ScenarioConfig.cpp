@@ -5,6 +5,7 @@
 #include "DataRecorder.h"
 #include "EventRecorder.h"
 #include "CommConfig.h"
+#include "SpawnController.h"
 
 UScenarioConfig::UScenarioConfig()
 {
@@ -178,12 +179,34 @@ bool UScenarioConfig::Instantiate(UObject* ContextObject)
 		}
 	}
 
-	// TODO: Tie in with agent spawn controller
-
 	// Set the comms framework
 	if (UCommConfig* CommConfigObject = GetCommConfigObject())
 	{
 		CommConfigObject->Instantiate(ContextObject);
+	}
+	else return false;
+
+	// Spawn agents
+	SpawnPointList SpawnList;
+	for (const auto& SpawnPair : SpawnPoints)
+	{
+		for (const FName& SpawnName : SpawnList.GetSpawnPointRefs())
+		{
+			if (SpawnPair.Key == SpawnName)
+			{
+				// spawn the agent
+				if (UAgentConfig* AgentConfig = GetAgent(SpawnPair.Value))
+				{
+					FVector AgentLocation = SpawnList.GetSpawnPointbyName(SpawnName).GetLocation();
+					FRotator AgentRotation = SpawnList.GetSpawnPointbyName(SpawnName).GetRotation();
+
+					AgentConfig->SetNextSpawn(AgentLocation, AgentRotation);
+					AgentConfig->Instantiate(ContextObject);
+				}
+				else return false;
+				break;
+			}
+		}
 	}
 
 	return true;
@@ -307,7 +330,7 @@ UAgentConfig* UScenarioConfig::GetAgentBySpawn(const FName SpawnName)
 
 bool UScenarioConfig::AddSpawn(const FName SpawnName, const FString AgentFile)
 {
-	if (AgentFile == "")
+	if (AgentFile != "")
 	{
 		SpawnPoints.Add(SpawnName, AgentFile);
 		return true;

@@ -9,7 +9,7 @@
 #include "Engine/SkeletalMeshSocket.h"
 #include "TestbedWheeledVehicle.generated.h"
 
-UCLASS()
+UCLASS(Abstract)
 ///<summary>Base class for all wheeled vehicle actors. Sets up cameras and controls for player usage.</summary>
 class VEHICLETESTBED_API ATestbedWheeledVehicle : public AWheeledVehicle, public IMountablePawn
 {

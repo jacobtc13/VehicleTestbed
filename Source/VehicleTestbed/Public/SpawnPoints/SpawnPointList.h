@@ -51,6 +51,6 @@ public:
 	TArray<FName> GetSpawnPointRefs() const;
 
 	///<summary>Returns True if Spawnpoint found in list</summary>
-	///<returns><see cref="TArray"> Returns a TArray of FNames</returns> 
+	///<returns><see cref="bool"> Returns True if Spawnpoint is found in list. False if not found</returns> 
 	bool CheckSpawnPointInList(FName Name) const;
 };

@@ -3,6 +3,7 @@
 #include "rapidxml.hpp"
 #include "ConfigBase.h"
 #include "TestbedPlayerController.h"
+#include "TestbedWheeledVehicle.h"
 #include "Gadget.h"
 
 #include "CoreMinimal.h"
@@ -21,6 +22,8 @@ public:
 	UFUNCTION(meta = (WorldContext = ContextObject))
 	virtual bool Instantiate(UObject* ContextObject) override;
 
+	TArray<FName> GetAgentClassNames();
+
 	FName GetAgentClassName() const;
 
 	void SetAgentClassName(const FName& NewClassName);
@@ -29,7 +32,17 @@ public:
 
 	void SetAgentName(const FName& NewAgentName);
 
+	bool GetPossessAtStart() const;
 
+	void SetPossessAtStart(const bool ShouldPossessAtStart);
+
+	TArray<FName> GetGadgetsOnThisAgent() const;
+
+	void AddGadget(const FName& GadgetName);
+
+	void RemoveGadget(const FName& GadgetName);
+
+	ATestbedWheeledVehicle* GetLastAgentInstantiated() const;
 
 private:
 	UPROPERTY()
@@ -39,10 +52,18 @@ private:
 	FName AgentName;
 
 	UPROPERTY()
-	ATestbedPlayerController* Controller;
+	bool bPosessAtStart;
 
+	UPROPERTY()
+	TArray<FName> GadgetsOnThisAgent;
+
+	UPROPERTY()
+	ATestbedWheeledVehicle* LastAgentInstantiated;
+
+	static TArray<TSubclassOf<ATestbedWheeledVehicle>> AgentClasses;
 	static TArray<TSubclassOf<AGadget>> Gadgets;
 
 private:
-	void InitializeGadgetsMap();
+	static void InitializeAgentClassArray();
+	static void InitializeGadgetsArray();
 };

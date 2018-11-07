@@ -62,13 +62,13 @@ bool UAgentConfig::InitializeFromXML(rapidxml::xml_document<>& Document)
 
 	// Get possession bool
 	Node = Node->next_sibling();
-	if (Node)
+	if (Node && ((std::string)Node->name() == "Possess"))
 	{
-		if ((std::string)Node->name() == "true")
+		if ((std::string)Node->value() == "true")
 		{
 			SetPossessAtStart(true);
 		}
-		else if ((std::string)Node->name() == "false")
+		else if ((std::string)Node->value() == "false")
 		{
 			SetPossessAtStart(false);
 		}

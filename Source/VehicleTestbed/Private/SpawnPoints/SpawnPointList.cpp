@@ -11,7 +11,7 @@ SpawnPointList::SpawnPointList()
 }
 
 //Populate spawnpoint list with Spawnpoints from Desert Map
-bool SpawnPointList::PopulateList()
+void SpawnPointList::PopulateList()
 {
 	spList.Add(SpawnPoint(FName(TEXT("DEFAULT")), FVector(0, 0, 0), FRotator(0, 0, 0), ""));
 	spList.Add(SpawnPoint(FName(TEXT("ALLY1")), FVector(128581.210938, 161129.390625, -53666.914062), FRotator(0, 0, 165.599533), ""));
@@ -20,7 +20,7 @@ bool SpawnPointList::PopulateList()
 	spList.Add(SpawnPoint(FName(TEXT("ENEMY2")), FVector(87885.257812, 205574.890625, -48679.117188), FRotator(0, 0, 295.199066), ""));
 	spList.Add(SpawnPoint(FName(TEXT("ENEMY3")), FVector(114588.4375, 206807.359375, -45675.542969), FRotator(0, 0, 273.59924), ""));
 
-	return true;
+
 }
 
 //Returns SpawnPoint based on array position

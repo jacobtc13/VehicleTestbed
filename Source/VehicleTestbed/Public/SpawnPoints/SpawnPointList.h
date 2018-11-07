@@ -25,10 +25,8 @@ public:
 	///<summary>Destructor</summary>
 	~SpawnPointList();
 
-	///<summary>Update the name of the SpawnPoint</summary>
-	///<param name="newName">Name to be set</param>
-	///<returns><see cref="bool" /> True if update is successful</returns>
-	bool PopulateList();
+	///<summary>Populate SpawnPoint List</summary>
+	void PopulateList();
 
 	///<summary>Add a new SpawnPoint to the SpawnPointList</summary>
 	///<param name="Name">Name of SpawnPoint</param>
@@ -40,12 +38,12 @@ public:
 
 	///<summary>Returns a Spawn Ppoint based on position in Array</summary>
 	///<param name="position">position in TArray of SpawnPoint</param>
-	///<returns><see cref="SpawnPoint" /> SpawnPoint requested</returns>
+	///<returns><see cref="SpawnPoint" /> SpawnPoint requested or if no Spawnpoint at postion provided returns default SpawnPoint</returns>
 	SpawnPoint GetSpawnPointbyPos(int position) const;
 
 	///<summary>Returns a SpawnPoint Based on Name of SpawnPoint</summary>
 	///<param name="SpawnPointName">Name of SpawnPoint to be returned</param>
-	///<returns><see cref="SpawnPoint" /> SpawnPoint requested</returns>
+	///<returns><see cref="SpawnPoint" /> SpawnPoint requestedor if no Spawnpoint with name provided returns default SpawnPoint</returns>
 	SpawnPoint GetSpawnPointbyName(FName SpawnPointName) const;
 
 	///<summary>Returns an Array of FNames representing all SpawnPoints</summary>

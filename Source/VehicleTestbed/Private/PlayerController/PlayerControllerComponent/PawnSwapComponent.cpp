@@ -1,4 +1,5 @@
 #include "PawnSwapComponent.h"
+#include "TestbedWheeledVehicle.h"
 
 void UPawnSwapComponent::SetupPlayerInputComponent(UInputComponent* InputComponent)
 {
@@ -11,7 +12,7 @@ void UPawnSwapComponent::BeginPlay()
 {
 	UPCComponent::BeginPlay();
 
-	UGameplayStatics::GetAllActorsOfClass((UObject*)GetWorld(), APawn::StaticClass(), ControllablePawns);
+	UGameplayStatics::GetAllActorsOfClass((UObject*)GetWorld(), ATestbedWheeledVehicle::StaticClass(), ControllablePawns);
 	if (Controller->GetPawn() != nullptr)
 	{
 		CurrentPawnIndex = ControllablePawns.Find(Controller->GetPawn());

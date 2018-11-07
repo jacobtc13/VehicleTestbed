@@ -34,4 +34,6 @@ public:
 
 	///<summary>Called the game ends, stops dataRecording</summary>
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
+
+	UDataRecorder* GetDataRecorder() const;
 };

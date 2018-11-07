@@ -5,7 +5,8 @@
 std::atomic<bool> UEventRecorder::bStop = false;
 std::queue<UEventRecorder::EventRef> UEventRecorder::WriteQueue;
 std::mutex UEventRecorder::QueueMutex;
-FString UEventRecorder::FileName = FPaths::ProjectDir() + TEXT("Logs/events.xml");
+FString UEventRecorder::FolderName;
+FString UEventRecorder::FileName;
 std::future<void> UEventRecorder::WriterThread;
 UEventRecorder::FDestructor UEventRecorder::Destructor;
 
@@ -55,8 +56,8 @@ const bool UEventRecorder::Start()
 	{
 		bStop = false;
 		// Set the target filename to reflect the newly starting run. The file won't exist until the recorder tries to write
-		FileName = FPaths::ProjectDir() + TEXT("Logs/events-") + FDateTime::Now().ToString(TEXT("%d.%m.%Y-%H.%M.%S")) + TEXT(".xml");
-		
+		FileName = FolderName + TEXT("/events-") + FDateTime::Now().ToString(TEXT("%d.%m.%Y-%H.%M.%S")) + TEXT(".xml");
+
 		WriterThread = std::async(std::launch::async, WriteThreadFunction);
 		return true;
 	}
@@ -69,6 +70,22 @@ void UEventRecorder::Stop()
 	if (!bStop)
 	{
 		bStop = true;
+	}
+}
+
+FString UEventRecorder::GetFolderOutput()
+{
+	return FolderName;
+}
+
+void UEventRecorder::SetFolderOutput(FString NewFolderLocation)
+{
+	// Don't change if the recorder is currently running
+	if (isWriterThreadFinished(WriterThread))
+	{
+		// Remove the ending slash if its there
+		NewFolderLocation.RemoveFromEnd(TEXT("/"));
+		FolderName = NewFolderLocation;
 	}
 }
 

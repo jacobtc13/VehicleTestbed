@@ -1,6 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "VehicleTestbedGameModeBase.h"
+#include "Configurator.h"
 
 AVehicleTestbedGameModeBase::AVehicleTestbedGameModeBase()
 {
@@ -10,6 +11,7 @@ AVehicleTestbedGameModeBase::AVehicleTestbedGameModeBase()
 void AVehicleTestbedGameModeBase::PostInitializeComponents()
 {
 	Super::PostInitializeComponents();
+
 
 	// Add collectors to data recorder
 	// TODO: Rewrite this to load from file/menu and do bindings dynamically
@@ -21,6 +23,10 @@ void AVehicleTestbedGameModeBase::PostInitializeComponents()
 void AVehicleTestbedGameModeBase::BeginPlay()
 {
 	Super::BeginPlay();
+
+	// Load the scenario
+	UConfigurator::StartScenario(this);
+
 	dataRecorder->Start();
 }
 
@@ -28,4 +34,9 @@ void AVehicleTestbedGameModeBase::EndPlay(const EEndPlayReason::Type EndPlayReas
 {
 	dataRecorder->Stop();
 	Super::EndPlay(EndPlayReason);
+}
+
+UDataRecorder* AVehicleTestbedGameModeBase::GetDataRecorder() const
+{
+	return dataRecorder;
 }

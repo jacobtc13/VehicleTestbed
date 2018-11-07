@@ -22,7 +22,7 @@ public:
 	UFUNCTION(meta = (WorldContext = ContextObject))
 	virtual bool Instantiate(UObject* ContextObject) override;
 
-	TArray<FName> GetAgentClassNames();
+	static TArray<FName> GetAgentClassNames();
 
 	FName GetAgentClassName() const;
 

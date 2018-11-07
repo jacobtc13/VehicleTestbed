@@ -243,6 +243,11 @@ void UAgentConfig::InitializeAgentClassArray()
 			continue;
 		}
 
+		if (Class->GetName().StartsWith(TEXT("SKEL_")) || Class->GetName().StartsWith(TEXT("REINST_")))
+		{
+			continue;
+		}
+
 		AgentClasses.Add(Class);
 	}
 }
@@ -254,6 +259,11 @@ void UAgentConfig::InitializeGadgetsArray()
 		UClass* Class = *ClassIterator;
 
 		if (!Class->IsChildOf<AGadget>() || Class->HasAnyClassFlags(CLASS_Abstract))
+		{
+			continue;
+		}
+
+		if (Class->GetName().StartsWith(TEXT("SKEL_")) || Class->GetName().StartsWith(TEXT("REINST_")))
 		{
 			continue;
 		}

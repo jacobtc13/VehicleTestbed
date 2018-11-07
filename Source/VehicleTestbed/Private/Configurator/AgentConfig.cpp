@@ -165,6 +165,22 @@ FName UAgentConfig::GetAgentClassName() const
 	return AgentClassName;
 }
 
+UClass* UAgentConfig::GetAgentClass() const
+{
+	if (!AgentClasses.Num())
+	{
+		InitializeAgentClassArray();
+	}
+	for (UClass* AgentClass : AgentClasses)
+	{
+		if (AgentClass->GetFName() == AgentClassName)
+		{
+			return AgentClass;
+		}
+	}
+	return nullptr;
+}
+
 void UAgentConfig::SetAgentClassName(const FName& NewClassName)
 {
 	if (!AgentClasses.Num())
@@ -230,6 +246,15 @@ void UAgentConfig::RemoveGadget(const FName& GadgetName)
 ATestbedWheeledVehicle* UAgentConfig::GetAgent() const
 {
 	return Agent;
+}
+
+TArray<TSubclassOf<AGadget>> UAgentConfig::GetGadgetClasses()
+{
+	if (!Gadgets.Num())
+	{
+		InitializeGadgetsArray();
+	}
+	return Gadgets;
 }
 
 void UAgentConfig::InitializeAgentClassArray()

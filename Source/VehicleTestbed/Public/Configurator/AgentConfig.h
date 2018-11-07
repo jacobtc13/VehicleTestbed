@@ -26,6 +26,8 @@ public:
 
 	FName GetAgentClassName() const;
 
+	UClass* GetAgentClass() const;
+
 	void SetAgentClassName(const FName& NewClassName);
 
 	FName GetAgentName() const;
@@ -43,6 +45,8 @@ public:
 	void RemoveGadget(const FName& GadgetName);
 
 	ATestbedWheeledVehicle* GetAgent() const;
+
+	static TArray<TSubclassOf<AGadget>> GetGadgetClasses();
 
 private:
 	UPROPERTY()

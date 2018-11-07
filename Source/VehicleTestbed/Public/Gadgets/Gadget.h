@@ -8,7 +8,7 @@
 /**
  * Base class for mounting/dismounting to an AMountablePAwn
  */
-UCLASS()
+UCLASS(Abstract)
 class VEHICLETESTBED_API AGadget : public APawn
 {
 	GENERATED_BODY()

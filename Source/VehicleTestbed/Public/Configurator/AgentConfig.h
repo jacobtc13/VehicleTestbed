@@ -42,7 +42,7 @@ public:
 
 	void RemoveGadget(const FName& GadgetName);
 
-	ATestbedWheeledVehicle* GetLastAgentInstantiated() const;
+	ATestbedWheeledVehicle* GetAgent() const;
 
 private:
 	UPROPERTY()
@@ -58,7 +58,7 @@ private:
 	TArray<FName> GadgetsOnThisAgent;
 
 	UPROPERTY()
-	ATestbedWheeledVehicle* LastAgentInstantiated;
+	ATestbedWheeledVehicle* Agent;
 
 	static TArray<TSubclassOf<ATestbedWheeledVehicle>> AgentClasses;
 	static TArray<TSubclassOf<AGadget>> Gadgets;

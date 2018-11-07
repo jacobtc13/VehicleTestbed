@@ -1,5 +1,6 @@
 #include "AgentConfig.h"
 #include "UObjectIterator.h"
+#include "GameFramework/GameState.h"
 
 TArray<TSubclassOf<ATestbedWheeledVehicle>> UAgentConfig::AgentClasses;
 TArray<TSubclassOf<AGadget>> UAgentConfig::Gadgets;
@@ -79,7 +80,7 @@ bool UAgentConfig::InitializeFromXML(rapidxml::xml_document<>& Document)
 	Node = Node->next_sibling();
 	if (Node && ((std::string)Node->name() == "Gadgets"))
 	{
-		for (xml_node<>* GadgetNode = GadgetNode->first_node(); GadgetNode && ((std::string)GadgetNode->name() == "Gadget"); GadgetNode = GadgetNode->next_sibling())
+		for (xml_node<>* GadgetNode = Node->first_node(); GadgetNode && ((std::string)GadgetNode->name() == "Gadget"); GadgetNode = GadgetNode->next_sibling())
 		{
 			xml_node<>* GadgetNameNode = GadgetNode->first_node();
 			if (GadgetNameNode && ((std::string)GadgetNameNode->name() == "Name"))
@@ -102,7 +103,46 @@ bool UAgentConfig::InitializeFromXML(rapidxml::xml_document<>& Document)
 
 bool UAgentConfig::Instantiate(UObject* ContextObject)
 {
-	return false;
+	if (!ContextObject || !ContextObject->ImplementsGetWorld())
+	{
+		return false;
+	}
+
+	UClass* Class = nullptr;
+	for (UClass* AgentClass : AgentClasses)
+	{
+		if (AgentClass->GetFName() == GetAgentClassName())
+		{
+			Class = AgentClass;
+			break;
+		}
+	}
+	if (!Class) return false;
+	ATestbedWheeledVehicle* NewAgent = NewObject<ATestbedWheeledVehicle>(UGameplayStatics::GetGameState(ContextObject)->GetLevel(), Class, GetAgentName());
+	for (const FName& GadgetName : GadgetsOnThisAgent)
+	{
+		for (const TSubclassOf<AGadget>& GadgetClass : Gadgets)
+		{
+			if (GadgetClass->GetFName() == GadgetName)
+			{
+				// TODO: Un-hard code this
+				if (GadgetName == TEXT("ShieldCountermeasure"))
+				{
+					NewAgent->MountGadget(GadgetClass, NewAgent->GetMountingNodeBySocketName(TEXT("ShieldSocket"))->GetMeshSocket());
+				}
+				else if (GadgetName == ("ProjectileCountermeasure"))
+				{
+					NewAgent->MountGadget(GadgetClass, NewAgent->GetMountingNodeBySocketName(TEXT("TurretSocket"))->GetMeshSocket());
+				}
+				else return false;
+				break;
+			}
+		}
+	}
+
+	Agent = NewAgent;
+
+	return true;
 }
 
 TArray<FName> UAgentConfig::GetAgentClassNames()
@@ -187,9 +227,9 @@ void UAgentConfig::RemoveGadget(const FName& GadgetName)
 	GadgetsOnThisAgent.Remove(GadgetName);
 }
 
-ATestbedWheeledVehicle* UAgentConfig::GetLastAgentInstantiated() const
+ATestbedWheeledVehicle* UAgentConfig::GetAgent() const
 {
-	return LastAgentInstantiated;
+	return Agent;
 }
 
 void UAgentConfig::InitializeAgentClassArray()

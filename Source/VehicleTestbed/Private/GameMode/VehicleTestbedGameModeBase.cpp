@@ -64,12 +64,14 @@ void AVehicleTestbedGameModeBase::BeginPlay()
 	}
 
 	dataRecorder->Start();
+	UEventRecorder::Start();
 }
 
 void AVehicleTestbedGameModeBase::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
 	dataRecorder->Stop();
 	UCommDistributor::EndPlay();
+	UEventRecorder::Stop();
 	Super::EndPlay(EndPlayReason);
 }
 

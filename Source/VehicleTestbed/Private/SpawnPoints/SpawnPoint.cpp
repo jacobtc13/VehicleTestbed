@@ -23,45 +23,39 @@ SpawnPoint::SpawnPoint()
 }
 
 // Updates Spawnpoint name
-bool SpawnPoint::SetName(FName newName)
+void SpawnPoint::SetName(FName newName)
 {
 	spName = newName;
-	if (spName == newName) { return true; }
-	else { return false; };
+	
 }
 
 // Updates SpawnPoint Location
-bool SpawnPoint::SetLocation(FVector newLocation)
+void SpawnPoint::SetLocation(FVector newLocation)
 {
 	spLocation = newLocation;
-	if (spLocation == newLocation) { return true; }
-	else { return false; };
-	return true;
+	
 }
 
 // Updates SpawnPoint Rotation
-bool SpawnPoint::SetRotation(FRotator newRotation)
+void SpawnPoint::SetRotation(FRotator newRotation)
 {
 	spRotation = newRotation;
-	if (spRotation == newRotation) { return true; }
-	else { return false; };
+	
 }
 
 // Updates SpawnPoint Tags
-bool SpawnPoint::SetTags(FString newTags)
+void SpawnPoint::SetTags(FString newTags)
 {
 	spTags = newTags;
-	if (spTags == newTags) { return true; }
-	else { return false; };
+	
 }
 
 //Updated SpawnPoint Location and Rotation
-bool SpawnPoint::SetSpawnPoint(FVector newLocation, FRotator newRotation)
+void SpawnPoint::SetSpawnPoint(FVector newLocation, FRotator newRotation)
 {
 	spLocation = newLocation;
 	spRotation = newRotation;
-	if ((spLocation == newLocation) && (spRotation == newRotation)) { return true; }
-	else { return false; };
+	
 }
 
 // Returns SpawnPoint Name

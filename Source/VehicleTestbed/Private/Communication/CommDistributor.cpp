@@ -1,5 +1,6 @@
 #include "CommDistributor.h"
 #include "MessageSender.h"
+#include "VoidSNR.h"
 
 // static initialization
 TArray<UCommChannel*> UCommDistributor::ChannelList;
@@ -125,14 +126,13 @@ void UCommDistributor::CreateChannel(float Frequency)
 			// Use the first SNRModel in the list
 			NewChannel->Initialize(Frequency, SNRRanges[0]->GetSNRModel());
 		}
-		else if (DefaultProp)
-		{
-			NewChannel->Initialize(Frequency, DefaultProp);
-		}
 		else
 		{
-			// Comm Distributor has not been intialized yet
-			UE_LOG(LogTemp, Fatal, TEXT("Channel attempted to be made before Distributor is initialized"));
+			if (!DefaultProp)
+			{
+				SetDefaultPropagation(NewObject<UVoidSNR>());
+			}
+			NewChannel->Initialize(Frequency, DefaultProp);
 		}
 
 		ChannelList.Add(NewChannel);

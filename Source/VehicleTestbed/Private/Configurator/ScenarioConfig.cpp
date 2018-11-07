@@ -197,21 +197,11 @@ bool UScenarioConfig::Instantiate(UObject* ContextObject)
 				// spawn the agent
 				if (UAgentConfig* AgentConfig = GetAgent(SpawnPair.Value))
 				{
-					AgentConfig->Instantiate(ContextObject);
-
-					UClass* AgentClass = AgentConfig->GetAgent()->GetClass();
 					FVector AgentLocation = SpawnList.GetSpawnPointbyName(SpawnName).GetLocation();
 					FRotator AgentRotation = SpawnList.GetSpawnPointbyName(SpawnName).GetRotation();
 
-					FActorSpawnParameters SpawnParameters;
-					SpawnParameters.Name = AgentConfig->GetAgentName();
-					SpawnParameters.Template = AgentConfig->GetAgent();
-
-					ATestbedWheeledVehicle* SpawnedAgent = ContextObject->GetWorld()->SpawnActor<ATestbedWheeledVehicle>(AgentClass, AgentLocation, AgentRotation, SpawnParameters);
-					if (AgentConfig->GetPossessAtStart())
-					{
-						UGameplayStatics::GetPlayerController(ContextObject, 0)->Possess(SpawnedAgent);
-					}
+					AgentConfig->SetNextSpawn(AgentLocation, AgentRotation);
+					AgentConfig->Instantiate(ContextObject);
 				}
 				else return false;
 				break;

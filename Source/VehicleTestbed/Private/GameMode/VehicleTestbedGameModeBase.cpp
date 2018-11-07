@@ -2,6 +2,7 @@
 
 #include "VehicleTestbedGameModeBase.h"
 #include "Configurator.h"
+#include "ScenarioConfig.h"
 
 AVehicleTestbedGameModeBase::AVehicleTestbedGameModeBase()
 {
@@ -24,8 +25,39 @@ void AVehicleTestbedGameModeBase::BeginPlay()
 {
 	Super::BeginPlay();
 
-	// Load the scenario
-	UConfigurator::StartScenario(this);
+	UConfigurator::SetScenario(FPaths::ProjectDir() + TEXT("Configurations/Scenarios/DemoScenario.xml"));
+
+	if (UGameplayStatics::GetCurrentLevelName(this) == "Desert")
+	{
+		// Load the scenario
+		UConfigurator::StartScenario(this);
+	}
+	else
+	{
+		UAgentConfig* AgentConfig = NewObject<UAgentConfig>();
+		AgentConfig->SetFileLocation(FPaths::ProjectDir() + TEXT("Configurations/Agents/DemoAgent.xml"));
+		UCommConfig* CommConfig = NewObject<UCommConfig>();
+		CommConfig->SetFileLocation(FPaths::ProjectDir() + TEXT("Configurations/Communication/DemoComm.xml"));
+		UScenarioConfig* ScenarioConfig = NewObject<UScenarioConfig>();
+		ScenarioConfig->SetFileLocation(FPaths::ProjectDir() + TEXT("Configurations/Scenarios/DemoScenario.xml"));
+
+		AgentConfig->AddGadget(TEXT("ShieldCountermeasure"));
+		AgentConfig->SetAgentClassName(TEXT("Jackal_BP_C"));
+		AgentConfig->SetAgentName("DemoAgent");
+		AgentConfig->SetPossessAtStart(true);
+		UConfigurator::SaveConfig(AgentConfig);
+
+		CommConfig->SetDefaultModelName(TEXT("ThirtyMetreSNR"));
+		UConfigurator::SaveConfig(CommConfig);
+
+		ScenarioConfig->AddAgent(AgentConfig->GetFileLocation(), AgentConfig);
+		ScenarioConfig->AddSpawn(TEXT("ALLY1"), AgentConfig->GetFileLocation());
+		ScenarioConfig->SetCommConfig(CommConfig->GetFileLocation());
+		ScenarioConfig->SetMapName(TEXT("Desert"));
+		ScenarioConfig->SetDataRecordingOutputFolder(FPaths::ProjectDir() + TEXT("Logs"));
+		ScenarioConfig->SetEventRecordingOuptutFolder(FPaths::ProjectDir() + TEXT("Logs"));
+		UConfigurator::SaveConfig(ScenarioConfig);
+	}
 
 	dataRecorder->Start();
 }

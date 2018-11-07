@@ -30,29 +30,24 @@ public:
 
 	///<summary>Update the name of the SpawnPoint</summary>
 	///<param name="newName">Name to be set</param>
-	///<returns><see cref="bool" /> True if update is successful</returns>
-	bool SetName(FName newName);
+	void SetName(FName newName);
 
 
 	///<summary>Update the Location of the SpawnPoint</summary>
 	///<param name="newLocation">Location to be set</param>
-	///<returns><see cref="bool" /> True if update is successful</returns>
-	bool SetLocation(FVector newLocation);
+	void SetLocation(FVector newLocation);
 
 	///<summary>Update the Location of the SpawnPoint</summary>
-	///<param name="newLocation">Location to be set</param>
-	///<returns><see cref="bool" /> True if update is successful</returns>
-	bool SetRotation(FRotator newRotation);
+	///<param name="newRotation">Location to be set</param>
+	void SetRotation(FRotator newRotation);
 
 	///<summary>Update the Tags of the SpawnPoint</summary>
 	///<param name="newTags">Tags to be set</param>
-	///<returns><see cref="bool" /> True if update is successful</returns>
-	bool SetTags(FString newTags);
+	void SetTags(FString newTags);
 
 	///<summary>Update the Location of the SpawnPoint</summary>
 	///<param name="newLocation">Location to be set</param>
-	///<returns><see cref="bool" /> True if update is successful</returns>
-	bool SetSpawnPoint(FVector newLocation, FRotator newRotation);
+	void SetSpawnPoint(FVector newLocation, FRotator newRotation);
 
 	///<summary>Returns the name of the Spawn Point</summary>
 	///<returns><see cref="FName" /> Name of SpawnPoint</returns>

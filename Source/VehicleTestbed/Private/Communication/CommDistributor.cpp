@@ -224,6 +224,15 @@ void UCommDistributor::SetDefaultPropagation(USNRModel* NewDefaultProp)
 			// Need to make sure to remove them again, very much like new / delete
 			DefaultProp->RemoveFromRoot();
 		}
+
+		for (UCommChannel* Channel : ChannelList)
+		{
+			if (Channel->GetSNRModel() == DefaultProp)
+			{
+				Channel->SetSNRModel(NewDefaultProp);
+			}
+		}
+
 		DefaultProp = NewDefaultProp;
 	}
 }

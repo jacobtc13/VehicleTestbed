@@ -3,7 +3,11 @@
 #include "Components/BoxComponent.h"
 #include "Engine/CollisionProfile.h"
 #include "Kismet/GameplayStatics.h"
-#include "JackalWheeledVehicle.h"
+
+#include "ProjectileCountermeasure.h"
+#include "Runtime/Engine/Classes/Components/SkeletalMeshComponent.h"
+#include "Engine/SkeletalMeshSocket.h"
+#include "Runtime/Engine/Classes/PhysicsEngine/PhysicsAsset.h"
 
 #include "WheeledVehicleMovementComponent.h"
 #include "CoreMinimal.h"
@@ -34,6 +38,26 @@ ATestbedWheeledVehicle::ATestbedWheeledVehicle()
 ATestbedWheeledVehicle::~ATestbedWheeledVehicle()
 {
 
+}
+
+void ATestbedWheeledVehicle::PostInitializeComponents()
+{
+	Super::PostInitializeComponents();
+
+	// Initialises default socket names
+	if (GetMesh()->SkeletalMesh != nullptr)
+	{
+		// Get all sockets on the mesh
+		const TArray<USkeletalMeshSocket*> AllSockets = GetMesh()->SkeletalMesh->GetActiveSocketList();
+
+		// For each socket, create a GadgetMountingNode
+		for (int i = 0; i < AllSockets.Num(); i++)
+		{
+			UGadgetMountingNode* MountingNode = NewObject<UGadgetMountingNode>(UGadgetMountingNode::StaticClass());
+			MountingNode->SetMeshSocket(AllSockets[i]);
+			GadgetMountingNodes.Add(MountingNode);
+		}
+	}
 }
 
 void ATestbedWheeledVehicle::SetThrottleInput(float Value)
@@ -77,4 +101,51 @@ void ATestbedWheeledVehicle::SwitchActiveCamera(UCameraComponent* NewActiveCamer
 	ActiveCamera->Deactivate();
 	ActiveCamera = NewActiveCamera;
 	ActiveCamera->Activate();
+}
+
+TArray<UGadgetMountingNode*> ATestbedWheeledVehicle::GetMountingNodes()
+{
+	return GadgetMountingNodes;
+}
+
+UGadgetMountingNode* ATestbedWheeledVehicle::GetMountingNodeBySocketName(FName SocketName)
+{
+	for (int i = 0; i < GadgetMountingNodes.Num(); i++)
+	{
+		if (SocketName == GadgetMountingNodes[i]->GetMeshSocket()->SocketName)
+		{
+			return GadgetMountingNodes[i];
+		}
+	}
+
+	// Return nullptr if nothing is found with that name
+	return nullptr;
+}
+
+void ATestbedWheeledVehicle::MountGadget(TSubclassOf<AGadget> GadgetClass, USkeletalMeshSocket* Socket)
+{
+	for (int i = 0; i < GadgetMountingNodes.Num(); i++)
+	{
+		if (Socket == GadgetMountingNodes[i]->GetMeshSocket())
+		{
+			// Make object capable of spawning anywhere, because it will be attached to socket anyway
+			FActorSpawnParameters SpawnInfo;
+			SpawnInfo.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+			AGadget* Gadget = this->GetWorld()->SpawnActor<AGadget>(GadgetClass.Get(), FVector::ZeroVector, FRotator::ZeroRotator, SpawnInfo);
+
+			// Check if gadget was successfully created
+			if (Gadget != nullptr)
+			{
+				// Attach to mounting node
+				GadgetMountingNodes[i]->SetMountedGadget(Gadget);
+
+				// Attach gadget mesh to the vehicle
+				Gadget->AttachToActor(this, FAttachmentTransformRules::SnapToTargetIncludingScale, Socket->SocketName);
+			}
+			else
+			{
+				UE_LOG(LogTemp, Warning, TEXT("Error initialising countermeasure class."));
+			}
+		}
+	}
 }

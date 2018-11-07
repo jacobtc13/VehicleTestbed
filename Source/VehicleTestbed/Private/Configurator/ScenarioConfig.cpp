@@ -195,7 +195,7 @@ bool UScenarioConfig::Instantiate(UObject* ContextObject)
 			if (SpawnPair.Key == SpawnName)
 			{
 				// spawn the agent
-				if (UAgentConfig* AgentConfig = GetAgent(SpawnPair.Key.ToString()))
+				if (UAgentConfig* AgentConfig = GetAgent(SpawnPair.Value))
 				{
 					AgentConfig->Instantiate(ContextObject);
 

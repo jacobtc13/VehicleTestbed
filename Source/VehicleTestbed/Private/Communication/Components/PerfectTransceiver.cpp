@@ -35,7 +35,7 @@ void UPerfectTransceiver::Receive(const UMessage* Message, float SNR)
 {
 	TMap<FString, FString> Details;
 	Details.Add(TEXT("SNR"), FString::SanitizeFloat(SNR));
-	UEventRecorder::RecordEventWithDetails(TEXT("Received message"), this, Details);
+	UEventRecorder::RecordEventWithDetails(TEXT("Received message"), GetOwner(), Details);
 
 	if (SNR >= MinSNR)
 	{

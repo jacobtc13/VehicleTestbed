@@ -108,40 +108,38 @@ bool UAgentConfig::Instantiate(UObject* ContextObject)
 		return false;
 	}
 
-	UClass* Class = nullptr;
-	for (UClass* AgentClass : AgentClasses)
+	// spawn the agent
+	UClass* AgentClass = GetAgentClass();
+	if (!AgentClass) return false;
+
+	FActorSpawnParameters SpawnParameters;
+	SpawnParameters.Name = GetAgentName();
+
+	ATestbedWheeledVehicle* SpawnedAgent = ContextObject->GetWorld()->SpawnActor<ATestbedWheeledVehicle>(AgentClass, PositionforNextSpawn, RotationForNextSpawn, SpawnParameters);
+	if (GetPossessAtStart())
 	{
-		if (AgentClass->GetFName() == GetAgentClassName())
-		{
-			Class = AgentClass;
-			break;
-		}
+		UGameplayStatics::GetPlayerController(ContextObject, 0)->Possess(SpawnedAgent);
 	}
-	if (!Class) return false;
-	ATestbedWheeledVehicle* NewAgent = NewObject<ATestbedWheeledVehicle>(UGameplayStatics::GetGameState(ContextObject)->GetLevel(), Class, GetAgentName());
-	for (const FName& GadgetName : GadgetsOnThisAgent)
+	for (const FName& GadgetName : GetGadgetsOnThisAgent())
 	{
-		for (const TSubclassOf<AGadget>& GadgetClass : Gadgets)
+		for (const TSubclassOf<AGadget>& GadgetClass : UAgentConfig::GetGadgetClasses())
 		{
 			if (GadgetClass->GetFName() == GadgetName)
 			{
 				// TODO: Un-hard code this
 				if (GadgetName == TEXT("ShieldCountermeasure"))
 				{
-					NewAgent->MountGadget(GadgetClass, NewAgent->GetMountingNodeBySocketName(TEXT("ShieldSocket"))->GetMeshSocket());
+					SpawnedAgent->MountGadget(GadgetClass, SpawnedAgent->GetMountingNodeBySocketName(TEXT("ShieldSocket"))->GetMeshSocket());
 				}
 				else if (GadgetName == ("ProjectileCountermeasure"))
 				{
-					NewAgent->MountGadget(GadgetClass, NewAgent->GetMountingNodeBySocketName(TEXT("TurretSocket"))->GetMeshSocket());
+					SpawnedAgent->MountGadget(GadgetClass, SpawnedAgent->GetMountingNodeBySocketName(TEXT("TurretSocket"))->GetMeshSocket());
 				}
 				else return false;
 				break;
 			}
 		}
 	}
-
-	Agent = NewAgent;
-
 	return true;
 }
 
@@ -163,6 +161,22 @@ TArray<FName> UAgentConfig::GetAgentClassNames()
 FName UAgentConfig::GetAgentClassName() const
 {
 	return AgentClassName;
+}
+
+UClass* UAgentConfig::GetAgentClass() const
+{
+	if (!AgentClasses.Num())
+	{
+		InitializeAgentClassArray();
+	}
+	for (UClass* AgentClass : AgentClasses)
+	{
+		if (AgentClass->GetFName() == AgentClassName)
+		{
+			return AgentClass;
+		}
+	}
+	return nullptr;
 }
 
 void UAgentConfig::SetAgentClassName(const FName& NewClassName)
@@ -227,9 +241,19 @@ void UAgentConfig::RemoveGadget(const FName& GadgetName)
 	GadgetsOnThisAgent.Remove(GadgetName);
 }
 
-ATestbedWheeledVehicle* UAgentConfig::GetAgent() const
+void UAgentConfig::SetNextSpawn(const FVector & NextPosition, const FRotator & NextRotation)
 {
-	return Agent;
+	PositionforNextSpawn = NextPosition;
+	RotationForNextSpawn = NextRotation;
+}
+
+TArray<TSubclassOf<AGadget>> UAgentConfig::GetGadgetClasses()
+{
+	if (!Gadgets.Num())
+	{
+		InitializeGadgetsArray();
+	}
+	return Gadgets;
 }
 
 void UAgentConfig::InitializeAgentClassArray()

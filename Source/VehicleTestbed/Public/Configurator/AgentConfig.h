@@ -26,6 +26,8 @@ public:
 
 	FName GetAgentClassName() const;
 
+	UClass* GetAgentClass() const;
+
 	void SetAgentClassName(const FName& NewClassName);
 
 	FName GetAgentName() const;
@@ -42,7 +44,9 @@ public:
 
 	void RemoveGadget(const FName& GadgetName);
 
-	ATestbedWheeledVehicle* GetAgent() const;
+	void SetNextSpawn(const FVector& NextPosition, const FRotator& NextRotation);
+
+	static TArray<TSubclassOf<AGadget>> GetGadgetClasses();
 
 private:
 	UPROPERTY()
@@ -58,7 +62,10 @@ private:
 	TArray<FName> GadgetsOnThisAgent;
 
 	UPROPERTY()
-	ATestbedWheeledVehicle* Agent;
+	FVector PositionforNextSpawn;
+
+	UPROPERTY()
+	FRotator RotationForNextSpawn;
 
 	static TArray<TSubclassOf<ATestbedWheeledVehicle>> AgentClasses;
 	static TArray<TSubclassOf<AGadget>> Gadgets;

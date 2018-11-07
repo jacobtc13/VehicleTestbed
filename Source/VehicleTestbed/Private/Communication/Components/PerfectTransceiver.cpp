@@ -43,9 +43,12 @@ void UPerfectTransceiver::Receive(const UMessage* Message, float SNR)
 		// Send it to the player controller of the pawn this is attached to
 		if (APawn* Owner = Cast<APawn>(GetOwner()))
 		{
-			if (UTransceiverControllerComponent* TransceiverLogic = Owner->GetController()->FindComponentByClass<UTransceiverControllerComponent>())
+			if (AController* Controller = Owner->GetController())
 			{
-				TransceiverLogic->InterpretMessage(Message);
+				if (UTransceiverControllerComponent* TransceiverLogic = Controller->FindComponentByClass<UTransceiverControllerComponent>())
+				{
+					TransceiverLogic->InterpretMessage(Message);
+				}
 			}
 		}
 	}

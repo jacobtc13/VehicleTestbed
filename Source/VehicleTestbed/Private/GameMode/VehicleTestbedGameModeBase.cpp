@@ -3,6 +3,8 @@
 #include "VehicleTestbedGameModeBase.h"
 #include "Configurator.h"
 #include "ScenarioConfig.h"
+#include "CommDistributor.h"
+#include "ThirtyMetreSNR.h"
 
 AVehicleTestbedGameModeBase::AVehicleTestbedGameModeBase()
 {
@@ -19,11 +21,6 @@ void AVehicleTestbedGameModeBase::PostInitializeComponents()
 	DataCollector<int32>* myCollector = new DataCollector<int32>();
 	myCollector->FGetDelegate.BindUObject(this, &AVehicleTestbedGameModeBase::GetNumPlayers);
 	dataRecorder->AddCollector(myCollector);
-}
-
-void AVehicleTestbedGameModeBase::BeginPlay()
-{
-	Super::BeginPlay();
 
 	UConfigurator::SetScenario(FPaths::ProjectDir() + TEXT("Configurations/Scenarios/DemoScenario.xml"));
 
@@ -57,7 +54,14 @@ void AVehicleTestbedGameModeBase::BeginPlay()
 		ScenarioConfig->SetDataRecordingOutputFolder(FPaths::ProjectDir() + TEXT("Logs"));
 		ScenarioConfig->SetEventRecordingOuptutFolder(FPaths::ProjectDir() + TEXT("Logs"));
 		UConfigurator::SaveConfig(ScenarioConfig);
+
+		UCommDistributor::SetDefaultPropagation(NewObject<UThirtyMetreSNR>());
 	}
+}
+
+void AVehicleTestbedGameModeBase::BeginPlay()
+{
+	Super::BeginPlay();
 
 	dataRecorder->Start();
 }

@@ -7,6 +7,9 @@
 #include "GadgetMountingNode.h"
 #include "MountablePawn.h"
 #include "Engine/SkeletalMeshSocket.h"
+
+#include "PerfectTransceiver.h"
+
 #include "TestbedWheeledVehicle.generated.h"
 
 UCLASS(Abstract)
@@ -101,4 +104,6 @@ protected:
 
 	UPROPERTY(EditAnywhere, Category = "Gadget")
 	TArray<UGadgetMountingNode*> GadgetMountingNodes;
+
+	UPerfectTransceiver* Transceiver;
 };

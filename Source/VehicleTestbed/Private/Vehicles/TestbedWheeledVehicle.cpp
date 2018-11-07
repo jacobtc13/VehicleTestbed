@@ -14,6 +14,9 @@
 
 ATestbedWheeledVehicle::ATestbedWheeledVehicle()
 {
+	Transceiver = CreateDefaultSubobject<UPerfectTransceiver>(TEXT("Transceiver"));
+	Transceiver->Initialize(100, 20, 1, 0);
+
 	// All camera position values need to be manually changed based on size of vehicle in inherited classes.
 	// Use a spring arm to give the camera smooth, natural-feeling motion.
 	CameraSpringArm = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraSpringArm"));

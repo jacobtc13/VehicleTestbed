@@ -11,6 +11,6 @@ void UDemoTransceiverControllerComponent::InterpretMessage(const UMessage* Messa
 {
 	if (const UDemoMessage* DemoMessage = Cast<const UDemoMessage>(Message))
 	{
-		GEngine->AddOnScreenDebugMessage(-1, 2, FColor::Green, TEXT("Received Message"));
+		GEngine->AddOnScreenDebugMessage(-1, 1, FColor::Green, TEXT("Received Message"));
 	}
 }

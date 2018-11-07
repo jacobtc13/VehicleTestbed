@@ -1,0 +1,12 @@
+<Scenario>
+	<Map>Desert</Map>
+	<Agent>D:/Swinburne/VehicleTestBed/Configurations/Agents/DemoAgent.xml</Agent>
+	<Spawn>
+		<Name>ALLY1</Name>
+		<Agent>D:/Swinburne/VehicleTestBed/Configurations/Agents/DemoAgent.xml</Agent>
+	</Spawn>
+	<DataRecordingOutput>D:/Swinburne/VehicleTestBed/Logs</DataRecordingOutput>
+	<EventRecordingOutput>D:/Swinburne/VehicleTestBed/Logs</EventRecordingOutput>
+	<Communication>D:/Swinburne/VehicleTestBed/Configurations/Communication/DemoComm.xml</Communication>
+</Scenario>
+

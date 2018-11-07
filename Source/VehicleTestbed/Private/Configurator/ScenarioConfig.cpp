@@ -5,6 +5,7 @@
 #include "DataRecorder.h"
 #include "EventRecorder.h"
 #include "CommConfig.h"
+#include "SpawnController.h"
 
 UScenarioConfig::UScenarioConfig()
 {
@@ -178,12 +179,44 @@ bool UScenarioConfig::Instantiate(UObject* ContextObject)
 		}
 	}
 
-	// TODO: Tie in with agent spawn controller
-
 	// Set the comms framework
 	if (UCommConfig* CommConfigObject = GetCommConfigObject())
 	{
 		CommConfigObject->Instantiate(ContextObject);
+	}
+	else return false;
+
+	// Spawn agents
+	SpawnPointList SpawnList;
+	for (const auto& SpawnPair : SpawnPoints)
+	{
+		for (const FName& SpawnName : SpawnList.GetSpawnPointRefs())
+		{
+			if (SpawnPair.Key == SpawnName)
+			{
+				// spawn the agent
+				if (UAgentConfig* AgentConfig = GetAgent(SpawnPair.Key.ToString()))
+				{
+					AgentConfig->Instantiate(ContextObject);
+
+					UClass* AgentClass = AgentConfig->GetAgent()->GetClass();
+					FVector AgentLocation = SpawnList.GetSpawnPointbyName(SpawnName).GetLocation();
+					FRotator AgentRotation = SpawnList.GetSpawnPointbyName(SpawnName).GetRotation();
+
+					FActorSpawnParameters SpawnParameters;
+					SpawnParameters.Name = AgentConfig->GetAgentName();
+					SpawnParameters.Template = AgentConfig->GetAgent();
+
+					ATestbedWheeledVehicle* SpawnedAgent = ContextObject->GetWorld()->SpawnActor<ATestbedWheeledVehicle>(AgentClass, AgentLocation, AgentRotation, SpawnParameters);
+					if (AgentConfig->GetPossessAtStart())
+					{
+						UGameplayStatics::GetPlayerController(ContextObject, 0)->Possess(SpawnedAgent);
+					}
+				}
+				else return false;
+				break;
+			}
+		}
 	}
 
 	return true;

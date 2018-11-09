@@ -35,52 +35,48 @@ void UCommConfig::AppendDocument(rapidxml::xml_document<>& OutDocument) const
 bool UCommConfig::InitializeFromXML(rapidxml::xml_document<>& Doc)
 {
 	using namespace rapidxml;
-	xml_node<>* Node = Doc.first_node();
 
 	// Check is a scenario
-	if (Node && ((std::string)Node->name() != "Communication"))
-	{
-		return false;
-	}
+	xml_node<>* OuterNode = Doc.first_node("Communication");
+	if (!OuterNode) return false;
+
+	xml_node<>* ContentNode = nullptr;
 
 	// Get default snr model
-	Node = Node->first_node();
-	if (Node && ((std::string)Node->name() == "DefaultModel") &&
-		IsClassNameValidSNRModel(Node->value()))
+	ContentNode = OuterNode->first_node("DefaultModel");
+	if (ContentNode && IsClassNameValidSNRModel(ContentNode->value()))
 	{
-		DefaultModelName = Node->value();
+		SetDefaultModelName(ContentNode->value());
 	}
 	else return false;
 
 	// Get the frequency ranges
-	Node = Node->next_sibling();
-	if (Node && ((std::string)Node->name() == "FrequencyRanges"))
+	ContentNode = OuterNode->first_node("FrequencyRanges");
+	if (ContentNode)
 	{
-		Node = Node->first_node();
-		for (; Node && ((std::string)Node->name() == "FrequencyRange"); Node = Node->next_sibling())
+		for (xml_node<>* FrequencyNode = ContentNode->first_node("FrequencyRange"); FrequencyNode; FrequencyNode = FrequencyNode->next_sibling("FrequencyRange"))
 		{
 			FFrequencyRangeStruct FrequencyRange;
 
 			// Get snr model for this range
-			xml_node<>* InnerNode = Node->first_node();
-			if (InnerNode && ((std::string)InnerNode->name() == "SNRModel") &&
-				IsClassNameValidSNRModel(InnerNode->value()))
+			xml_node<>* InnerNode = FrequencyNode->first_node("SNRModel");
+			if (InnerNode && IsClassNameValidSNRModel(InnerNode->value()))
 			{
 				FrequencyRange.ModelName = InnerNode->value();
 			}
 			else return false;
 
 			// Get min frequency for this range
-			InnerNode = InnerNode->next_sibling();
-			if (InnerNode && ((std::string)InnerNode->name() == "MinFrequency"))
+			InnerNode = FrequencyNode->first_node("MinFrequency");
+			if (InnerNode)
 			{
 				FrequencyRange.MinFrequency = FCString::Atof(UTF8_TO_TCHAR(InnerNode->value()));
 			}
 			else return false;
 
 			// Get max frequency for this range
-			InnerNode = InnerNode->next_sibling();
-			if (InnerNode && ((std::string)InnerNode->name() == "MaxFrequency"))
+			InnerNode = FrequencyNode->first_node("MaxFrequency");
+			if (InnerNode)
 			{
 				FrequencyRange.MaxFrequency = FCString::Atof(UTF8_TO_TCHAR(InnerNode->value()));
 			}

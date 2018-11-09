@@ -18,7 +18,7 @@ void UPerfectTransceiver::Initialize(const float aMaxSignalStrength, const float
 
 void UPerfectTransceiver::Send(const UMessage* Message, float SignalStrength)
 {
-	UEventRecorder::RecordEvent(TEXT("Sending message"), this);
+	UEventRecorder::RecordEvent(TEXT("Sending message"), GetOwner());
 	UCommDistributor::Send(Message, this, MaxSignalStrength * SignalStrength);
 }
 
@@ -35,7 +35,7 @@ void UPerfectTransceiver::Receive(const UMessage* Message, float SNR)
 {
 	TMap<FString, FString> Details;
 	Details.Add(TEXT("SNR"), FString::SanitizeFloat(SNR));
-	UEventRecorder::RecordEventWithDetails(TEXT("Received message"), this, Details);
+	UEventRecorder::RecordEventWithDetails(TEXT("Received message"), GetOwner(), Details);
 
 	if (SNR >= MinSNR)
 	{
@@ -43,9 +43,12 @@ void UPerfectTransceiver::Receive(const UMessage* Message, float SNR)
 		// Send it to the player controller of the pawn this is attached to
 		if (APawn* Owner = Cast<APawn>(GetOwner()))
 		{
-			if (UTransceiverControllerComponent* TransceiverLogic = Owner->GetController()->FindComponentByClass<UTransceiverControllerComponent>())
+			if (AController* Controller = Owner->GetController())
 			{
-				TransceiverLogic->InterpretMessage(Message);
+				if (UTransceiverControllerComponent* TransceiverLogic = Controller->FindComponentByClass<UTransceiverControllerComponent>())
+				{
+					TransceiverLogic->InterpretMessage(Message);
+				}
 			}
 		}
 	}

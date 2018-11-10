@@ -20,16 +20,16 @@ void UDataRecorder::Push(std::unique_ptr<DataPoint> item)
 }
 
 UDataRecorder::UDataRecorder()
-	: ClockRateMS(100), Filename("data.csv"), Filepath(TCHAR_TO_UTF8(*FPaths::ProjectDir())) { }
+	: ClockRateMS(100), Filename("data.csv"), Filepath(TCHAR_TO_UTF8(*FPaths::ProjectDir() + *TEXT("Logs"))) { }
 
 UDataRecorder::UDataRecorder(int clockRateMS)
-	: ClockRateMS(clockRateMS), Filename("data.csv"), Filepath(TCHAR_TO_UTF8(*FPaths::ProjectDir())) { }
+	: ClockRateMS(clockRateMS), Filename("data.csv"), Filepath(TCHAR_TO_UTF8(*FPaths::ProjectDir() + *TEXT("Logs"))) { }
 
 UDataRecorder::UDataRecorder(std::string filename)
-	: ClockRateMS(100), Filename(filename), Filepath(TCHAR_TO_UTF8(*FPaths::ProjectDir())) { }
+	: ClockRateMS(100), Filename(filename), Filepath(TCHAR_TO_UTF8(*FPaths::ProjectDir() + *TEXT("Logs"))) { }
 
 UDataRecorder::UDataRecorder(int clockRateMS, std::string filename) 
-	: ClockRateMS(clockRateMS), Filename(filename), Filepath(TCHAR_TO_UTF8(*FPaths::ProjectDir())) { }
+	: ClockRateMS(clockRateMS), Filename(filename), Filepath(TCHAR_TO_UTF8(*FPaths::ProjectDir() + *TEXT("Logs"))) { }
 
 UDataRecorder::~UDataRecorder()
 {
@@ -137,8 +137,13 @@ int UDataRecorder::GetClockRate()
 	return ClockRateMS;
 }
 
-void UDataRecorder::SetFilePath(const std::string& NewPath)
+void UDataRecorder::SetFilePath(std::string NewPath)
 {
+	// Check if the new path ends with a slash
+	if (NewPath.find_last_of("/\\") == (NewPath.size() - 1))
+	{
+		NewPath = NewPath.substr(0, NewPath.size() - 1);
+	}
 	Filepath = NewPath;
 }
 

@@ -18,6 +18,7 @@ void UConfigurator::StartScenario(UObject* ContextObject)
 		{
 			return;
 		}
+		FMessageDialog::Open(EAppMsgType::Ok, FText::FromString(TEXT("Failed to start the scenario.  Check that the xml file has correct values")));
 	}
 	// Failed to load the scenario, error already shown to user by LoadConfig()
 	// Backtrack to the main menu

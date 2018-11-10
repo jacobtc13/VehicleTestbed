@@ -5,7 +5,7 @@
 std::atomic<bool> UEventRecorder::bStop = false;
 std::queue<UEventRecorder::EventRef> UEventRecorder::WriteQueue;
 std::mutex UEventRecorder::QueueMutex;
-FString UEventRecorder::FolderName;
+FString UEventRecorder::FolderName = FPaths::ProjectDir() + TEXT("Logs");
 FString UEventRecorder::FileName;
 std::future<void> UEventRecorder::WriterThread;
 UEventRecorder::FDestructor UEventRecorder::Destructor;
@@ -80,13 +80,10 @@ FString UEventRecorder::GetFolderOutput()
 
 void UEventRecorder::SetFolderOutput(FString NewFolderLocation)
 {
-	// Don't change if the recorder is currently running
-	if (isWriterThreadFinished(WriterThread))
-	{
-		// Remove the ending slash if its there
-		NewFolderLocation.RemoveFromEnd(TEXT("/"));
-		FolderName = NewFolderLocation;
-	}
+	// Remove the ending slash if its there
+	NewFolderLocation.RemoveFromEnd(TEXT("/"));
+	NewFolderLocation.RemoveFromEnd(TEXT("\\"));
+	FolderName = NewFolderLocation;
 }
 
 // Private functions

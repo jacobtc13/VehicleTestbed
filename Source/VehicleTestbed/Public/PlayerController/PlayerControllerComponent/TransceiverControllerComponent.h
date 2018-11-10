@@ -19,4 +19,12 @@ public:
 	///<summary>Interprets the message</summary>
 	///<param name="Message">The message to interpret</param>
 	virtual void InterpretMessage(const UMessage* Message);
+
+	enum EResponseCode
+	{
+		// Used to denote that a message was received successfully
+		Received,
+		// Used to denote that a message was heard but not clearly enough to interpret
+		Garbled
+	};
 };

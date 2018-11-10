@@ -3,12 +3,7 @@
 UCommChannel::UCommChannel() : UObject()
 {}
 
-UCommChannel::UCommChannel(float aFrequency, USNRModel* aModel) : UCommChannel()
-{
-	Initialize(aFrequency, aModel);
-}
-
-void UCommChannel::Initialize(float aFrequency, USNRModel * aModel)
+void UCommChannel::Initialize(float aFrequency, USNRModel* aModel)
 {
 	Frequency = aFrequency;
 	SNRModel = aModel;

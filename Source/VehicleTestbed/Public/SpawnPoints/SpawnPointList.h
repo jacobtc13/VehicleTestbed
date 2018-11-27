@@ -4,8 +4,10 @@
 
 #include "CoreMinimal.h"
 #include "Array.h"
+#include "Runtime/Core/Public/Math/UnrealMathUtility.h"
 #include "VehicleTestbed.h"
 #include "SpawnPoint.h"
+
 
 
 
@@ -43,8 +45,12 @@ public:
 
 	///<summary>Returns a SpawnPoint Based on Name of SpawnPoint</summary>
 	///<param name="SpawnPointName">Name of SpawnPoint to be returned</param>
-	///<returns><see cref="SpawnPoint" /> SpawnPoint requestedor if no Spawnpoint with name provided returns default SpawnPoint</returns>
+	///<returns><see cref="SpawnPoint" /> SpawnPoint requested or if no Spawnpoint with name provided returns default SpawnPoint</returns>
 	SpawnPoint GetSpawnPointbyName(FName SpawnPointName) const;
+
+	///<summary>Returns a random SpawnPoint</summary>
+	///<returns><see cref="SpawnPoint" /> SpawnPoint selected randomly from SpawnPointList</returns>
+	SpawnPoint GetRandomSpawnPoint() const;
 
 	///<summary>Returns an Array of FNames representing all SpawnPoints</summary>
 	///<returns><see cref="TArray"> Returns a TArray of FNames</returns> 

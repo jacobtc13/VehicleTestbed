@@ -96,6 +96,11 @@ public:
 	///<returns>An array of names of gadget classes</returns>
 	static TArray<FName> GetGadgetClassNames();
 
+	UFUNCTION(BlueprintCallable)
+	///<summary>Gets the UClass of all available gadget classes using the reflection system</summary>
+	///<returns>An array of the UClasses of gadget classes</returns>
+	static TArray<TSubclassOf<AGadget>> GetGadgetClasses();
+
 private:
 	UPROPERTY(BlueprintGetter=GetAgentClassName, BlueprintSetter=SetAgentClassName)
 	FName AgentClassName;
@@ -103,7 +108,7 @@ private:
 	UPROPERTY(BlueprintGetter=GetAgentName, BlueprintSetter=SetAgentName)
 	FName AgentName;
 
-	UPROPERTY(BleuprintGetter=GetPossessAtStart, BlueprintSetter=SetPossessAtStart)
+	UPROPERTY(BlueprintGetter=GetPossessAtStart, BlueprintSetter=SetPossessAtStart)
 	bool bPosessAtStart;
 
 	UPROPERTY(BlueprintGetter=GetGadgetsOnThisAgent)

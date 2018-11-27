@@ -261,6 +261,15 @@ TArray<FName> UAgentConfig::GetGadgetClassNames()
 	return Names;
 }
 
+TArray<TSubclassOf<AGadget>> UAgentConfig::GetGadgetClasses()
+{
+	if (!Gadgets.Num())
+	{
+		InitializeGadgetsArray();
+	}
+	return Gadgets;
+}
+
 void UAgentConfig::InitializeAgentClassArray()
 {
 	for (TObjectIterator<UClass> ClassIterator; ClassIterator; ++ClassIterator)

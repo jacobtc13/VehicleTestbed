@@ -18,8 +18,9 @@ public:
 
 	virtual void AppendDocument(rapidxml::xml_document<>& OutDocument) const;
 
-	virtual bool InitializeFromXML(rapidxml::xml_document<>& doc);
+	virtual bool InitializeFromXML(rapidxml::xml_document<>& Document);
 
+	UFUNCTION(meta = (WorldContext = ContextObject))
 	virtual bool Instantiate(UObject* ContextObject);
 
 	UFUNCTION(BlueprintGetter)

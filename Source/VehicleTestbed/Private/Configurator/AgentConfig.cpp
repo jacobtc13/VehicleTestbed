@@ -143,26 +143,6 @@ bool UAgentConfig::Instantiate(UObject* ContextObject)
 	return true;
 }
 
-TArray<FName> UAgentConfig::GetAgentClassNames()
-{
-	if (!AgentClasses.Num())
-	{
-		InitializeAgentClassArray();
-	}
-
-	TArray<FName> Names;
-	for (const UClass* Class : Gadgets)
-	{
-		Names.Add(Class->GetFName());
-	}
-	return Names;
-}
-
-FName UAgentConfig::GetAgentClassName() const
-{
-	return AgentClassName;
-}
-
 UClass* UAgentConfig::GetAgentClass() const
 {
 	if (!AgentClasses.Num())
@@ -177,6 +157,11 @@ UClass* UAgentConfig::GetAgentClass() const
 		}
 	}
 	return nullptr;
+}
+
+FName UAgentConfig::GetAgentClassName() const
+{
+	return AgentClassName;
 }
 
 void UAgentConfig::SetAgentClassName(const FName& NewClassName)
@@ -247,13 +232,33 @@ void UAgentConfig::SetNextSpawn(const FVector & NextPosition, const FRotator & N
 	RotationForNextSpawn = NextRotation;
 }
 
-TArray<TSubclassOf<AGadget>> UAgentConfig::GetGadgetClasses()
+TArray<FName> UAgentConfig::GetAgentClassNames()
+{
+	if (!AgentClasses.Num())
+	{
+		InitializeAgentClassArray();
+	}
+
+	TArray<FName> Names;
+	for (const UClass* Class : AgentClasses)
+	{
+		Names.Add(Class->GetFName());
+	}
+	return Names;
+}
+
+TArray<FName> UAgentConfig::GetGadgetClassNames()
 {
 	if (!Gadgets.Num())
 	{
 		InitializeGadgetsArray();
 	}
-	return Gadgets;
+	TArray<FName> Names;
+	for (const UClass* Class : Gadgets)
+	{
+		Names.Add(Class->GetFName());
+	}
+	return Names;
 }
 
 void UAgentConfig::InitializeAgentClassArray()

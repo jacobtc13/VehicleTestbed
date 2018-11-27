@@ -22,11 +22,10 @@ public:
 	UFUNCTION(meta = (WorldContext = ContextObject))
 	virtual bool Instantiate(UObject* ContextObject) override;
 
-	static TArray<FName> GetAgentClassNames();
+	UFUNCTION(BlueprintCallable)
+	UClass* GetAgentClass() const;
 
 	FName GetAgentClassName() const;
-
-	UClass* GetAgentClass() const;
 
 	void SetAgentClassName(const FName& NewClassName);
 
@@ -46,7 +45,11 @@ public:
 
 	void SetNextSpawn(const FVector& NextPosition, const FRotator& NextRotation);
 
-	static TArray<TSubclassOf<AGadget>> GetGadgetClasses();
+	UFUNCTION(BlueprintCallable)
+	static TArray<FName> GetAgentClassNames();
+
+	UFUNCTION(BlueprintCallable)
+	static TArray<FName> GetGadgetClassNames();
 
 private:
 	UPROPERTY()

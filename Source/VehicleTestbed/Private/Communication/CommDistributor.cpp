@@ -24,6 +24,9 @@ void UCommDistributor::Send(const UMessage* Message, UObject* Sender, float Sign
 		else
 		{
 			// Log Event - The channel the sender want to broadcast does not exist.
+			TMap<FString, FString> Details;
+			Details.Add(TEXT("Frequency"), FString::SanitizeFloat(MessageSender->GetFrequency()));
+			UEventRecorder::RecordEventWithDetails(TEXT("No receivers on frequency channel"), Sender, Details);
 		}
 	}
 }

@@ -50,6 +50,7 @@ void UCommChannel::Broadcast(const UMessage* Message, const float SignalPower, c
 	else
 	{
 		//Log event - message was not broadcast to any receiver.
+		UEventRecorder::RecordEvent(TEXT("Message not broadcast to any receiver"), this);
 	}
 }
 

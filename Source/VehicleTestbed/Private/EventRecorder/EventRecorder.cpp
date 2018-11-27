@@ -27,14 +27,18 @@ void UEventRecorder::RecordEvent(EventRef REvent)
 
 void UEventRecorder::RecordEvent(const FString EventName, const UObject* Caller)
 {
-	if (Caller != nullptr)
+	if (!bStop && Caller && Caller->ImplementsGetWorld())
+	{
 		RecordEvent(EventRef(new FRecordableEvent(EventName, Caller)));
+	}
 }
 
 void UEventRecorder::RecordEventWithDetails(const FString EventName, const UObject* Caller, const TMap<FString, FString> Details)
 {
-	if (Caller != nullptr)
+	if (!bStop && Caller && Caller->ImplementsGetWorld())
+	{
 		RecordEvent(EventRef(new FRecordableEvent(EventName, Caller, Details)));
+	}
 }
 
 const bool isWriterThreadFinished(const std::future<void>& WriterThread)

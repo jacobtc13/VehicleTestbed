@@ -2,8 +2,8 @@
 
 UEventRecorder::FRecordableEvent::FRecordableEvent(const FString EventName, const UObject* Caller, const TMap<FString, FString> Details)
 	: Timestamp(FDateTime::Now().ToString(TEXT("%d/%m/%Y - %H:%M:%S.%s"))),
-	GameTimestamp(FString::SanitizeFloat(Caller->GetWorld()->GetRealTimeSeconds())),
-	Name(EventName), Caller(Caller->GetFName().ToString()), Details(Details)
+	GameTimestamp((Caller && Caller->ImplementsGetWorld()) ? FString::SanitizeFloat(Caller->GetWorld()->GetRealTimeSeconds()) : TEXT("n/a")),
+	Name(EventName), Caller(Caller ? Caller->GetFName().ToString() : TEXT("n/a")), Details(Details)
 {}
 
 UEventRecorder::FRecordableEvent::~FRecordableEvent()

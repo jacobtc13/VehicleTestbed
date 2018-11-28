@@ -8,7 +8,7 @@
 #include "GadgetMountingNode.h"
 #include "JackalWheeledVehicle.generated.h"
 
-UCLASS()
+UCLASS(Abstract)
 ///<summary>Class to represent the Clearpath Jackal.</summary>
 class VEHICLETESTBED_API AJackalWheeledVehicle : public ATestbedWheeledVehicle
 {

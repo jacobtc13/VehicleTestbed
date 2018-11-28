@@ -14,7 +14,7 @@ void UConfigBase::AppendDocument(rapidxml::xml_document<>& OutDocument) const
 	check(0 && "You must override this");
 }
 
-bool UConfigBase::InitializeFromXML(rapidxml::xml_document<>& doc)
+bool UConfigBase::InitializeFromXML(rapidxml::xml_document<>& Document)
 {
 	check(0 && "You must override this");
 	return false;

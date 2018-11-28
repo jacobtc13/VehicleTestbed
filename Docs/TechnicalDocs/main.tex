@@ -4,6 +4,13 @@
 \usepackage{graphicx}
 \usepackage{color}
 \usepackage{float}
+\usepackage{listings}
+\usepackage{xcolor}
+\lstset{ %
+    language=C++,
+    backgroundcolor=\color{black!5}, % set backgroundcolor
+    basicstyle=\footnotesize,% basic font setting
+}
 
 \graphicspath{{images/}{../images/}}
 
@@ -66,7 +73,7 @@
 
 	{\scshape\Large
   Jacob Carroll \\
-	Madeleine Cochrane \\
+	Madeline Cochrane \\
 	Matthew Rimkevicus \\
 	Jed Sharman \\
 	Michael Shim \\
@@ -97,10 +104,16 @@
 \chapter{Communications}
 \subfile{sections/Communications}
 
+\chapter{Data Recording}
+\subfile{sections/DataRecording}
+
 \chapter{Event Recording}
 \subfile{sections/EventRecorder}
 
-\chapter[ROS Integration]{ROS AI and Integration}
+\chapter{Environments}
+\subfile{sections/Environments}
+
+\chapter{ROS AI and Integration}
 \subfile{sections/RosPluginAndAi}
 
 \end{document}

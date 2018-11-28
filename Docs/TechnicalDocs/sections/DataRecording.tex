@@ -1,0 +1,56 @@
+\documentclass[../main.tex]{subfiles}
+
+\begin{document}
+\section{Overview}
+This sectio outlines how the data recording system was design. How it works and how to extend it.
+
+\section{Design Concept}
+The data recording system utilises a subscriber design pattern. Data collector objects are attached to the recorder which polls them at a set rate. The advantages of this design makes it agnositic to errors in the data it is recording.
+
+\section{Creating Data Collectors}
+To create a custom data collector you have two options. You can create a custom datatype and then use the templated methods of the provided data recorder to collect it. The only requirement is that you correctly utilise the operator>> override method for writing out to csv.
+
+Otherwise you can derive from the Data Collector class and override the methods you require.
+\begin{figure}[H]
+\begin{lstlisting}
+template <typename T>
+class VEHICLETESTBED_API DataCollector : public DataCollectorBase
+{
+	DECLARE_DELEGATE_RetVal(T, FTypeDelegate)
+
+public:
+	FTypeDelegate FGetDelegate;
+
+	///<summary>Default constuctor, calls base class default</summary>
+	DataCollector();
+
+	///<summary>Name constuctor, calls base class name ctor</summary>
+	DataCollector(FName name);
+
+	///<summary>Full constuctor, calls base class full ctor</summary>
+	DataCollector(FName name, bool bEnable);
+
+	///<summary>virtual destructor</summary>
+	virtual ~DataCollector();
+
+	///<summary>Collects the datavalue if delegate is bound</summary>
+	///<returns>Unique pointer to <see cref="DataValueBase"/> object with value</returns>
+	virtual std::unique_ptr<DataValueBase> Collect() const override;
+};
+\end{lstlisting}
+\caption{DataCollect Code}
+\end{figure}
+
+\section{Binding the Delegates}
+The data collectors uses the Unreal Engine delegates system to bind the methods to the collectors. Information on this system can be found in the \href{https://docs.unrealengine.com/en-US/Programming/UnrealArchitecture/Delegates}{Unreal Engine docuementation}.
+
+\begin{figure}[H]
+  \begin{lstlisting}
+// Add collectors to data recorder
+DataCollector<int32>* myCollector = new DataCollector<int32>();
+myCollector->FGetDelegate.BindUObject(this, &AVehicleTestbedGameModeBase::GetNumPlayers);
+dataRecorder->AddCollector(myCollector);
+  \end{lstlisting}
+  \caption{Delegates example}
+\end{figure}
+\end{document}

@@ -36,7 +36,7 @@ bool UCommConfig::InitializeFromXML(rapidxml::xml_document<>& Doc)
 {
 	using namespace rapidxml;
 
-	// Check is a scenario
+	// Check is a communication config
 	xml_node<>* OuterNode = Doc.first_node("Communication");
 	if (!OuterNode) return false;
 

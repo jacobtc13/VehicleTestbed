@@ -5,6 +5,7 @@
 #include "DataRecorder.h"
 #include "EventRecorder.h"
 #include "CommConfig.h"
+#include "SpawnController.h"
 
 UScenarioConfig::UScenarioConfig()
 {
@@ -17,7 +18,6 @@ bool LoadAgentFromFile(TPair<FString, UAgentConfig*>& Pair)
 	{
 		// New Agent is valid
 		Pair.Value = NewAgent;
-		// TODO: Register the new agent config with whatever static thing that keeps track of all the configs
 		return true;
 	}
 	else
@@ -41,15 +41,19 @@ void UScenarioConfig::AppendDocument(rapidxml::xml_document<>& OutDocument) cons
 	BaseNode->append_node(MapNode);
 
 	// Save the agents used
+	xml_node<>* AgentsOuterNode = OutDocument.allocate_node(node_element, "Agents");
+	BaseNode->append_node(AgentsOuterNode);
 	TArray<FString> AgentFiles;
 	Agents.GetKeys(AgentFiles);
 	for (const FString& Agent : AgentFiles)
 	{
 		xml_node<>* AgentNode = OutDocument.allocate_node(node_element, "Agent", OutDocument.allocate_string(TCHAR_TO_UTF8(*Agent)));
-		BaseNode->append_node(AgentNode);
+		AgentsOuterNode->append_node(AgentNode);
 	}
 
 	// Save the spawn points and which agents go with them
+	xml_node<>* SpawnPointsOuterNode = OutDocument.allocate_node(node_element, "Spawns");
+	BaseNode->append_node(SpawnPointsOuterNode);
 	for (const auto& Pair : SpawnPoints)
 	{
 		xml_node<>* SpawnNode = OutDocument.allocate_node(node_element, "Spawn");
@@ -57,7 +61,7 @@ void UScenarioConfig::AppendDocument(rapidxml::xml_document<>& OutDocument) cons
 		SpawnNode->append_node(SpawnNameNode);
 		xml_node<>* SpawnAgentNode = OutDocument.allocate_node(node_element, "Agent", OutDocument.allocate_string(TCHAR_TO_UTF8(*Pair.Value)));
 		SpawnNode->append_node(SpawnAgentNode);
-		BaseNode->append_node(SpawnNode);
+		SpawnPointsOuterNode->append_node(SpawnNode);
 	}
 
 	// Save the data recording output file
@@ -76,63 +80,72 @@ void UScenarioConfig::AppendDocument(rapidxml::xml_document<>& OutDocument) cons
 bool UScenarioConfig::InitializeFromXML(rapidxml::xml_document<>& Doc)
 {
 	using namespace rapidxml;
-	xml_node<>* Node = Doc.first_node();
+	xml_node<>* OuterNode = Doc.first_node("Scenario");
 
 	// Check is a scenario
-	if (Node && ((std::string)Node->name() != "Scenario"))
-	{
-		return false;
-	}
+	if (!OuterNode) return false;
 
 	// Check for a map next
-	Node = Node->first_node();
-	if (Node && ((std::string)Node->name() == "Map"))
+	xml_node<>* ContentNode = OuterNode->first_node("Map");
+	if (ContentNode)
 	{
-		SetMapName(Node->value());
+		SetMapName(ContentNode->value());
 	}
 	else return false;
 
 	// Find agents
-	// this is the recommended way to loop through rapidxml
-	// Stops when it gets to a non-Agent node
-	for (Node = Node->next_sibling(); Node && ((std::string)Node->name() == "Agent"); Node = Node->next_sibling())
+
+	ContentNode = OuterNode->first_node("Agents");
+	if (ContentNode)
 	{
-		AddAgent(Node->value());
+		// this is the recommended way to loop through rapidxml
+		// Stops when it gets to a non-Agent node
+		for (ContentNode = ContentNode->first_node("Agent"); ContentNode; ContentNode = ContentNode->next_sibling("Agent"))
+		{
+			AddAgent(ContentNode->value());
+		}
 	}
+	else return false;
 
 	// Find spawns
-	for (; Node && (std::string)Node->name() == "Spawn"; Node = Node->next_sibling())
+	ContentNode = OuterNode->first_node("Spawns");
+	if (ContentNode)
 	{
-		xml_node<>* NameNode = Node->first_node("Name");
-		xml_node<>* AgentNode = Node->first_node("Agent");
-		if (!NameNode || !AgentNode)
+		for (ContentNode = ContentNode->first_node("Spawn"); ContentNode; ContentNode = ContentNode->next_sibling("Spawn"))
 		{
-			// Bad file structure error
-			return false;
+			xml_node<>* NameNode = ContentNode->first_node("Name");
+			xml_node<>* AgentNode = ContentNode->first_node("Agent");
+			if (!NameNode || !AgentNode)
+			{
+				// Bad file structure error
+				return false;
+			}
+			AddSpawn(NameNode->value(), AgentNode->value());
 		}
-		AddSpawn(NameNode->value(), AgentNode->value());
 	}
+	else return false;
 
 	// Get data recording output folder
-	if (Node && ((std::string)Node->name() == "DataRecordingOutput"))
+	ContentNode = OuterNode->first_node("DataRecordingOutput");
+	if (ContentNode)
 	{
-		SetDataRecordingOutputFolder(Node->value());
+		SetDataRecordingOutputFolder(ContentNode->value());
 	}
 	else return false;
 
 	// Get event recording output folder
-	Node = Node->next_sibling();
-	if (Node && ((std::string)Node->name() == "EventRecordingOutput"))
+	ContentNode = OuterNode->first_node("EventRecordingOutput");
+	if (ContentNode)
 	{
-		SetEventRecordingOuptutFolder(Node->value());
+		SetEventRecordingOuptutFolder(ContentNode->value());
 	}
 	else return false;
 
 	// Get the Communications config
-	Node = Node->next_sibling();
-	if (Node && ((std::string)Node->name() == "Communication"))
+	ContentNode = OuterNode->first_node("Communication");
+	if (ContentNode)
 	{
-		SetCommConfig(Node->value());
+		SetCommConfig(ContentNode->value());
 	}
 	else return false;
 
@@ -178,12 +191,34 @@ bool UScenarioConfig::Instantiate(UObject* ContextObject)
 		}
 	}
 
-	// TODO: Tie in with agent spawn controller
-
 	// Set the comms framework
 	if (UCommConfig* CommConfigObject = GetCommConfigObject())
 	{
 		CommConfigObject->Instantiate(ContextObject);
+	}
+	else return false;
+
+	// Spawn agents
+	SpawnPointList SpawnList;
+	for (const auto& SpawnPair : SpawnPoints)
+	{
+		for (const FName& SpawnName : SpawnList.GetSpawnPointRefs())
+		{
+			if (SpawnPair.Key == SpawnName)
+			{
+				// spawn the agent
+				if (UAgentConfig* AgentConfig = GetAgent(SpawnPair.Value))
+				{
+					FVector AgentLocation = SpawnList.GetSpawnPointbyName(SpawnName).GetLocation();
+					FRotator AgentRotation = SpawnList.GetSpawnPointbyName(SpawnName).GetRotation();
+
+					AgentConfig->SetNextSpawn(AgentLocation, AgentRotation);
+					AgentConfig->Instantiate(ContextObject);
+				}
+				else return false;
+				break;
+			}
+		}
 	}
 
 	return true;

@@ -66,7 +66,7 @@ public:
 
 	///<summary>Sets the path for the output file</summary>
 	///<param name="NewPath">New folder path</param>
-	void SetFilePath(const std::string& NewPath);
+	void SetFilePath(std::string NewPath);
 
 	///<summary>Gets the folder path for the output file</summary>
 	///<returns>The folder path</returns>

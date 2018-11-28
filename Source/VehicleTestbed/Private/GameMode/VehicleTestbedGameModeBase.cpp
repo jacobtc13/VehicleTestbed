@@ -2,6 +2,7 @@
 
 #include "VehicleTestbedGameModeBase.h"
 #include "Configurator.h"
+#include "EventRecorder.h"
 
 AVehicleTestbedGameModeBase::AVehicleTestbedGameModeBase()
 {
@@ -24,15 +25,14 @@ void AVehicleTestbedGameModeBase::BeginPlay()
 {
 	Super::BeginPlay();
 
-	// Load the scenario
-	UConfigurator::StartScenario(this);
-
 	dataRecorder->Start();
+	UEventRecorder::Start();
 }
 
 void AVehicleTestbedGameModeBase::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
 	dataRecorder->Stop();
+	UEventRecorder::Stop();
 	Super::EndPlay(EndPlayReason);
 }
 

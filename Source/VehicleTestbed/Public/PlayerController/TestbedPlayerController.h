@@ -3,6 +3,7 @@
 #include "PauseMenuComponent.h"
 #include "PawnSwapComponent.h"
 #include "JackalControlComponent.h"
+#include "TransceiverControllerComponent.h"
 
 #include "CoreMinimal.h"
 #include "GameFramework/PlayerController.h"
@@ -27,4 +28,5 @@ protected:
 	UPauseMenuComponent* PauseMenuComponent;
 	UPawnSwapComponent* PawnSwapComponent;
 	UJackalControlComponent* JackalControlComponent;
+	UTransceiverControllerComponent* TransceiverControllerComponent;
 };

@@ -1,4 +1,5 @@
 #include "TestbedPlayerController.h"
+#include "DemoTransceiverControllerComponent.h"
 
 ATestbedPlayerController::ATestbedPlayerController()
 	: APlayerController()
@@ -6,6 +7,7 @@ ATestbedPlayerController::ATestbedPlayerController()
 	PauseMenuComponent = CreateDefaultSubobject<UPauseMenuComponent>("PauseMenuComponent");
 	PawnSwapComponent = CreateDefaultSubobject<UPawnSwapComponent>("PawnSwapComponent");
 	JackalControlComponent = CreateDefaultSubobject<UJackalControlComponent>("JackalControlComponent");
+	TransceiverControllerComponent = CreateDefaultSubobject<UDemoTransceiverControllerComponent>("TransceiverControllerComponent");
 }
 
 void ATestbedPlayerController::SetupInputComponent()

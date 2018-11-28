@@ -23,6 +23,8 @@ class VEHICLETESTBED_API USpawnController : public UBlueprintFunctionLibrary
 
 public:
 
+	///<summary>Returns an Array of FNames representing all SpawnPoints</summary>
+	///<returns><see cref="TArray"> Returns a TArray of FNames</returns> 
 	TArray<FName> GetSpawnPointRefs() const;
 
 private:

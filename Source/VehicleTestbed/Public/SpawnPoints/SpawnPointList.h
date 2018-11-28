@@ -4,8 +4,10 @@
 
 #include "CoreMinimal.h"
 #include "Array.h"
+#include "Runtime/Core/Public/Math/UnrealMathUtility.h"
 #include "VehicleTestbed.h"
 #include "SpawnPoint.h"
+
 
 
 
@@ -25,10 +27,8 @@ public:
 	///<summary>Destructor</summary>
 	~SpawnPointList();
 
-	///<summary>Update the name of the SpawnPoint</summary>
-	///<param name="newName">Name to be set</param>
-	///<returns><see cref="bool" /> True if update is successful</returns>
-	bool PopulateList();
+	///<summary>Populate SpawnPoint List</summary>
+	void PopulateList();
 
 	///<summary>Add a new SpawnPoint to the SpawnPointList</summary>
 	///<param name="Name">Name of SpawnPoint</param>
@@ -40,19 +40,23 @@ public:
 
 	///<summary>Returns a Spawn Ppoint based on position in Array</summary>
 	///<param name="position">position in TArray of SpawnPoint</param>
-	///<returns><see cref="SpawnPoint" /> SpawnPoint requested</returns>
+	///<returns><see cref="SpawnPoint" /> SpawnPoint requested or if no Spawnpoint at postion provided returns default SpawnPoint</returns>
 	SpawnPoint GetSpawnPointbyPos(int position) const;
 
 	///<summary>Returns a SpawnPoint Based on Name of SpawnPoint</summary>
 	///<param name="SpawnPointName">Name of SpawnPoint to be returned</param>
-	///<returns><see cref="SpawnPoint" /> SpawnPoint requested</returns>
+	///<returns><see cref="SpawnPoint" /> SpawnPoint requested or if no Spawnpoint with name provided returns default SpawnPoint</returns>
 	SpawnPoint GetSpawnPointbyName(FName SpawnPointName) const;
+
+	///<summary>Returns a random SpawnPoint</summary>
+	///<returns><see cref="SpawnPoint" /> SpawnPoint selected randomly from SpawnPointList</returns>
+	SpawnPoint GetRandomSpawnPoint() const;
 
 	///<summary>Returns an Array of FNames representing all SpawnPoints</summary>
 	///<returns><see cref="TArray"> Returns a TArray of FNames</returns> 
 	TArray<FName> GetSpawnPointRefs() const;
 
 	///<summary>Returns True if Spawnpoint found in list</summary>
-	///<returns><see cref="TArray"> Returns a TArray of FNames</returns> 
+	///<returns><see cref="bool"> Returns True if Spawnpoint is found in list. False if not found</returns> 
 	bool CheckSpawnPointInList(FName Name) const;
 };

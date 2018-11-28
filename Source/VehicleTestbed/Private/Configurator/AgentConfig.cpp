@@ -33,17 +33,16 @@ bool UAgentConfig::InitializeFromXML(rapidxml::xml_document<>& Document)
 {
 	using namespace rapidxml;
 
-	xml_node<>* Node = Document.first_node();
-	if (!Node || ((std::string)Node->name() != "Agent"))
-	{
-		return false;
-	}
+	xml_node<>* OuterNode = Document.first_node("Agent");
+	if (!OuterNode) return false;
+
+	xml_node<>* ContentNode = nullptr;
 
 	// Get class
-	Node = Node->first_node();
-	if (Node && ((std::string)Node->name() == "Class"))
+	ContentNode = OuterNode->first_node("Class");
+	if (ContentNode)
 	{
-		SetAgentClassName(Node->value());
+		SetAgentClassName(ContentNode->value());
 		// Check that the set worked
 		if (GetAgentClassName() == FName())
 		{
@@ -53,22 +52,23 @@ bool UAgentConfig::InitializeFromXML(rapidxml::xml_document<>& Document)
 	else return false;
 
 	// Get the agent name
-	Node = Node->next_sibling();
-	if (Node && ((std::string)Node->name() == "Name"))
+	ContentNode = OuterNode->first_node("Name");
+	if (ContentNode)
 	{
-		SetAgentName(Node->value());
+		SetAgentName(ContentNode->value());
+		// Don't need to check the value because it's okay if the name is empty
 	}
 	else return false;
 
 	// Get possession bool
-	Node = Node->next_sibling();
-	if (Node && ((std::string)Node->name() == "Possess"))
+	ContentNode = OuterNode->first_node("Possess");
+	if (ContentNode)
 	{
-		if ((std::string)Node->value() == "true")
+		if ((std::string)ContentNode->value() == "true")
 		{
 			SetPossessAtStart(true);
 		}
-		else if ((std::string)Node->value() == "false")
+		else if ((std::string)ContentNode->value() == "false")
 		{
 			SetPossessAtStart(false);
 		}
@@ -77,13 +77,13 @@ bool UAgentConfig::InitializeFromXML(rapidxml::xml_document<>& Document)
 	else return false;
 
 	// Get gadgets
-	Node = Node->next_sibling();
-	if (Node && ((std::string)Node->name() == "Gadgets"))
+	ContentNode = OuterNode->first_node("Gadgets");
+	if (ContentNode)
 	{
-		for (xml_node<>* GadgetNode = Node->first_node(); GadgetNode && ((std::string)GadgetNode->name() == "Gadget"); GadgetNode = GadgetNode->next_sibling())
+		for (xml_node<>* GadgetNode = ContentNode->first_node("Gadget"); GadgetNode; GadgetNode = GadgetNode->next_sibling("Gadget"))
 		{
-			xml_node<>* GadgetNameNode = GadgetNode->first_node();
-			if (GadgetNameNode && ((std::string)GadgetNameNode->name() == "Name"))
+			// Get the name of the gadget
+			if (xml_node<>* GadgetNameNode = GadgetNode->first_node("Name"))
 			{
 				int32 GadgetArraySize = GadgetsOnThisAgent.Num();
 				AddGadget(GadgetNameNode->value());
@@ -143,26 +143,6 @@ bool UAgentConfig::Instantiate(UObject* ContextObject)
 	return true;
 }
 
-TArray<FName> UAgentConfig::GetAgentClassNames()
-{
-	if (!AgentClasses.Num())
-	{
-		InitializeAgentClassArray();
-	}
-
-	TArray<FName> Names;
-	for (const UClass* Class : Gadgets)
-	{
-		Names.Add(Class->GetFName());
-	}
-	return Names;
-}
-
-FName UAgentConfig::GetAgentClassName() const
-{
-	return AgentClassName;
-}
-
 UClass* UAgentConfig::GetAgentClass() const
 {
 	if (!AgentClasses.Num())
@@ -177,6 +157,11 @@ UClass* UAgentConfig::GetAgentClass() const
 		}
 	}
 	return nullptr;
+}
+
+FName UAgentConfig::GetAgentClassName() const
+{
+	return AgentClassName;
 }
 
 void UAgentConfig::SetAgentClassName(const FName& NewClassName)
@@ -245,6 +230,35 @@ void UAgentConfig::SetNextSpawn(const FVector & NextPosition, const FRotator & N
 {
 	PositionforNextSpawn = NextPosition;
 	RotationForNextSpawn = NextRotation;
+}
+
+TArray<FName> UAgentConfig::GetAgentClassNames()
+{
+	if (!AgentClasses.Num())
+	{
+		InitializeAgentClassArray();
+	}
+
+	TArray<FName> Names;
+	for (const UClass* Class : AgentClasses)
+	{
+		Names.Add(Class->GetFName());
+	}
+	return Names;
+}
+
+TArray<FName> UAgentConfig::GetGadgetClassNames()
+{
+	if (!Gadgets.Num())
+	{
+		InitializeGadgetsArray();
+	}
+	TArray<FName> Names;
+	for (const UClass* Class : Gadgets)
+	{
+		Names.Add(Class->GetFName());
+	}
+	return Names;
 }
 
 TArray<TSubclassOf<AGadget>> UAgentConfig::GetGadgetClasses()

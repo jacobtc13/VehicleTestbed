@@ -1,45 +1,103 @@
-\documentclass{article}
+\documentclass{report}
 \usepackage[utf8]{inputenc}
 \usepackage[english]{babel}
 \usepackage{graphicx}
+\usepackage{color}
+\usepackage{float}
 
 \graphicspath{{images/}{../images/}}
- 
+
 \usepackage{subfiles}
- 
+
+% Header footer and numbering
+\usepackage{fancyhdr}
+\usepackage{lastpage}
+\pagestyle{fancy}
+\fancyfoot{}
+\setlength{\headheight}{24pt}
+
 \usepackage{blindtext}
-
 \usepackage{hyperref}
-\hypersetup{ 
+\hypersetup{
     colorlinks=true,
-    urlcolor=blue 
+    urlcolor=blue
     }
- 
-\title{Vehicle Testbed Technical Documentation}
-\author{Jacob Carroll}
-\date{ }
- 
-\begin{document}
- 
-\maketitle
- 
-\section{Introduction}
-\subfile{sections/Introduction}
 
-\section{Menus System}
+\begin{document}
+
+\begin{titlepage}
+  \centering
+  \scshape
+  \vspace*{\baselineskip}
+
+  %------------------------------------------------
+	%	Title
+	%------------------------------------------------
+
+  \rule{\textwidth}{1.6pt}\vspace*{-\baselineskip}\vspace*{2pt} % Thick horizontal rule
+	\rule{\textwidth}{0.4pt} % Thin horizontal rule
+
+	\vspace{0.75\baselineskip} % Whitespace above the title
+
+	{\LARGE TECHNICAL\\ DOCUMENTATION\\} % Title
+
+	\vspace{0.75\baselineskip} % Whitespace below the title
+
+	\rule{\textwidth}{0.4pt}\vspace*{-\baselineskip}\vspace{3.2pt} % Thin horizontal rule
+	\rule{\textwidth}{1.6pt} % Thick horizontal rule
+
+	\vspace{2\baselineskip} % Whitespace after the title block
+
+  %------------------------------------------------
+	%	Subtitle
+	%------------------------------------------------
+
+	Federated Vehicle Testbed Project - Design Documentation and Techical Guide % Subtitle or further description
+
+	\vspace*{3\baselineskip} % Whitespace under the subtitle
+
+	%------------------------------------------------
+	%	Editor(s)
+	%------------------------------------------------
+
+	Written By
+
+	\vspace{0.5\baselineskip} % Whitespace before the editors
+
+	{\scshape\Large
+  Jacob Carroll \\
+	Madeline Cochrane \\
+	Matthew Rimkevicus \\
+	Jed Sharman \\
+	Michael Shim \\
+	Aslan Chadwick \\
+	Ryan Black \\
+	Timothy Quill \\
+	Simon Daniel} % Editor list
+
+	\vspace{0.5\baselineskip} % Whitespace below the editor list
+
+	\textit{Swinburne University of Technology} % Editor affiliation
+
+	\vfill % Whitespace between editor names and publisher logo
+\end{titlepage}
+
+\tableofcontents
+\newpage
+
+\chapter{Menus System}
 \subfile{sections/MenuSystem}
- 
-\section{Configuration}
+
+\chapter{Configuration}
 \subfile{sections/Configuration}
- 
-\section{Communications}
+
+\chapter{Communications}
 \subfile{sections/Communications}
 
-\section{Data Recording}
-\subsection{Event Recording}
+\chapter{Event Recording}
 \subfile{sections/EventRecorder}
 
-\section{ROS AI and Integration}
+\chapter{ROS AI and Integration}
 \subfile{sections/RosPluginAndAi}
 
 \end{document}

@@ -3,6 +3,7 @@
 #include "Object.h"
 #include "rapidxml.hpp"
 #include <string>
+#include "Kismet/GameplayStatics.h"
 
 #include "CoreMinimal.h"
 #include "ConfigBase.generated.h"

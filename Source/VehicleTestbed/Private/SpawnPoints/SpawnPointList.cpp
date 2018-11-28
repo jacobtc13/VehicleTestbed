@@ -4,6 +4,7 @@
 
 
 
+
 //SpawnPoint Constructor
 SpawnPointList::SpawnPointList()
 {
@@ -47,6 +48,17 @@ SpawnPoint SpawnPointList::GetSpawnPointbyName(FName SpawnPointName) const
 		}
 	}
 	return SpawnPoint();
+};
+
+//Returns Random SpawnPoint
+SpawnPoint SpawnPointList::GetRandomSpawnPoint() const
+{
+	int LastElement = (spList.Num()-1);
+	
+	int RandomSelect = FMath::RandRange(0, LastElement);
+
+	return GetSpawnPointbyPos(RandomSelect);
+
 };
 
 //Returns TArray of Names for all Spawnpoints

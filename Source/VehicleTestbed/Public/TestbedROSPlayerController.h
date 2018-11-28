@@ -80,6 +80,7 @@ private:
 	int32 CurrentPawnIndex;
 
 	//Persistent object for the Topic and the Callback object
+	UPROPERTY()
 	UTopic *ExampleTopic;
 	std::function<void(TSharedPtr<FROSBaseMsg>)> SubscribeCallback;
 

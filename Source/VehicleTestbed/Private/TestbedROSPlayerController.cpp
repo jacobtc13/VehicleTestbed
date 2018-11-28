@@ -32,7 +32,7 @@ void ATestbedROSPlayerController::InitialiseRosTopic()
 	// Initialize a topic
 	ExampleTopic = NewObject<UTopic>(UTopic::StaticClass());
 	UROSIntegrationGameInstance* rosinst = Cast<UROSIntegrationGameInstance>(this->GetWorld()->GetGameInstance());
-	ExampleTopic->Init(rosinst->ROSIntegrationCore, TEXT("cmd_vel"), TEXT("geometry_msgs/Twist"));
+	ExampleTopic->Init(rosinst->ROSIntegrationCore, TEXT("/cmd_vel"), TEXT("geometry_msgs/Twist"));
 
 	UE_LOG(LogTemp, Log, TEXT("ROS Topic Object Initialised"), (*""));
 

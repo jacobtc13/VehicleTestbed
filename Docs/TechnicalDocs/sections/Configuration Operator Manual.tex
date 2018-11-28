@@ -1,0 +1,163 @@
+\documentclass[../main.tex]{subfiles}
+\title{Configuration Operator Manual}
+
+\begin{document}
+    
+\section{Overview}
+This document describes the code behind the Configuration system.
+How it works, how to use it, and how to extend it.
+
+\section{How it Works}
+
+\subsection{Class Structure}
+\subsubsection{Configurator}
+This is the only class other parts of the program should interact with, other than the user interface for obvious reasons.
+This class houses static functions for saving and loading configurations.
+When saving, it creates an xml\_document object, tells the configuration object to append its details to that document, and then writes the document to file.
+When loading, it opens the file and creates an xml\_document by parsing the file, and then creates the configuration object with the correct class type.
+
+This class also houses a static string storing the filename of the scenario chosen to be run by the user.
+It also contains a function to start said scenario, however this function relies on the game to already be set to the correct map before being called.
+
+\subsection{ConfigBase}
+This class is the abstract base of all configuration classes. (Config classes for short).
+The Unreal engine does not allow pure virtual functions in UObject derived classes so the functions in this class have been defined but essentially left empty.
+They utilise an Unreal engine macro to force all derived classes to implement these functions.
+All config objects are designed to be interacted with from the blueprints that make up the main menu so almost all functions in this and derived classes have the UFUNCTION macro.
+
+\subsection{Scenario Config}
+This class represents the encapsulation of a scenario.
+It is the highest level config object.
+Anything that is to be used in a simulation scenario should be directly or indirectly mentioned in the scenario config object.
+It stores all agent configs used, where to spawn them, what communication config to use, and where to save the data and event recording output files.
+
+\subsection{Agent Config}
+This class stores all information necessary to create an agent in the simulation.
+It saves the name of the agent, the name of its class, the names of the classes of gadgets to attach to the agent, and whether to start the scenario in control of the agent.
+This class also stores the location and rotation to spawn the next agent at in the simulation.
+The intended use is for the scenario config to update these values with the information from the spawn location before telling the agent config object to spawn an agent that it encapsulates.
+
+\subsection{Communication Config}
+This class, CommConfig as it is called in the code, encapsulates the information to initialise the communication distributor class with when the scenario starts.
+A scenario config object can only have one of these at a time.
+Objects of this class store the names of SNRModel derived classes obtained using the reflection system of the Unreal engine.
+It stores the default propagation model to use and any additional models to use in specific ranges of frequencies.
+
+\section{How to Use it}
+
+\subsection{Creating a Scenario}
+All config objects have various getters and setters for all variables.
+
+\subsubsection{Scenario Config}
+Scenarios are technically valid without any agents or spawn points, but it is highly recommended that some are added so that the scenario actually does something in simulation.
+It is required that a CommConfig is used, a map name is set, and the output locations of the data and event recording systems are set.
+
+\subsubsection{Agent Config}
+The potential values for the agent and gadget class names are found using the reflection system of the Unreal engine.
+It is not required for an agent to have any gadgets.
+Nor is it required to provide a name for the agent, however it will make it more difficult to distinguish agents in any output files because the Unreal engine will give them a name based on their agent class.
+
+\subsubsection{Communication Config}
+It is required to provide a default propagation model because the Communication Distributor class defaults to using the VoidSNR class which zeroes the SNR of all messages sent through the system.
+It is not required to provide any addition propagation models within ranges of frequencies.
+The names of the available propagation model classes are found using the reflection system as well.
+
+\subsection{Starting a Scenario}
+In order for a scenario to be started, one must be set as the scenario to use in the configurator class.
+There is a setter available for this purpose.
+Next, one must open the level that the scenario is to be run on.
+This starts the initialisation sequence in the Unreal engine.
+It is recommended to call 'StartScenario' at some stage during the initialisation process, most likely in 'PostInitializeComponents' or 'BeginPlay' of the game mode or some other high level class.
+This will ensure the scenario is fully initialised and ready to go before the simulation begins.
+
+The 'StartScenario' function in the configurator is essentially a wrapper function for calling 'Initialize' on the ScenarioConfig object.
+This function in turn calls 'Instantiate' on each of the AgentConfig objects for each spawn point, and on the CommConfig object.
+If at any point something doesn't instantiate correctly, the program will bubble back up to the 'StartScenario' function in the configurator which sends the program back to the main menu.
+
+\subsubsection{Instantiate in the Scenario Config}
+All instantiate functions rely on a context object to get a reference to the current world from.
+The first thing the scenario config does after checking that the context object can indeed be used as a config object is checking whether the program is already on the map specified in the scenario config, immediately stopping the instantiation process if its not.
+It tells the CommConfig object to instantiate itself before any agents are spawned so that any communication equipment on them will initialise correctly.
+
+\subsubsection{Instantiate in the Communication Config}
+There's nothing special in this class.
+It sets the default SNRModel class that the Communication Distributor should use and adds any additional frequency ranges.
+It has a small optimisation to only make one object of any SNRModel derived classes to save on memory usage.
+
+\subsubsection{Instantiate in the Agent Config}
+This function spawns the agent into the game world and then adds any gadgets to it.
+Determining how to add gadgets is currently hard-coded into this function.
+This function currently does not support adding communications devices to agents or initialising them.
+
+\subsection{RapidXML}
+The configuration system relies on the RapidXML library to read and write from file.
+We have chosen to use this library because it constructs a tree structure of the xml document and allows us to operate on it in memory, doing all of the reading and writing from file for us.
+There are a handful of classes and functions within the RapidXML library that have been used in this project.
+There are a few quirks to using them so we've provided a few tips based on what we've learned.
+
+\subsubsection{xml\_document}
+This class is the basis for an xml document.
+It is used for creating other nodes so when passing it to other functions make sure to pass it as a reference.
+It is a derivative of xml\_node.
+
+\subsubsection{xml\_node}
+This class is the one to use for adding information to the document.
+It is primarily made up of a name and value.
+
+\subsubsection{allocate\_node}
+This is a function of the xml\_document class which creates an xml\_node within it's internal memory pool.
+This function is the reason why xml\_document objects need to be passed around by reference.
+Any xml\_node objects will be deleted when the xml\_document they were allocated with goes out of scope.
+
+\subsubsection{append\_node}
+It is important to note that allocate\_node does not add the node to the document.
+This function is what serves that purpose.
+It is a function of the xml\_node class meaning nodes can be appended to other nodes, which is how the tree structures are achieved.
+
+\subsubsection{first\_node}
+This function returns the first child node of the node it was called from.
+Keep in mind that the xml\_document class is a derivative of xml\_node.
+This function has an optional parameter to search through it's immediate child nodes by name.
+If it does not find a node with a matching name, or no node at all, it will return 0.
+
+\subsubsection{next\_sibling}
+This function returns the next immediate child node of it's parent node.
+Like first\_node, this function can also search for nodes by name.
+
+We have leveraged this functionality in the program to not require xml documents to be rigid in the order of the major topics of the configuration.
+E.G. The list of agent configurations to use can come before or after where to save the output file of data recording.
+
+\subsubsection{allocate\_string}
+The Unreal engine has macros to convert FStrings into char arrays, however they do this by way of pointers linked to the FString object.
+When the FStrings go out of scope the char arrays get cleaned up with them.
+The allocate\_string function makes a copy of the string in the xml\_document's memory pool.
+
+\subsubsection{Output to File}
+The RapidXML library comes with a left shift operator for basic\_ostream derived streams which prints the entire xml\_node (or document) to the stream.
+
+\subsubsection{Reading From File}
+\paragraph{file}
+The library comes with a 'file' class which has a constructor that takes the filename as a parameter and initializes itself from that file.
+\paragraph{parse}
+The xml\_document class has a 'parse' function which wants a character array parameter, which can be obtained with the 'data' function of the 'file' object.
+This function builds the xml\_document with all of the information from the file, it is essentially the opposite of the left shift operator.
+There is more pointer foolery happening in the parse function, it is recommended to do all of the operations on the xml\_document to construct the configuration object while the file object is still in scope.
+The parse function will throw a 'parse\_error' if the contents of the file do not match the expected format.
+
+\section{How to Extend it}
+\subsection{Adding New Information to Existing Config Classes}
+There are 4 places that need to be updated when adding new information to config classes:
+\begin{itemize}
+    \item Getters and setters
+    \item Saving it to the xml\_document in the 'AppendDocument' function
+    \item Initialising from an xml\_document in the 'InitializeFromXML' function
+    \item Instantiating it in the world in the 'Instantiate' function.
+\end{itemize}
+Take examples from the existing functionality.
+
+\subsection{Creating New Config Classes}
+All config classes are derived from ConfigBase, and must implement the three empty functions: AppendDocument, InitializeFromXML, and Instantiate.
+The config's Instantiate function will need to be called from within the ScenarioConfig or some other config class where appropriate.
+The configurator will also need to have a new entry in its LoadConfig function where it checks what type of configuration it is working with.
+
+\end{document}

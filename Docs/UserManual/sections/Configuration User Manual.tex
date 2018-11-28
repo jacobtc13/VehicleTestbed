@@ -1,0 +1,206 @@
+\documentclass[../main.tex]{subfiles}
+
+\title{Configuration User Manual}
+\begin{document}
+
+\section{Overview}
+The configuration system is designed to allow users of the simulation to define and run their own scenarios.
+The system saves these scenarios, and all relevant components, to file in an xml format.
+These files contain all the information necessary to recreate a scenario in a human readable format.
+
+\section{Composition}
+Scenario configurations rely on a few other configurations.  Namely, agents and communications.
+In order to create a scenario configuration that is more than an empty map you will need to create at least one configuration of each of the aforementioned types.
+
+\subsection{Scenario}
+Scenario configurations are the overarching configuration for the scenario.
+They determine which agent configurations to use and where to spawn them in the map, and what communications configuration to use.
+They also determine where to save the output files of the data recording systems.
+
+\subsection{Agent}
+Agent configurations determine the properties of an agent.
+What type of agent it is (e.g. Jackal), what countermeasures it is equipped with, and what name it should be represented with in the simulation.
+
+
+\subsection{Communication}
+Communication configurations determine the radio propagation properties to use in the simulation.
+See the communications documentation for more details.
+The configuration determines what propagation model to use by default and what other models to use within ranges of frequencies.
+
+
+\section{Using Configurations}
+Configurations can be stored anywhere in storage, but keep in mind that scenario configurations point to agent and communication configurations by file location so take care when moving files.
+
+\subsection{In the Program}
+
+\subsubsection{Scenario}
+Before jumping into the simulation, the program will first ask you to select or create a new scenario configuration to use.
+You will need to add a communication configuration to use, and can add agent configurations to use as well.
+There is always an option to create a new communication or agent configuration.
+You can set which starting points to use and which agent configurations to use at those starting points.
+You can use the same agent configuration for multiple starting points, the simulation will append a number to the name of all subsequent agents using the same configuration.
+E.g. Agent, Agent2, Agent3, etc.
+
+\subsubsection{Agent}
+The program uses the reflection system of the Unreal Engine to find all available options for what class of agent and what countermeasures are available.
+The name of the agent can be anything, it is merely a way to identify it within the simulation and in data output files.
+
+\subsubsection{Communication}
+The program again uses the reflection system to find all propagation models available for use.
+These models have been denoted as 'SNR models' because their purpose is to calculate the signal-to-noise ratio between two points.
+You will need to set which model to use, and can choose to add other models to use within a range of frequencies instead of the default model.
+
+\subsection{With XML Files}
+Scenarios can be created solely in XML however you will not have Unreal's reflection system available to help select the correct name of classes you wish to use.
+The names of blueprint classes in particular will not be what one might expect so it is recommended to use the program to create a configuration using a class to find its name from the subsequently created xml document.
+
+\subsubsection{Scenario}
+Scenario configurations have the following structure:
+\begin{itemize}
+	\item Scenario Tag
+	\item Map Tag
+	\item Agents Tag
+	\begin{itemize}
+        \item Agent Tag
+    \end{itemize}
+	\item Spawns Tag
+	\begin{itemize}
+        \item Spawn Tag
+        \begin{itemize}
+            \item Name Tag
+            \item Agent Tag
+        \end{itemize}
+    \end{itemize}
+	\item Data Recording Output Tag
+	\item Event Recording Output Tag
+	\item Communication Tag
+\end{itemize}
+
+The program can interpret these major tags in any order, but will not look for any sub tags anywhere other than within their major tag.
+
+\paragraph{Scenario Tag}
+The scenario tag is used to identify this configuration as a scenario configuration.
+Do not remove or change this tag or the program will fail to load this scenario.
+
+\paragraph{Map Tag}
+This tag specifies the name of the map to use, this tag must have a value.
+
+\paragraph{Agents Tag}
+The agents tag houses a list of tags denoting the agent configuration files used by this scenario.
+It is not necessarily required for a scenario to use agents but the scenario will be empty without them.
+An agent must be listed here if it is referenced in the spawns tag.
+
+\paragraph{Agent Tag}
+This tag specifies the file name of the agent configuration to use.
+
+\paragraph{Spawns Tag}
+The spawns tag houses a list of spawn tags which have the name of the spawn point and the configuration file of the agent to spawn.
+Like agents, it is not necessarily required that a scenario have any agents and therefore any spawn points.
+
+\paragraph{Spawns- Spawn Tag}
+This tag contains the name and agents tags of a spawn point.
+
+\paragraph{Spawns- Spawn- Name Tag}
+This tag specifies the name of the spawn point to start an agent at.
+The names are defined in the program so it may be useful to open the program to see what the names are.
+
+\paragraph{Spawns- Spawn- Agent Tag}
+This tag specifies the agent configuration file to use for this spawn point.
+
+\paragraph{Data Recording Output Tag}
+This tag specifies the output folder of the data recording system.
+It is recommended that the folder path does not have an ending slash but the system will handle the case that it does.
+
+\paragraph{Event Recording Output Tag}
+This tag specifies the output folder of the event recording system.
+Like before it is recommended that this value does not have an ending slash.
+
+\paragraph{Communication Tag}
+This tag specifies which communication configuration to use by its file name.
+This tag must have a value.
+
+\subsubsection{Agent}
+Agent configurations have the following information:
+\begin{itemize}
+    \item Agent Tag
+    \item Class Tag
+    \item Name Tag
+    \item Possess Tag
+    \item Gadgets Tag
+    \begin{itemize}
+        \item Gadget Tag
+        \begin{itemize}
+            \item Name Tag
+        \end{itemize}
+    \end{itemize}
+\end{itemize}
+
+\paragraph{Agent Tag}
+This tag is used to identify the configuration as an agent configuration.
+
+\paragraph{Class Tag}
+This tag specifies the name of the class this agent should be.
+It must be a perfect match of the name of an agent class in the program.
+
+\paragraph{Name Tag}
+This tag specifies the name of agents created by this configuration.
+An agent is not required to have a name but it will reduce the readability of any data recording files.
+
+\paragraph{Possess Tag}
+This tag specifies whether agents of this configuration should be controlled by the player when the simulation starts.
+If more than one agent of this configuration is created the player will be in control of the last one created.
+
+\paragraph{Gadgets Tag}
+This tag specifies what gadgets are attached to the agent.
+Gadgets include countermeasures.
+This tag contains a list of gadget tags which in turn contain a name tag which denotes the name of the class of the gadget.
+
+\paragraph{Gadgets- Gadget Tag}
+This tag describes everything needed to create a gadget in the simulation.
+
+\paragraph{Gadgets- Gadget- Name Tag}
+This tag specifies the name of the class of this gadget.
+The name must match a gadget class in the program.
+
+\subsubsection{Communication}
+Communication configurations have the following information:
+\begin{itemize}
+    \item Communication Tag
+    \item Default Model Tag
+    \item Frequency Ranges Tag
+    \begin{itemize}
+        \item Frequency Range Tag
+        \begin{itemize}
+            \item SNR Model Tag
+            \item Min Frequency Tag
+            \item Max Frequency Tag
+        \end{itemize}
+    \end{itemize}
+\end{itemize}
+
+\paragraph{Communication Tag}
+This tag is used to identify this configuration as a communication configuration.
+
+\paragraph{Default Model Tag}
+This tag specifies the name of the propagation model to use.
+The name must match a class in the program.
+
+\paragraph{Frequency Ranges Tag}
+This tag hosts a list of frequency range tags.
+
+\paragraph{Frequency Ranges- Frequency Range Tag}
+This tag specifies an extra propagation model to use within a range of frequencies.
+
+\paragraph{Frequency Ranges- Frequency Range- SNRModel Tag}
+This tag specifies the name of the propagation model to use within this range of frequencies.
+The name must match a class within the program.
+
+\paragraph{Frequency Ranges- Frequency Range- Min Frequency Tag}
+This tag specifies the minimum value of this range.
+Inclusive.
+
+\paragraph{Frequency Ranges- Frequency Range- Max Frequency Tag}
+This tag specifies the maximum value of this range.
+Inclusive.
+
+\end{document}

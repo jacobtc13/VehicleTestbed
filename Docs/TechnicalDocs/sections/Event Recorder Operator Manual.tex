@@ -1,0 +1,61 @@
+\documentclass[../main.tex]{subfiles}
+\title{Event Recorder Operator Manual}
+
+\begin{document}
+
+\section{Overview}
+This document describes the design intentions and workings of the event recording system, and most importantly how to use it.
+
+\section{Design}
+The event recording system needs to be dynamic enough to record any information from anywhere in the system.
+To suit this, the event recorder has been designed as a static class, accessible from anywhere.
+Because it is accessible from anywhere, the recording system needs to be self-sufficient.
+Therefore the recorder offers functions for recording events which only use basic Unreal engine classes: UObject, FString, and TMap.
+
+\section{How the Recorder Works}
+Events are pushed into a thread-safe queue from anywhere in the program.
+The system uses the `async' library to create a thread which continuously writes the queue to file.
+The recorder is started and stopped with appropriately named functions.
+Each time the event recorder is started, it creates a new file with the date and time appended to the name.
+This means if the event recorder is started in the game mode class for example, it will produce a new file each time a new level is opened.
+The event recorder technically doesn't need to be stopped as it will stop on its own when the program is closed, though it may improve performance to stop it when not needed.
+
+\section{How to Record Events}
+Simplicity is quality.
+There are three functions to record events with, two accessible from within Unreal's blueprints.
+
+The first takes a string to describe the event and a UObject from which its name and the game time are extracted.
+In many cases this function will be all that is necessary.
+Take care in which UObject is passed in.
+In the case of UActorComponent derived classes it may make more sense to pass in the owner of the component as the component's name will not distinguish which actor it is part of.
+E.g. "Jackal2 received a message" rather than "Radio received a message".
+
+The second function takes the same parameters as the first but with an additional map of FString pairs.
+The purpose of this map is to add any additional information, such as the SNR of a received message from the communications system.
+
+The third function takes a FRecordableEvent object directly.
+More on that later.
+The other two functions actually create a FRecordableEvent object from the parameter information and call this third function.
+This function is not available to blueprints.
+
+\section{Recordable Event Class}
+The event recorder uses Unreal's smart pointers when dealing with FRecordableEvent objects which means they will need to be created with the `new' keyword but do not need to be deleted as the smart pointers will do that.
+
+The event recorder is designed to use its FRecordableEvent class by default, but it was designed with polymorphism in mind if a use case for that appears.
+The FRecordableEvent class is responsible for its own xml output format.
+It has a getter function for the xml output as an array of FStrings.
+
+\textbf{Note:} The xml output should not include line endings as they will be appended by the Unreal engine.
+
+\section{Writing to File}
+The event recorder's output location can be set with the configuration system.
+Writing to file is handled by the Unreal engine because it handles the different file endings used by different operating systems.
+The event recorder collects the xml output of each recordable event and gets the Unreal engine to write them to file.
+Take note that the file will not exist until an event is written.
+
+\section{Performance}
+In our testing we did not find any concerns regarding performance.
+The recorder has a simple optimisation built in to only write to file when it has collected more than 1000 lines of text or if the event queue is empty.
+Even on a 5400rpm mechanical hard drive the writer thread did not lag behind when testing with thousands of events per second.
+
+\end{document}

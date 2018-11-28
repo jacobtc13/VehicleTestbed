@@ -1,0 +1,81 @@
+\documentclass[../main.tex]{subfiles}
+\title{Communications Operator Manual}
+
+\begin{document}
+
+\section{Overview}
+This document describes the structure and mechanics of the communications system.
+It will detail how the system works and how to extend it.
+
+\section{How it Works}
+The system is designed to use radio propagation models which estimate the signal loss primarily based on the distance between the two positions.
+There are four main classes that anything using the communications system may have to interact with.
+MessageSender, MessageReceiver, CommDistributor, and Message.
+
+\subsection{MessageSender Interface}
+This interface must be implemented by any class designed to send messages.
+The intention is that classes implementing this interface will keep track of their maximum signal output power.
+The design also includes "variance", which is a measure of how widely the signal is sent onto nearby frequencies.
+
+\subsection{MessageReceiver Interface}
+Any classes intended to receive messages from the communication system must implement this interface.
+It is expected that part of the initialisation process of any classes which implement this add themselves to the Communication Distributor.
+Both interfaces are purely virtual and can both be implemented in the same class.
+
+\subsection{Communication Distributor}
+The communication distributor, or CommDistributor as it is called in the code, is the main hub of the system.
+It is a static class whose purpose is to act as the interface into the communications system.
+Messages get sent into it by MessageSender classes, and it will then send the messages out to every MessageReceiver listening on that particular frequency.
+Hidden away in the CommDistributor is the rest of the logic of the system.
+When the CommDistributor receives a message it will tell the channel object that represents the radio frequency of the message to send the message to all of the MessageReceivers listening on that frequency.
+
+\subsubsection{Channels}
+Channels, or CommChannels as they are called in the code, are the encapsulation of a frequency.
+They contain the frequency, the propagation model to use on that frequency, and a list of MessageReceivers to send messages to when the CommDistributor gives it one.
+The channel will calculate the signal-to-noise ratio and pass it along with the message for the receiver to interpret.
+
+\subsubsection{Propagation Models}
+Propagation models have been encapsulated into a class called SNRModel.
+This class is an abstract base class for models to derive from.
+The only thing it contains is a function for calculating the estimated signal-to-noise level between two points.
+The system has been created with polymorphism as the core concept around using these models and new models can be created and used easily because of this.
+
+\subsubsection{Multiple Models Used Simultaneously}
+The communication system also provides support for using different propagation models Simultaneously.
+This is encapsulated in a class called SNRModelFrequencyRange (FrequencyRange for short).
+This class links an SNRModel to a numerical range of frequencies.
+The idea is that one model will be used by default in cases where no FrequencyRanges cover a particular frequency, but the model in the FrequencyRange will be used when it does.
+If multiple FrequencyRanges overlap the CommDistributor will use the model from the first one in the list.
+
+\subsection{Message Class}
+The system has been designed to emulate sending a stream or packets of data through a network.
+Receivers need to know what to listen for in order to interpret messages properly.
+As such, the communication system has been designed to be brittle when it comes to interpreting messages.
+Each receiver will need to know how to interpret each type of message it is designed to operate with.
+The messages can't interpret themselves.
+
+A template message class has been provided to simplify the use of this design.
+Rather than making a new message-derived class you could instead create an enumeration or something like that and pass it through the communication system using the message template class.
+
+\subsection{How it All Works Together}
+When the simulation starts, the CommDistributor is initialised with whatever the configuration system pushes into it.
+A default model to use and any FrequencyRanges.
+Part of the process of initialising MessageReceivers involves adding themselves to the CommDistributor.
+This involves creating a new CommChannel if one doesn't already exist, and checking if any FrequencyRange objects exist for the particular frequency the receiver is being added for.
+
+When a message is sent, the CommDistributor looks for the CommChannel that matches the frequency being used and tells the CommChannel to pass on the message to all MessageReceivers it knows about.
+
+\section{Classes That Need to be Defined}
+\subsection{Transceivers}
+There is currently a PerfectTransceiver class available in the code.
+This is only meant to be used as a way to test and demonstrate that the communication system works.
+It is expected that a proper transceiver-style class (one that implements both MessageSender and MessageReceiver) would be created.
+There is also a TransceiverControllerComponent class whose intended function is to behave as the player, or offer them the means to interact with the PerfectTransceiver.
+The workload is split in this way so that the transceiver is responsible for interpreting the SNR related activities while the controller is responsible for interpreting and sending messages.
+Think of it like a person and their radio.
+
+\subsection{Propagation Models}
+Any number of propagation models can be created and used with no changes needed anywhere in the code.
+The configuration system uses the reflection system in the Unreal engine to find all subclasses of SNRModel so there'll be no trouble.
+
+\end{document}

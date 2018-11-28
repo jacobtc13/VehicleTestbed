@@ -16,68 +16,68 @@ class VEHICLETESTBED_API UCommDistributor : public UObject
 	GENERATED_BODY()
 
 public:
-	UFUNCTION()
+	UFUNCTION(BlueprintCallable)
 	///<summary>Sends a message to all receivers on the chosen frequency</summary>
 	///<param name="Message">The message to send</param>
 	///<param name="Sender">The sender of the message</param>
 	///<param name="SignalPower">The signal strength of the message</param>
 	static void Send(const UMessage* Message, UObject* Sender, float SignalPower);
 
-	UFUNCTION()
+	UFUNCTION(BlueprintCallable)
 	///<summary>Adds a receiver to a frequency</summary>
 	///<param name="Frequency">The frequency to add to</param>
 	///<param name="Receiver">The receiver to add</param>
 	static void AddToChannel(float Frequency, UObject* Receiver);
 
-	UFUNCTION()
+	UFUNCTION(BlueprintCallable)
 	///<summary>Removes a receiver from a frequency</summary>
 	///<param name="Frequency">The frequency to remove from</param>
 	///<param name="Receiver">The receiver to remove</param>
 	static void RemoveFromChannel(float Frequency, UObject* Receiver);
 
-	UFUNCTION()
+	UFUNCTION(BlueprintPure)
 	///<summary>Checks if a channel exists in memory</summary>
 	///<param name="Frequency">The frequency to check</param>
 	///<returns>Whether the channel exists or not</returns>
 	static bool CheckForChannel(float Frequency);
 
-	UFUNCTION()
+	UFUNCTION(BlueprintPure)
 	///<summary>Checks if any channel exists within a range of frequencies</summary>
 	///<param name="Frequency">The median of the range</param>
 	///<param name="Variance">The value added and subtracted from the median to determine the min and max of the range</param>
 	///<returns>Whether a channel exists in this range</returns>
 	static bool CheckForMultiChannels(float Frequency, float Variance);
 
-	UFUNCTION()
+	UFUNCTION(BlueprintCallable)
 	///<summary>Creates a new channel for the specified frequency</summary>
 	///<param name="Frequency">The frequency for this channel</param>
 	static void CreateChannel(float Frequency);
 
-	UFUNCTION()
+	UFUNCTION(BlueprintPure)
 	///<summary>Returns an array of channels within a range of frequencies</summary>
 	///<param name="Frequency">The median of the range</param>
 	///<param name="Variance">The value added and subtracted from the median to determine the min and max of the range</param>
 	///<returns>An array of channels within the specified range</returns>
 	static TArray<UCommChannel*> GetChannels(float Frequency, float Variance);
 
-	UFUNCTION()
+	UFUNCTION(BlueprintCallable)
 	///<summary>Changes which frequency a receiver is listening to</summary>
 	///<param name="Frequency">The new frequency to listen to</param>
 	///<param name="Receiver">The receiver to modify</param>
 	static void SwitchChannel(float Frequency, UObject* Receiver);
 
-	UFUNCTION()
+	UFUNCTION(BlueprintPure)
 	///<summary>Returns an array of frequency range objects that match the specified frequency</summary>
 	///<param name="Frequency">The frequency to search for</param>
 	///<returns>An array of frequency range objects that match the specified frequency</returns>
 	static TArray<USNRModelFrequencyRange*> RetrieveSNRRange(float Frequency);
 
-	UFUNCTION()
+	UFUNCTION(BlueprintCallable)
 	///<summary>Adds a frequency range to use</summary>
 	///<param name="FrequencyRange">The frequency range object to add</param>
 	static void AddSNRModelForFrequencyRange(USNRModelFrequencyRange* FrequencyRange);
 
-	UFUNCTION()
+	UFUNCTION(BlueprintCallable)
 	///<summary>Removes a frequency range object</summary>
 	///<param name="FrequencyRange">The frequency range object to remove</param>
 	static void RemoveSNRModelFromFrequencyRange(USNRModelFrequencyRange* FrequencyRange);
@@ -93,6 +93,7 @@ public:
 	static void SetDefaultPropagation(USNRModel* NewDefaultProp);
 
 	UFUNCTION(BlueprintCallable)
+	///<summary>Clears all references to objects used by the distributor. Call during EndPlay if any communications might occur.</summary>
 	static void EndPlay();
 
 private:

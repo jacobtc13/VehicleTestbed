@@ -42,10 +42,4 @@ public:
 	///<summary>Sets the minimum SNR at which this receiver can understand messages</summary>
 	///<param name="NewMinSNR">The minimum SNR</param>
 	virtual void SetMinSNR(const float NewMinSNR) = 0;
-
-	enum EResponseCode
-	{
-		Received,
-		Garbled
-	};
 };

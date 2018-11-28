@@ -1,5 +1,6 @@
 #include "CommDistributor.h"
 #include "MessageSender.h"
+#include "VoidSNR.h"
 
 // static initialization
 TArray<UCommChannel*> UCommDistributor::ChannelList;
@@ -23,6 +24,9 @@ void UCommDistributor::Send(const UMessage* Message, UObject* Sender, float Sign
 		else
 		{
 			// Log Event - The channel the sender want to broadcast does not exist.
+			TMap<FString, FString> Details;
+			Details.Add(TEXT("Frequency"), FString::SanitizeFloat(MessageSender->GetFrequency()));
+			UEventRecorder::RecordEventWithDetails(TEXT("No receivers on frequency channel"), Sender, Details);
 		}
 	}
 }
@@ -125,14 +129,13 @@ void UCommDistributor::CreateChannel(float Frequency)
 			// Use the first SNRModel in the list
 			NewChannel->Initialize(Frequency, SNRRanges[0]->GetSNRModel());
 		}
-		else if (DefaultProp)
-		{
-			NewChannel->Initialize(Frequency, DefaultProp);
-		}
 		else
 		{
-			// Comm Distributor has not been intialized yet
-			UE_LOG(LogTemp, Fatal, TEXT("Channel attempted to be made before Distributor is initialized"));
+			if (!DefaultProp)
+			{
+				SetDefaultPropagation(NewObject<UVoidSNR>());
+			}
+			NewChannel->Initialize(Frequency, DefaultProp);
 		}
 
 		ChannelList.Add(NewChannel);
@@ -215,12 +218,26 @@ USNRModel* UCommDistributor::GetDefaultPropagation()
 
 void UCommDistributor::SetDefaultPropagation(USNRModel* NewDefaultProp)
 {
-	// Garbage collection does not touch root objects
-	if (NewDefaultProp) NewDefaultProp->AddToRoot();
-	// Need to make sure to remove them again, very much like new / delete
-	DefaultProp->RemoveFromRoot();
+	if (NewDefaultProp)
+	{
+		// Garbage collection does not touch root objects
+		NewDefaultProp->AddToRoot();
+		if (DefaultProp)
+		{
+			// Need to make sure to remove them again, very much like new / delete
+			DefaultProp->RemoveFromRoot();
+		}
 
-	DefaultProp = NewDefaultProp;
+		for (UCommChannel* Channel : ChannelList)
+		{
+			if (Channel->GetSNRModel() == DefaultProp)
+			{
+				Channel->SetSNRModel(NewDefaultProp);
+			}
+		}
+
+		DefaultProp = NewDefaultProp;
+	}
 }
 
 void UCommDistributor::EndPlay()

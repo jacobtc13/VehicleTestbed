@@ -10,7 +10,6 @@ void UTransceiverControllerComponent::SetupPlayerInputComponent(UInputComponent*
 
 void UTransceiverControllerComponent::InterpretMessage(const UMessage* Message)
 {
-	typedef IMessageReceiver::EResponseCode EResponseCode;
 	if (const TMessageTemplate<EResponseCode>* ResponseMessage = Cast<const TMessageTemplate<EResponseCode>>(Message))
 	{
 		EResponseCode ResponseCode = ResponseMessage->Get();

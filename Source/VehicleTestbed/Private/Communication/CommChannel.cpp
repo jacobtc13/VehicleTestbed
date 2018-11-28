@@ -3,12 +3,7 @@
 UCommChannel::UCommChannel() : UObject()
 {}
 
-UCommChannel::UCommChannel(float aFrequency, USNRModel* aModel) : UCommChannel()
-{
-	Initialize(aFrequency, aModel);
-}
-
-void UCommChannel::Initialize(float aFrequency, USNRModel * aModel)
+void UCommChannel::Initialize(float aFrequency, USNRModel* aModel)
 {
 	Frequency = aFrequency;
 	SNRModel = aModel;
@@ -55,6 +50,7 @@ void UCommChannel::Broadcast(const UMessage* Message, const float SignalPower, c
 	else
 	{
 		//Log event - message was not broadcast to any receiver.
+		UEventRecorder::RecordEvent(TEXT("Message not broadcast to any receiver"), this);
 	}
 }
 

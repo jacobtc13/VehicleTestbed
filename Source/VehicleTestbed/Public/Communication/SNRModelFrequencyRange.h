@@ -4,7 +4,7 @@
 #include "SNRModel.h"
 #include "SNRModelFrequencyRange.generated.h"
 
-UCLASS()
+UCLASS(BlueprintType)
 class USNRModelFrequencyRange : public UObject
 {
 	GENERATED_BODY()
@@ -18,6 +18,7 @@ private:
 	USNRModel* Model;
 
 public:
+	///<summary>Default constructor</summary>
 	USNRModelFrequencyRange();
 
 	UFUNCTION()

@@ -38,7 +38,7 @@ In its current state, this container contains the catkin workspace used on the J
 \subsection{Configuring the plugin} \label{sec:plugin_config}
 There are several steps required to configure the plugin for first-use. Many of these steps should be completed as part of the provided project source code, however it is worth working through these steps at least once to check the configuration is correct.
 \begin{enumerate}
-    \item Open the Plugins settings in Unreal (Edit \( \rightarrow \) Plugins) and search for the ROS Integration plugin. Check that it is activated, clicking the \verb|Activate| button if it is not. A restart may be required to fully activate the plugin if it was not previously active.
+    \item Open the Plugins settings in Unreal (Edit \( \rightarrow \) Plugins) and search for the ROS Integration plugin. Check that it is activated, clicking the \texttt{Activate} button if it is not. A restart may be required to fully activate the plugin if it was not previously active.
     \item Open the Maps and Modes settings (Edit \( \rightarrow \) Project Settings \( \rightarrow \) Maps and Modes) and check that the Game Instance class is set to "MyROSIntegrationGameInstance".
     \item Open the MyROSIntegrationGameInstance blueprint (Content \( \rightarrow \) MyROSIntegrationGameInstance and check the correct settings of the ROSBridge Server Host and Port. Rosbridge servers are by default started on port 9090, so you should not need to change that value. The host may need to change depending on your setup: if using a Docker container, the host should be 127.0.0.1, if using a seperate machine it should be the IP address of that machine.
 \end{enumerate}

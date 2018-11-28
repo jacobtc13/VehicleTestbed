@@ -2,11 +2,18 @@
 \usepackage[utf8]{inputenc}
 \usepackage[english]{babel}
 \usepackage{graphicx}
+
 \graphicspath{{images/}{../images/}}
  
 \usepackage{subfiles}
  
 \usepackage{blindtext}
+
+\usepackage{hyperref}
+\hypersetup{ 
+    colorlinks=true,
+    urlcolor=blue 
+    }
  
 \title{Vehicle Testbed Technical Documentation}
 \author{Jacob Carroll}
@@ -28,5 +35,8 @@
 \section{Data Recording}
 \subsection{Event Recording}
 \subfile{sections/EventRecording}
+
+\section{ROS AI and Integration}
+\subfile{sections/RosPluginAndAi}
 
 \end{document}

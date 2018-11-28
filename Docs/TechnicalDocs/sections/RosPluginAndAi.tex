@@ -1,0 +1,170 @@
+\documentclass[../main.tex]{subfiles}
+
+\title{AI Operator Manual}
+
+\begin{document}
+\newcommand{\shellcmd}[1]{\\\indent\indent\texttt{\footnotesize\# #1}}
+
+\section{Overview}
+This section provides implementation details for the AI components used in the project. There are three parts to the AI: the ROS plugin, which enables communication between Unreal and ROS; the ball tracking node, which identifies and locates incoming tennis ball threats; and the threat response AI, which rotates the Jackal to face a shield towards incoming threats. Each of these components will be explained in their own subsection. 
+
+A basic understanding of ROS is considered assumed knowledge for this section. For more information on ROS, consult the \href{http://wiki.ros.org/ROS/Tutorials}{\underline{ROS tutorials}} or Jason O'Kane's \href{http://lsi.vc.ehu.es/pablogn/investig/ROS/A\%20Gentle\%20Introduction\%20to\%20ROS.pdf}{\underline{Gentle Introduction to ROS}}.
+
+\section{ROS Integration Plugin}
+Within this project, an open source plugin was used to enable communication between ROS and Unreal. The plugin is provided with the project source code, but is also available on \href{https://github.com/code-iai/ROSIntegration}{\underline{GitHub}}. The \href{http://wiki.ros.org/rosbridge_suite}{\underline{rosbridge}} package is used by the plugin to facilitate communication with a ROS master.
+
+The ROS master can be run using either the provided Docker container, a custom Linux container or a physical computer running on the same network as the computer running Unreal. It is essential that the container or machine have the  \href{http://wiki.ros.org/rosbridge_suite}{\underline{rosbridge}} package installed. This can be installed using the command below in a terminal:
+\shellcmd{sudo apt-get install ros-kinetic-rosbridge-suite}
+
+Note that the above command uses ROS Kinetic. At this point in time, we have not been able to make the plugin work with other ROS versions. In particular, ROS Indigo was tested quite extensively without success. More information on this can be found in Section \ref{sec:no_messages_issue}.
+
+\subsection{Launching the provided Docker container} \label{sec:docker_launch}
+You may choose to use the provided Docker container as your ROS master machine. This container may be useful if there is no access to a physical Linux machine. In order to run the container, you must have Docker installed on your machine. It can be downloaded from the \href{https://store.docker.com/search?type=edition&offering=community}{\underline{Docker Website}}.
+
+Once Docker is running, the container can be started by entering the following commands into a command line interface from the directory storing the container:
+\shellcmd{docker run -it --rm -p 6080:80 -p 9090:9090 roswscontainer}
+
+The container will start up a VNC server connected to a machine with ROS Kinetic and rosbridge. You can connect to the container by navigating to \href{http://127.0.0.1:6080}{\underline{127.0.0.1:6080}} in any web browser.
+
+In its current state, this container contains the catkin workspace used on the Jackal. You can download your own code to the container using git clone, or similar techniques. If you make changes to the container and wish to save your setup, you can do so using the following method:
+\begin{enumerate}
+    \item On your physical machine, open a new tab or window of your CLI and type the command \texttt{docker ps} to find the container ID of your container.
+    \item Use the command \texttt{docker commit <container id> <chosen container name>} to commit the container to memory.
+    \item Save the container by using the command \texttt{docker save <chosen container name> > <chosen file name>.tar}
+    \item Load the container with the command \texttt{docker load -i <chosen file name>.tar}
+    \item You should now be able to stop and re-run the container by substituting roswscontainer with your chosen container name in the docker run command above.
+\end{enumerate}
+
+\subsection{Configuring the plugin} \label{sec:plugin_config}
+There are several steps required to configure the plugin for first-use. Many of these steps should be completed as part of the provided project source code, however it is worth working through these steps at least once to check the configuration is correct.
+\begin{enumerate}
+    \item Open the Plugins settings in Unreal (Edit \( \rightarrow \) Plugins) and search for the ROS Integration plugin. Check that it is activated, clicking the \verb|Activate| button if it is not. A restart may be required to fully activate the plugin if it was not previously active.
+    \item Open the Maps and Modes settings (Edit \( \rightarrow \) Project Settings \( \rightarrow \) Maps and Modes) and check that the Game Instance class is set to "MyROSIntegrationGameInstance".
+    \item Open the MyROSIntegrationGameInstance blueprint (Content \( \rightarrow \) MyROSIntegrationGameInstance and check the correct settings of the ROSBridge Server Host and Port. Rosbridge servers are by default started on port 9090, so you should not need to change that value. The host may need to change depending on your setup: if using a Docker container, the host should be 127.0.0.1, if using a seperate machine it should be the IP address of that machine.
+\end{enumerate}
+
+The current form of the project provides a player controller (Testbed ROS Player Controller) that subscribes to the \texttt{/cmd\_vel} topic to get the linear and angular velocity for the controlled agent. Use of this control has not quite been fully integrated into the control system and so requires an additional configuration step. The ROS player controller can not be switched to automatically and must instead be configured in the Unreal Editor. This can be done in the World Settings (on the right side panel). 
+
+If you do not wish to use the player controller, you can also test functionality of the ROS connection with the very basic TestPublisher and TestSubscriber classes. These can be added to the project by navigating to C++ Classes \( \rightarrow \) ROS Integration within the Unreal editor and dragging the objects into the viewport.
+
+If you wish to create additional publishers and subscribers, you can use the example publisher and subscriber in the \href{https://github.com/code-iai/ROSIntegration#rosintegration-plugin-for-unreal-engine-4}{\underline{ROS Integration README}} as a template. 
+
+\subsection{Using the plugin}
+Once the ROS machine and Unreal have been appropriately configured, it should be possible to run the plugin. On the Unreal side, all that is required is to launch the level. The ROS machine requires a command to start the rosbridge server. Simply enter the following command into a terminal:
+\shellcmd{roslaunch rosbridge\_server rosbridge\_tcp.launch bson\_only\_mode:=True}
+
+If the plugin is working correctly, you should see the rosbridge server correctly launched on port 9090. A message should appear when the Unreal client connects (and disconnects). If there are any subscribers in the Unreal code, a print statement in the ROS terminal will indicate when they have subscribed. 
+
+If the Unreal code is publishing messages to ROS, this can be confirmed by opening a second terminal tab or window and typing the command \texttt{rostopic echo /<topic name>}. You should be able to see messages appear as they are sent from Unreal. 
+
+\subsection{Troubleshooting} \label{sec:troubleshooting}
+Throughout development, we encountered a number of issues with the plugin that we managed to resolve. If the plugin is not functioning as expected, we recommend starting the troubleshooting process by looking through this section to see if the problem is described here.
+
+\subsubsection{Issue 1: Client connects to rosbridge, but no messages are sent or received} \label{sec:no_messages_issue}
+\begin{itemize}
+    \item After launching an Unreal level, a connected ROS machine shows a message like ``[Client 0] connected. 1 client total". 
+    \item The usual message, ``[Client 0] Subscribed to /example\_topic" does not display.
+    \item Running \texttt{rostopic echo /example\_topic} will produce the message ``WARNING: topic /example\_topic does not appear to be publshed yet".
+    \item /example\_topic is not shown in the list of topics generated by the command \texttt{rostopic list}. 
+    \item Wireshark analysis confirms that messages are being sent from one machine to the other.
+\end{itemize}
+
+\paragraph{Solutions} We have found two possible causes for this issue. The first is that the user missed \texttt{bson\_only\_mode:=True} in the roslaunch command. If this is the case, relaunching the rosbridge server with this extra part should resolve the issue.
+
+This issue was also encountered when using ROS Indigo. As the manifestation of the issue is the same as when not using \texttt{bson\_only\_mode}, we suspect that the root cause of the problem here is a difference in handling BSON between the versions of rosbridge for ROS Indigo and Kinetic. The \texttt{bson\_only\_mode} flag was added in a later version of rosbridge, however it does seem to have been implemented for ROS Indigo. It is possible that the repository has not been updated to include this version of rosbridge.
+
+If ROS Indigo must be used, our recommendation is to start by trying to install the latest version of rosbridge \href{https://github.com/RobotWebTools/rosbridge_suite/tree/indigo}{\underline{from source}}, rather than using \texttt{apt-get}.
+
+\subsubsection{Issue 2: Unreal client is unable to connect to rosbridge}
+\begin{itemize}
+    \item After launching an Unreal level, no connection messages are seen on the rosbridge machine.
+    \item There is no sign that any messages have been received from the Unreal side.
+\end{itemize}
+
+\paragraph{Solutions} There are many possible causes for this error. The best method for troubleshooting would be to work through the launch and configuration steps described in Sections \ref{sec:docker_launch} and \ref{sec:plugin_config}. In particular, focus should be given to the following areas:
+\begin{itemize}
+    \item Ensure that the plugin has been enabled within Unreal
+    \item Check that the ports and host are correct within the game instance settings
+    \item Make sure that the Game Instance is set to MyROSIntegrationGameInstance
+    \item Check that there is something within the level (either a player controller or agent) that publishes and subscribes to messages.
+    \item If using a Docker container as the ROS machine, make sure that port 9090 has been exposed by including \texttt{-p 9090:9090} somewhere in the run command.
+    \item If using a physical ROS machine, ensure that you are on the same network by attempting to ping the IP address you have provided in the rosbridge host settings.
+\end{itemize}
+
+\subsubsection{Issue 3: The program connects and sends/receives messages, but Unreal crashes shortly after beginning.}
+\begin{itemize}
+    \item After launching the Unreal level, the usual connection and subscription messages can be seen on the ROS machine.
+    \item Messages may be sent and received as expected for a short time.
+    \item Unreal crashes within about a minute of launch.
+    \item Problem occurs consistently.
+\end{itemize}
+
+\paragraph{Solutions} A potential explanation for this issue could be that the ROS topic is being garbage collected by Unreal. When the topic goes out of scope, it is deleted and causes an unhandled exception to be thrown.
+
+If this is the problem, it can be resolved by declaring the topic as a class property and placing ``UPROPERTY()" on the line immediately above its declaration. This is discussed within the related issue on the \href{https://github.com/code-iai/ROSIntegration/issues/32}{\underline{plugin's Github page}}.
+
+Of course, there are many other reasons that Unreal could crash - the issue may be totally unrelated to use of the ROS plugin. Further troubleshooting may be required to locate the source of the crash if this is the case.
+
+\section{Threat Detection AI}
+The threat detection AI detects and locates a tennis ball in an image. This functionality has been provided in the form of a ROS package which contains AI nodes, tests, configuration and launch files. This section will outline the design and use of this package.
+
+\subsection{Design description}
+The ball tracking node is the heart of this package and its functionality. This node subscribes to an incoming ROS image message, processes the image to find a tennis ball and, if found, publish the location of the tennis ball to the \texttt{/threat} topic. The ROS image message is converted to an Open CV frame format through the use of the ROS \href{http://wiki.ros.org/cv_bridge}{\underline{CV Bridge package}}.
+
+The technique used for identifying the tennis ball was adapted from the method shown on the \href{https://www.pyimagesearch.com/2015/09/14/ball-tracking-with-opencv/}{\underline{Py Image Search blog}}. Open CV is used to identify contours matching the green shade of the tennis ball. The centre of the tennis ball is found by summing the moments to find the centroid of the contour. Distance can be estimated based on the number of pixels the tennis ball fills, although it was found that using the raw number of pixels worked just as well for the AI. 
+
+If required, the image can be processed to place a circle around the identified tennis ball, and a mark at the centre. This image can be recorded to a video file, or, if a monitor is connected, displayed in real time while running. The feature can be toggled using a parameter and is on by default.
+
+The output of the node is a custom message type, \texttt{threat\_detection/Threat}. The message contains the width and height of the image, the x-y co-ordinates of the threat's centre point and the distance to the threat. Currently, the distance is actually the radius as it was found the AI node responded better to that than the distance measurement.
+
+\subsection{Parameters}
+The node has a number of parameters that enable the ball tracking node to be used in a variety of situations. Parameters all have default values and can be changed at run-time using either launch files or other parameter setting methods within ROS. The parameters used are summarised in Table \ref{tab:params}.
+
+\begin{table}[]
+    \centering
+    \begin{tabular}{c|c|c}
+        \textbf{Parameter name} & \textbf{Description} &    \textbf{Default Value}  \\
+        \hline
+        calibrate & Toggles calibrate mode & False \\
+        record\_video & Toggles record mode & True \\
+        image\_topic & Name of the image topic & ``/test\_image" \\
+        frame\_width & Width of the camera frame (pixels) & 1280 \\
+        frame\_height & Height of the camera frame (pixels) & 1024 \\
+        focal\_length & Focal length of the camera & 1 \\
+        known\_width & Width of the tennis ball (metres) & 0.065
+    \end{tabular}
+    \caption{Ball tracking parameters}
+    \label{tab:params}
+\end{table}
+
+\subsection{Usage}
+The package is provided with a number of launch files to make using the node as easy as possible. Parameter files and launch files are provided for both of the cameras on the Jackal. Testing found that the node functions better with the Axis camera due to a wider field of view and better focus. The launch file for this camera can be run by entering this command into a terminal window:
+\shellcmd{roslaunch threat\_detection ball\_tracking\_with\_axis.launch}
+
+This file launches an additional node. This node converts the image format from the axis camera (WFOV\_Image) to a normal ROS sensor\_msgs/Image message.
+
+One launch file sets up the node to work in calibrate mode with the Axis camera. Calibrate mode is used to find the focal length of the camera so that distances can be calculated. To calibrate the camera, hold the tennis ball 1m from the camera and write down the focal length shown on the screen. The value of the focal length and the width of the tennis ball in metres should be added to the launch file. Calibration mode can be run using the following command:
+\shellcmd{roslaunch threat\_detection calibrate\_with\_axis.launch}
+
+The final launch file in the package can be used to test tennis ball identification with static images. It may be worth running this launch file if changes are made to the node, to ensure that identification still works as expected. The unit tests in the package can also be used for the same purpose.
+
+\section{Threat Avoidance AI}
+The threat avoidance AI is a node within ROS which makes the Jackal rotate to face its shield towards an incoming threat. At this point the behaviour of the AI is very basic, but could be upgraded in the future.
+
+In its current form, the node subscribes to the \texttt{/threat} topic published by the ball tracking node. It compares the distance of the threat to previous threat messages to check whether the distance is decreasing (i.e. the threat is approaching). If the threat is approaching, the node will look at the x position of the ball to find the angle of the ball from the Jackal's centre. Based on that angle, the Jackal will rotate itself so that the shield on the right side of its body is facing the incoming threat.
+
+The calculated movement is sent to the Jackal using the \texttt{/cmd\_vel} topic. This consists of a geometry\_msgs/Twist message specifying the linear and angular velocity for the Jackal. This is passed to the Jackal's inbuilt motor control software. 
+
+\subsection{Usage}
+The threat avoidance AI requires the use of the ball tracking node to identify threats. At this point, the AI node has not been integrated into a launch file with the ball tracking node. This could be done easily in the future to make launching the nodes easier.
+
+For the moment, the AI node is launched with the following command:
+\shellcmd{rosrun jackal\_ai ai.py}
+
+\subsection{Limitations of AI}
+As noted earlier in the section, the AI is currently quite basic. There are a number of limitations in its behaviour. One of the big issues is in identifying whether an incoming tennis ball is a threat. As the current method is based only on the number of pixels the ball takes up, it will trigger whenever the ball first appears in the Jackal's field of view regardless of whether or not it is heading towards the Jackal. As a result of this, the Jackal can react to balls that are not a threat, or even move into the path of a threat. This could be fixed by using the distance and x value together to see if the ball is moving into the path of the Jackal. 
+
+Another issue is that the resolution and field of view of the camera are quite limited. This means that the tennis ball needs to be quite close to the Jackal to be detected. The ball therefore needs to be thrown quite slowly to give the Jackal enough time to react to the threat. It also means that the Jackal can only identify threats that are in front of it. For this reason, the Jackal currently only rotates to the right as that will always be the shortest path to any threat the camera is capable of detecting. If a better camera is used, more sophisticated algorithms will be required to find the optimal path to safety.
+
+
+\end{document}

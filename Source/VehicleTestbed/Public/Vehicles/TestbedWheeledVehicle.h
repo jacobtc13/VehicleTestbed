@@ -4,19 +4,29 @@
 
 #include "GameFramework/SpringArmComponent.h"
 #include "Camera/CameraComponent.h"
+#include "GadgetMountingNode.h"
+#include "MountablePawn.h"
+#include "Engine/SkeletalMeshSocket.h"
+
+#include "PerfectTransceiver.h"
 
 #include "TestbedWheeledVehicle.generated.h"
 
-UCLASS()
+UCLASS(Abstract)
 ///<summary>Base class for all wheeled vehicle actors. Sets up cameras and controls for player usage.</summary>
-class VEHICLETESTBED_API ATestbedWheeledVehicle : public AWheeledVehicle
+class VEHICLETESTBED_API ATestbedWheeledVehicle : public AWheeledVehicle, public IMountablePawn
 {
 	GENERATED_BODY()
 
 public:
+	///<summary>Default Constructor</summary>
 	ATestbedWheeledVehicle();
 	
+	///<summary>Default Deconstructor</summary>
 	~ATestbedWheeledVehicle();
+
+	///<summary>Allow actors to initialize themselves on the C++ side</summary>
+	void PostInitializeComponents();
 
 	UFUNCTION()
 	///<summary>Sets the current throttle applied to the vehicle by the player</summary>
@@ -54,6 +64,24 @@ public:
 	///<summary>Returns true if the actor can be possessed in game</summary>
 	bool IsPossessable() { return bIsPosessable; };
 
+	UFUNCTION()
+	///<summary>Get a TArray of pointers to the UGadgetMouningNodes on the vehicle</summary>
+	///<returns>A TArray of pointers to the UGadgetMountingNodes</returns>
+	virtual TArray<UGadgetMountingNode*> GetMountingNodes() override;
+
+	UFUNCTION()
+	///<summary>Search for and returns a GadgetMountingNode that is associated with a socket name. Can return a nullptr if nothing is found</summary>
+	///<params name = 'SocketName'>The socket name that is associated with the GadgetMountingNode being searched for</params>
+	///<returns>The GadgetMountingNode that is associated with the SocketName</returns>
+	virtual UGadgetMountingNode* GetMountingNodeBySocketName(FName SocketName) override;
+
+	UFUNCTION()
+	///<summary> GadgetMountingNodes related to the socket denoted by FName toAddTo</summary>
+	///<params name = 'GadgetClass'>A static class of the gadget that will be attached to the pawn</params>
+	///<params name = 'Socket'>The socket on the skeletal mesh of the pawn</params>
+	virtual void MountGadget(TSubclassOf<AGadget> GadgetClass, USkeletalMeshSocket* Socket) override;
+
+
 private:
 	UFUNCTION()
 	///<summary>Activates the selected camera and deactivates the previously active camera</summary>
@@ -73,4 +101,9 @@ protected:
 	UCameraComponent* ActiveCamera;
 	UPROPERTY(EditAnywhere)
 	bool bIsPosessable = true;
+
+	UPROPERTY(EditAnywhere, Category = "Gadget")
+	TArray<UGadgetMountingNode*> GadgetMountingNodes;
+
+	UPerfectTransceiver* Transceiver;
 };

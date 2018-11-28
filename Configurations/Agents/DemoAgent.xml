@@ -1,0 +1,11 @@
+<Agent>
+	<Class>Jackal_BP_C</Class>
+	<Name>DemoAgent</Name>
+	<Possess>true</Possess>
+	<Gadgets>
+		<Gadget>
+			<Name>ShieldCountermeasure</Name>
+		</Gadget>
+	</Gadgets>
+</Agent>
+
